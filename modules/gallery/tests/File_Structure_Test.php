@@ -25,6 +25,8 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     $count = 0;
     foreach ($dir as $file) {
+      if (preg_match("#(vendor|test)/#", $file)) continue;
+
       $count++;
       if (!preg_match("|\.html\.php$|", $file->getPathname())) {
         $this->assert_false(
@@ -57,7 +59,9 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     foreach ($dir as $file) {
-      if (preg_match("/\.(php|css|html|js)$/", $file)) {
+      if (preg_match("#(vendor|test)/#", $file)) {
+        continue;
+      } elseif (preg_match("/\.(php|css|html|js)$/", $file)) {
         foreach (file($file) as $line) {
           $this->assert_true(substr($line, -2) != "\r\n", "$file has windows style line endings");
         }
@@ -186,7 +190,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
         break;
 
       default:
-        if (preg_match("/vendor/", $path)) {
+        if (preg_match("#(vendor|test)/#", $path)) {
           # including unmodified 3rd party code
         } elseif (preg_match("/modules\/(autorotate|movie_resized)/", $path)) {
           # including unmodified 3rd party code
@@ -210,6 +214,8 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
           new RecursiveDirectoryIterator(DOCROOT))));
     $errors = array();
     foreach ($dir as $file) {
+      if (preg_match("#/vendor/#", $file)) continue;
+
       $file_as_string = file_get_contents($file);
       if (preg_match('/\t/', $file_as_string)) {
         foreach (explode("\n", $file_as_string) as $l => $line) {
@@ -331,7 +337,9 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     $errors = "";
     foreach ($dir as $file) {
-      if (preg_match("/\.(php|css|html|js)$/", $file)) {
+      if (preg_match("#(vendor|test)/#", $file)) {
+        continue;
+      } elseif (preg_match("/\.(php|css|html|js)$/", $file)) {
         foreach (file($file) as $line_num => $line) {
           if ((substr($line, -2) == " \n") || (substr($line, -1) == " ")) {
             $errors .= "$file at line " . ($line_num + 1) . "\n";
