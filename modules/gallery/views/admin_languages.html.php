@@ -73,7 +73,6 @@
       </div>
     </div>
 
-<!-- disabled as galleryproject.org is no longer available and we don't have the code for this
     <div id="g-translations" class="g-block">
       <h2> <?= t("Translations") ?> </h2>
       <p>
@@ -114,7 +113,6 @@
         <?= $share_translations_form ?>
       </div>
     </div>
--->
 
   </div>
 </div>

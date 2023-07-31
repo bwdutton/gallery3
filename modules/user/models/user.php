@@ -60,7 +60,7 @@ class User_Model_Core extends ORM implements User_Definition {
    */
   public function avatar_url($size=80, $default=null) {
     return sprintf("//www.gravatar.com/avatar/%s.jpg?s=%d&r=pg%s",
-                   ($this->email ? md5($this->email) : ''), $size, $default ? "&d=" . urlencode($default) : "");
+                   md5($this->email), $size, $default ? "&d=" . urlencode($default) : "");
   }
 
   public function groups() {

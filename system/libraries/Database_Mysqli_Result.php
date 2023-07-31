@@ -129,19 +129,24 @@ class Database_Mysqli_Result_Core extends Database_Result {
 	/**
 	 * SeekableIterator: seek
 	 */
-	public function seek($offset): void
+	public function seek($offset)
 	{
 		if ($this->offsetExists($offset) AND $this->result->data_seek($offset))
 		{
 			// Set the current row to the offset
 			$this->current_row = $offset;
+
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
 		}
 	}
 
 	/**
 	 * Iterator: current
 	 */
-    #[\ReturnTypeWillChange]
 	public function current()
 	{
 		if ($this->current_row !== $this->internal_row AND ! $this->seek($this->current_row))

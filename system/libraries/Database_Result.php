@@ -80,7 +80,7 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	/**
 	 * Countable: count
 	 */
-	public function count(): int
+	public function count()
 	{
 		return $this->total_rows;
 	}
@@ -88,7 +88,7 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	/**
 	 * ArrayAccess: offsetExists
 	 */
-	public function offsetExists($offset): bool
+	public function offsetExists($offset)
 	{
 		return ($offset >= 0 AND $offset < $this->total_rows);
 	}
@@ -96,7 +96,7 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	/**
 	 * ArrayAccess: offsetGet
 	 */
-	public function offsetGet($offset): mixed
+	public function offsetGet($offset)
 	{
 		if ( ! $this->seek($offset))
 			return NULL;
@@ -109,7 +109,7 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	 *
 	 * @throws  Kohana_Database_Exception
 	 */
-	final public function offsetSet($offset, $value): void
+	final public function offsetSet($offset, $value)
 	{
 		throw new Kohana_Exception('Database results are read-only');
 	}
@@ -119,7 +119,6 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	 *
 	 * @throws  Kohana_Database_Exception
 	 */
-    #[\ReturnTypeWillChange]
 	final public function offsetUnset($offset)
 	{
 		throw new Kohana_Exception('Database results are read-only');
@@ -128,7 +127,7 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	/**
 	 * Iterator: key
 	 */
-	public function key(): mixed
+	public function key()
 	{
 		return $this->current_row;
 	}
@@ -136,9 +135,10 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	/**
 	 * Iterator: next
 	 */
-	public function next(): void
+	public function next()
 	{
 		++$this->current_row;
+		return $this;
 	}
 
 	/**
@@ -153,15 +153,16 @@ abstract class Database_Result_Core implements Countable, Iterator, SeekableIter
 	/**
 	 * Iterator: rewind
 	 */
-	public function rewind(): void
+	public function rewind()
 	{
 		$this->current_row = 0;
+		return $this;
 	}
 
 	/**
 	 * Iterator: valid
 	 */
-	public function valid(): bool
+	public function valid()
 	{
 		return $this->offsetExists($this->current_row);
 	}
