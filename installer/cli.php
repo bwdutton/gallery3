@@ -85,10 +85,10 @@ function oops($message) {
 
 function parse_cli_params() {
   $config = array(
-    "host" => getenv('MYSQL_HOST') ? getenv('MYSQL_HOST') : "localhost",
-    "user" => getenv('MYSQL_USER') ? getenv('MYSQL_USER') : "root",
-    "password" => getenv('MYSQL_PASSWORD') ? getenv('MYSQL_PASSWORD') : "",
-    "dbname" => getenv('MYSQL_DATABASE') ? getenv('MYSQL_DATABASE') : "gallery3",
+    "host" => getenv('DB_HOST') ? getenv('DB_HOST') : "localhost",
+    "user" => getenv('DB_USER') ? getenv('DB_USER') : "root",
+    "password" => getenv('DB_PASSWORD') ? getenv('DB_PASSWORD') : "",
+    "dbname" => getenv('DB_DATABASE') ? getenv('DB_DATABASE') : "gallery3",
     "prefix" => getenv('DB_PREFIX') ? getenv('DB_PREFIX') : "",
     "g3_password" => getenv('G3_PASSWORD') ? getenv('G3_PASSWORD') : "",
     "type" => function_exists("mysqli_set_charset") ? "mysqli" : "mysql",

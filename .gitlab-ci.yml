@@ -1,0 +1,82 @@
+variables:
+  MYSQL_ROOT_PASSWORD: gallery_ci
+  MYSQL_DATABASE: gallery_ci
+  MYSQL_HOST: mysql
+  DB_DATABASE: gallery_ci
+  DB_HOST: mysql
+  DB_USER: root
+  DB_PASSWORD: gallery_ci
+  COMPOSER_HOME: $CI_PROJECT_DIR/composer_cache
+
+stages:
+#  - pull
+  - install_deps
+  - test
+
+#pullimages:
+#  stage: pull
+#  variables:
+#    GIT_STRATEGY: none
+#  script:
+#    - docker login -u $CI_USER -p $CI_PASS
+#    - docker pull composer:2
+##    - docker pull alpine:3
+##    - docker pull cytopia/eslint
+##    - docker pull eeacms/jshint
+
+default:
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+#    key: cache-default
+    paths:
+      - apt
+      - composer_cache
+      - composer.phar
+      - vendor
+
+update_os:
+# just need the base OS to be the same, any version should be fine
+  image: php:8.5
+  stage: install_deps
+  before_script:
+    - echo `pwd`
+    - mkdir -p apt/cache apt/lists/partial apt/lists/archives/partial
+  script:
+    - echo `pwd`
+    - rm /etc/apt/apt.conf.d/docker*
+    - echo "Dir::State::Lists \"$CI_PROJECT_DIR/apt/lists\";" > /etc/apt/apt.conf.d/99custom-path
+    - echo "Dir::Cache \"$CI_PROJECT_DIR/apt/cache\";" > /etc/apt/apt.conf.d/99custom-cache
+    - apt-get update
+    - apt-get install -y imagemagick graphicsmagick dcraw ffmpeg git zip mariadb-client zip
+    - curl --show-error --silent "https://getcomposer.org/installer" | php
+    - php composer.phar install --prefer-dist --no-progress
+
+test:
+  stage: test
+  parallel:
+    matrix:
+      - PHP_VERSION: ["8.2"]
+        DBSERVICE: ["mysql:8"]
+  image: php:$PHP_VERSION
+  services:
+    - $DBSERVICE
+  before_script:
+    - rm /etc/apt/apt.conf.d/docker*
+    - echo "Dir::State::Lists \"$CI_PROJECT_DIR/apt/lists\";" > /etc/apt/apt.conf.d/99custom-path
+    - echo "Dir::Cache \"$CI_PROJECT_DIR/apt/cache\";" > /etc/apt/apt.conf.d/99custom-cache
+#    - apt-get update
+# php images seem to be upgraded regularly
+#    - apt-get upgrade
+    - apt-get install -y imagemagick graphicsmagick dcraw ffmpeg git zip mariadb-client zip
+    - docker-php-ext-install mysqli
+# should be restored from the cached copy
+#    - curl --show-error --silent "https://getcomposer.org/installer" | php
+    - php composer.phar install --prefer-dist --no-progress
+#    mysql image does this for us
+#    - mysql -e "CREATE DATABASE ${DB_DATABASE};" --skip-ssl -u${DB_USER} -p${DB_PASSWORD} -h${DB_HOST}
+    - mysql -e "CREATE DATABASE ${DB_DATABASE}_test;" --skip-ssl -u${DB_USER} -p${DB_PASSWORD} -h${DB_HOST}
+  script:
+    - bin/linter.sh
+    - bin/phpcs.sh
+    - php ./installer/index.php
+    - php index.php test
