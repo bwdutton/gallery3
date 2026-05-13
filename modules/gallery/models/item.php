@@ -864,7 +864,7 @@ class Item_Model_Core extends ORM_MPTT {
   /**
    * Specify our rules here so that we have access to the instance of this model.
    */
-  public function validate(Validation $array=null) {
+  public function validate(?Validation $array=null) {
     if (!$array) {
       $this->rules = array(
         "album_cover_item_id" => array("callbacks" => array(array($this, "valid_album_cover"))),
