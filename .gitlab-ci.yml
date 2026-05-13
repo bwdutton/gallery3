@@ -34,22 +34,23 @@ default:
       - composer.phar
       - vendor
 
-update_os:
-# just need the base OS to be the same, any version should be fine
-  image: php:8.5
-  stage: install_deps
-  before_script:
-    - echo `pwd`
-    - mkdir -p apt/cache apt/lists/partial apt/lists/archives/partial
-  script:
-    - echo `pwd`
-    - rm /etc/apt/apt.conf.d/docker*
-    - echo "Dir::State::Lists \"$CI_PROJECT_DIR/apt/lists\";" > /etc/apt/apt.conf.d/99custom-path
-    - echo "Dir::Cache \"$CI_PROJECT_DIR/apt/cache\";" > /etc/apt/apt.conf.d/99custom-cache
-    - apt-get update
-    - apt-get install -y imagemagick graphicsmagick dcraw ffmpeg git zip mariadb-client zip
-    - curl --show-error --silent "https://getcomposer.org/installer" | php
-    - php composer.phar install --prefer-dist --no-progress
+# why did I have this first step?
+#update_os:
+## just need the base OS to be the same, any version should be fine
+#  image: php:8.5
+#  stage: install_deps
+#  before_script:
+#    - echo `pwd`
+#    - mkdir -p apt/cache apt/lists/partial apt/lists/archives/partial
+#  script:
+#    - echo `pwd`
+#    - rm /etc/apt/apt.conf.d/docker*
+#    - echo "Dir::State::Lists \"$CI_PROJECT_DIR/apt/lists\";" > /etc/apt/apt.conf.d/99custom-path
+#    - echo "Dir::Cache \"$CI_PROJECT_DIR/apt/cache\";" > /etc/apt/apt.conf.d/99custom-cache
+#    - apt-get update
+#    - apt-get install -y imagemagick graphicsmagick dcraw ffmpeg git zip mariadb-client zip
+#    - curl --show-error --silent "https://getcomposer.org/installer" | php
+#    - php composer.phar install --prefer-dist --no-progress
 
 test:
   stage: test
