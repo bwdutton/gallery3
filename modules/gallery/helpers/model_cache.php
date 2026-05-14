@@ -37,6 +37,15 @@ class model_cache_Core {
   }
 
   static function set($model) {
+    if (is_null($model->object_name)) {
+      print "MISSING object name\n";
+    }
+    if (is_null($model->primary_key)) {
+      print "MISSING PK\n";
+    }
+    if (is_null($model->{$model->primary_key})) {
+      print "MISSING value for {$model->object_name} {$model->primary_key}\n";
+    }
     self::$cache[$model->object_name][$model->primary_key][$model->{$model->primary_key}] = $model;
   }
 }
