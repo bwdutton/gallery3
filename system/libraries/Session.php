@@ -144,15 +144,36 @@ class Session_Core {
 										   array(':driver:' => Session::$config['driver'], ':library:' => get_class($this), ':interface:' => 'Session_Driver'));
 
 			// Register non-native driver as the session handler
-			session_set_save_handler
-			(
-				array(Session::$driver, 'open'),
-				array(Session::$driver, 'close'),
-				array(Session::$driver, 'read'),
-				array(Session::$driver, 'write'),
-				array(Session::$driver, 'destroy'),
-				array(Session::$driver, 'gc')
-			);
+
+			$sessionHandler = new class(Session::$driver) implements SessionHandlerInterface {
+				public function __construct(public $driver) {}
+
+				public function open(string $path, string $name): bool {
+					return $this->driver->open($path, $name);
+				}
+
+				public function close(): bool {
+					return $this->driver->close();
+				}
+
+				public function read(string $id): string|false {
+					return $this->driver->read($id);
+				}
+
+				public function write(string $id, string $data): bool {
+					return $this->driver->write($id, $data);
+				}
+
+				public function destroy(string $id): bool {
+					return $this->driver->destroy($id);
+				}
+
+				public function gc(int $max_lifetime): int|false {
+					return $this->driver->gc($max_lifetime);
+				}
+			};
+
+			session_set_save_handler($sessionHandler);
 		}
 
 		// Validate the session name

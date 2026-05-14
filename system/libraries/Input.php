@@ -221,7 +221,7 @@ class Input_Core {
 			}
 		}
 
-		if ($comma = strrpos($this->ip_address, ',') !== FALSE)
+		if ($comma = strrpos($this->ip_address ?? '', ',') !== FALSE)
 		{
 			$this->ip_address = substr($this->ip_address, $comma + 1);
 		}
