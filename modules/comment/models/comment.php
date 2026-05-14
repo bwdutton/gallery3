@@ -56,7 +56,7 @@ class Comment_Model_Core extends ORM {
   /**
    * Add some custom per-instance rules.
    */
-  public function validate(Validation $array=null) {
+  public function validate(?Validation $array=null) {
     // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
       $this->rules = array(
