@@ -35,8 +35,10 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
       }
     }
 
+	print_r($count);
+
     $this->assert_true($count > 500, "We should have analyzed at least this 500 files");
-    $this->assert_true($count < 1000, "We shouldn't be shipping 1000 files!");
+    $this->assert_true($count < 1000, "We shouldn't be shipping 1000 files!".$count);
   }
 
   public function view_files_correct_suffix_test() {

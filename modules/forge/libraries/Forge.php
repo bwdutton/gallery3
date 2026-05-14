@@ -31,6 +31,8 @@ class Forge_Core {
 	public $error_format = '<p class="error">{message}</p>';
 	public $newline_char = "\n";
 
+	protected $method;
+
 	/**
 	 * Form constructor. Sets the form action, title, method, and attributes.
 	 *
