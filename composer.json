@@ -1,7 +1,7 @@
 {
 	"require": {
 		"phpmailer/phpmailer": "~6.1",
-		"lsolesen/pel": "^0.9"
+		"fileeye/pel": "0.*"
 	},
 	"require-dev": {
 		"phpstan/phpstan": "^1.0",
