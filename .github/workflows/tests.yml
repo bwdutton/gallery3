@@ -9,6 +9,7 @@ on:
 jobs:
   tests:
     runs-on: self-hosted
+    container: ubuntu:24
     services:
       mysql:
         image: mysql:8
