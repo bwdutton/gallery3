@@ -32,17 +32,26 @@ jobs:
       DB_PORT: 3306
       DB_HOST: mysql
     steps:
+      - name: Cache APT Packages
+        uses: actions/cache@v4
+        id: apt-cache
+        with:
+          path: /var/cache/apt/archives
+          # Modify the string to include the exact packages you plan to install
+          key: ${{ runner.os }}-apt-cache-${{ hashFiles('.github/workflows/ci.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-cache-
+
+      - name: Configure APT Keep-Cache
+        run: |
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+          # Optional: Remove Docker's default auto-clean directive if present
+          rm -f /etc/apt/apt.conf.d/docker-clean
+
       - name: Install OS packages
         run: |
           apt-get update
           apt-get install -y imagemagick graphicsmagick dcraw ffmpeg git mysql-client
-
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Set up MySQL
-        run: |
-          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }}_test;' -h ${{ env.DB_HOST }} --port ${{ env.DB_PORT }} -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@verbose
@@ -52,6 +61,12 @@ jobs:
           ini-values: post_max_size=256M, max_execution_time=180
           tools: composer:v2
 
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up MySQL
+        run: |
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }}_test;' -h ${{ env.DB_HOST }} --port ${{ env.DB_PORT }} -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
       - name: Get composer cache directory
         id: composer-cache
         run: |
