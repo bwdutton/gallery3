@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
       matrix:
@@ -20,7 +20,7 @@ jobs:
         run: sudo apt-get install imagemagick graphicsmagick dcraw ffmpeg git
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
 
       - name: Set up MySQL
         run: |
@@ -43,7 +43,7 @@ jobs:
           echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v5
         with:
           path: |
             ${{ steps.composer-cache.outputs.dir }}
