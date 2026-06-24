@@ -32,13 +32,15 @@ jobs:
       DB_PORT: 3306
       DB_HOST: mysql
     steps:
+      - name: env
+        run: env
+
       - name: Cache APT Packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: apt-cache
         with:
           path: /var/cache/apt/archives
-          # Modify the string to include the exact packages you plan to install
-          key: ${{ runner.os }}-apt-cache-${{ hashFiles('.github/workflows/ci.yml') }}
+          key: ${{ runner.os }}-apt-cache-${{ hashFiles('.github/workflows/tests.yml') }}
           restore-keys: |
             ${{ runner.os }}-apt-cache-
 
@@ -54,7 +56,7 @@ jobs:
           apt-get install -y imagemagick graphicsmagick dcraw ffmpeg git mysql-client
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@verbose
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, gd, mysql, xml
