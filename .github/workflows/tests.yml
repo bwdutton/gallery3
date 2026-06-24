@@ -31,6 +31,7 @@ jobs:
       DB_PASSWORD: root
       DB_PORT: 3306
       DB_HOST: mysql
+      ACTIONS_RESULTS_URL: http://host.docker.internal:3000
     steps:
       - name: env
         run: env
