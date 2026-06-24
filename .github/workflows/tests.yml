@@ -9,7 +9,7 @@ on:
 jobs:
   tests:
     runs-on: self-hosted
-    container: ubuntu:24
+    container: ubuntu:noble
     services:
       mysql:
         image: mysql:8
