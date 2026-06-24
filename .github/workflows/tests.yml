@@ -42,7 +42,7 @@ jobs:
           mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }}_test;' -h ${{ env.DB_HOST }} --port ${{ env.DB_PORT }} -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@verbose
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, gd, mysql, xml
