@@ -33,7 +33,9 @@ jobs:
       DB_HOST: 127.0.0.1
     steps:
       - name: Install OS packages
-        run: apt-get install -y imagemagick graphicsmagick dcraw ffmpeg git mysql-client
+        run: |
+          apt-get update
+          apt-get install -y imagemagick graphicsmagick dcraw ffmpeg git mysql-client
 
       - name: Checkout
         uses: actions/checkout@v7
