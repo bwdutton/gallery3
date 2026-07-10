@@ -69,6 +69,10 @@ class request_Core {
 		{
 			return $config['site_protocol'];
 		}
+        elseif ( ! empty($_SERVER['HTTP_X_FORWARDED_PROTO']) )
+        {
+            return $_SERVER['HTTP_X_FORWARDED_PROTO'];
+        }    
 		elseif ( ! empty($_SERVER['HTTPS']) AND $_SERVER['HTTPS'] === 'on')
 		{
 			return 'https';
