@@ -82,8 +82,9 @@ class Albums_Controller extends Items_Controller {
     $where = array(array("type", "!=", "album"));
     $position = item::get_position($item, $where);
     if ($position > 1) {
-      list ($previous_item, $ignore, $next_item) =
-        iterator_to_array($item->parent()->viewable()->children(3, $position - 2, $where));
+        $res = iterator_to_array($item->parent()->viewable()->children(3, $position - 2, $where));
+        list ($previous_item, $ignore) = $res;
+        $next_item = count($res) == 3 ? $res[2] : null;
     } else {
       $previous_item = null;
       list ($next_item) = iterator_to_array($item->parent()->viewable()->children(1, $position, $where));
