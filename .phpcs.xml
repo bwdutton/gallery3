@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="KPQuote Standards">
+<ruleset name="Gallery Standards">
 	<config name="installed_paths" value="vendor/phpcompatibility/php-compatibility" />
 	<config name="testVersion" value="8.4" />
 
