@@ -83,10 +83,10 @@ class Albums_Controller extends Items_Controller {
     $position = item::get_position($item, $where);
     if ($position > 1) {
       list ($previous_item, $ignore, $next_item) =
-        $item->parent()->viewable()->children(3, $position - 2, $where);
+        iterator_to_array($item->parent()->viewable()->children(3, $position - 2, $where));
     } else {
       $previous_item = null;
-      list ($next_item) = $item->parent()->viewable()->children(1, $position, $where);
+      list ($next_item) = iterator_to_array($item->parent()->viewable()->children(1, $position, $where));
     }
 
     return array("position" => $position,

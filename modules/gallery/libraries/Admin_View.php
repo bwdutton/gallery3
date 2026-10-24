@@ -83,7 +83,7 @@ class Admin_View_Core extends Gallery_View {
    */
   public function __call($function, $args) {
     switch ($function) {
-    case "admin_credits";
+    case "admin_credits":
     case "admin_footer":
     case "admin_header_top":
     case "admin_header_bottom":
