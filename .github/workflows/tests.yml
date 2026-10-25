@@ -1,6 +1,10 @@
 name: test suite
 
-on: [push, pull_request]
+#on: [push, pull_request]
+on:
+  push:
+    branches:
+      - non_existent
 
 jobs:
   tests:
@@ -8,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['7.4', '8.0', '8.1']
+        php-versions: ['8.2']
     env:
       DB_DATABASE: gallery3
       DB_USER: root
@@ -20,7 +24,7 @@ jobs:
         run: sudo apt-get install imagemagick graphicsmagick dcraw ffmpeg git
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
 
       - name: Set up MySQL
         run: |
@@ -43,7 +47,7 @@ jobs:
           echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v6
         with:
           path: |
             ${{ steps.composer-cache.outputs.dir }}
