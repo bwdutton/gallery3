@@ -60,6 +60,11 @@ $config["site_protocol"] = getEnv('SITE_PROTOCOL') ? getEnv('SITE_PROTOCOL') : "
 $config["index_page"] = isset($_GET["kohana_uri"]) ? "" : "index.php";
 
 /**
+ * If you're using nginx, comment the line above and uncomment the following line instead.
+ */
+// $config["index_page"]="";
+
+/**
  * Fake file extension that will be added to all generated URLs. Example: .html
  */
 $config["url_suffix"] = "";
