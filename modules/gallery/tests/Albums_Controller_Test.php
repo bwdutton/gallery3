@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Albums_Controller_Test extends Gallery_Unit_Test_Case {
+  protected $_save;
+
   public function setup() {
     $this->_save = array($_POST, $_SERVER);
   }

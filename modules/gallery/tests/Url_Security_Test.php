@@ -18,12 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Url_Security_Test extends Gallery_Unit_Test_Case {
+  protected $_save;
+
   public function setup() {
-    $this->save = array(Router::$current_uri, Router::$complete_uri, $_GET);
+    $this->_save = array(Router::$current_uri, Router::$complete_uri, $_GET);
   }
 
   public function teardown() {
-    list(Router::$current_uri, Router::$complete_uri, $_GET) = $this->save;
+    list(Router::$current_uri, Router::$complete_uri, $_GET) = $this->_save;
   }
 
   public function xss_in_current_url_test() {

@@ -45,6 +45,8 @@ class Image_Core {
 	// Reference to the current image filename
 	protected $image = '';
 
+	protected $config;
+
 	/**
 	 * Creates a new Image instance and returns it.
 	 *

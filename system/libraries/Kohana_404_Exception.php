@@ -13,6 +13,7 @@
 class Kohana_404_Exception_Core extends Kohana_Exception {
 
 	protected $code = E_PAGE_NOT_FOUND;
+	public $test_fail_code;
 
 	/**
 	 * Set internal properties.

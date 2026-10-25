@@ -48,7 +48,7 @@ class Group_Model_Core extends ORM implements Group_Definition {
   /**
    * Specify our rules here so that we have access to the instance of this model.
    */
-  public function validate(Validation $array=null) {
+  public function validate(?Validation $array=null) {
     // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
       $this->rules = array(

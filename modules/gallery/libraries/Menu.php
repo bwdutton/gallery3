@@ -24,6 +24,7 @@ class Menu_Element {
   public $css_class;
   public $id;
   public $type;
+  public $view;
 
   public function __construct($type) {
     $this->type = $type;

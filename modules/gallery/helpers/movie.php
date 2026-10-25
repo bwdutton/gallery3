@@ -162,7 +162,7 @@ class movie_Core {
     // Find version using -h argument since -version wasn't available in early versions.
     // To keep the preg_match searches quick, we'll trim the (otherwise long) result.
     $cmd = escapeshellcmd($ffmpeg) . " -h 2>&1";
-    $result = substr(`$cmd`, 0, 1000);
+    $result = substr(shell_exec($cmd), 0, 1000);
     if (preg_match("/ffmpeg version (\S+)/i", $result, $matches_version)) {
       // Version number found - see if we can get the build date or copyright year as well.
       if (preg_match("/built on (\S+\s\S+\s\S+)/i", $result, $matches_build_date)) {
@@ -207,7 +207,7 @@ class movie_Core {
     if (!empty($ffmpeg)) {
       // ffmpeg found - use it to get width, height, and duration.
       $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($file_path) . " 2>&1";
-      $result = `$cmd`;
+      $result = shell_exec($cmd);
       if (preg_match("/Stream.*?Video:.*?, (\d+)x(\d+)/", $result, $matches_res)) {
         if (preg_match("/Stream.*?Video:.*? \[.*?DAR (\d+):(\d+).*?\]/", $result, $matches_dar) &&
             $matches_dar[1] >= 1 && $matches_dar[2] >= 1) {

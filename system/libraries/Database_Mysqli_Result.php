@@ -10,6 +10,7 @@
 class Database_Mysqli_Result_Core extends Database_Result {
 
 	protected $internal_row = 0;
+	protected $sql;
 
 	public function __construct($result, $sql, $link, $return_objects)
 	{

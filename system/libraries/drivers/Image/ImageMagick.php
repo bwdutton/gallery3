@@ -19,6 +19,10 @@ class Image_ImageMagick_Driver extends Image_Driver {
 
 	// Temporary image filename
 	protected $tmp_image;
+	protected $cmd_image;
+	protected $new_image;
+
+	protected $background;
 
 	/**
 	 * Attempts to detect the ImageMagick installation directory.
