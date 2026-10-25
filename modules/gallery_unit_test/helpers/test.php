@@ -129,7 +129,7 @@ class test_Core {
   static function diff($a, $b) {
     fwrite(fopen($a_name = tempnam("/tmp", "test"), "w"), $a);
     fwrite(fopen($b_name = tempnam("/tmp", "test"), "w"), $b);
-    return `diff $a_name $b_name`;
+    return shell_exec("diff $a_name $b_name");
   }
 
   static function random_string($length) {

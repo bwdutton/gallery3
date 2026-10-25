@@ -60,7 +60,7 @@ class User_Model_Core extends ORM implements User_Definition {
    */
   public function avatar_url($size=80, $default=null) {
     return sprintf("//www.gravatar.com/avatar/%s.jpg?s=%d&r=pg%s",
-                   md5($this->email), $size, $default ? "&d=" . urlencode($default) : "");
+                   ($this->email ? md5($this->email) : ''), $size, $default ? "&d=" . urlencode($default) : "");
   }
 
   public function groups() {
@@ -73,7 +73,7 @@ class User_Model_Core extends ORM implements User_Definition {
   /**
    * Specify our rules here so that we have access to the instance of this model.
    */
-  public function validate(Validation $array=null) {
+  public function validate(?Validation $array=null) {
     // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
       $this->rules = array(

@@ -158,6 +158,7 @@ class Kohana_Exception_Test_Database extends Database {
   public function list_tables() {}
 }
 
+#[AllowDynamicProperties]
 class Kohana_Exception_Test_Class {
   public $var_1 = "val 1";
   protected $var_2 = "val 2";

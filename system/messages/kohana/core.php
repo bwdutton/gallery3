@@ -24,14 +24,8 @@ $messages = array
 		E_COMPILE_WARNING    => 'Warning Message',
 		E_CORE_WARNING       => 'Warning Message',
 		E_USER_WARNING       => 'Warning Message',
-		E_STRICT             => 'Strict Mode Error',
 		E_NOTICE             => 'Runtime Message',
 		E_USER_NOTICE        => 'Runtime Message',
+		E_DEPRECATED         => 'Deprecated',
 	),
 );
-
-// E_DEPRECATED is only defined in PHP >= 5.3.0
-if (defined('E_DEPRECATED'))
-{
-	$messages['errors'][E_DEPRECATED] = 'Deprecated';
-}

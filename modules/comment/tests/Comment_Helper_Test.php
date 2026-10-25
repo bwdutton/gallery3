@@ -20,6 +20,7 @@
 class Comment_Helper_Test extends Gallery_Unit_Test_Case {
   private $_ip_address;
   private $_user_agent;
+  private $_save;
 
   public function setup() {
     $this->_ip_address = Input::instance()->ip_address;

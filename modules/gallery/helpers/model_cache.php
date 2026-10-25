@@ -37,6 +37,6 @@ class model_cache_Core {
   }
 
   static function set($model) {
-    self::$cache[$model->object_name][$model->primary_key][$model->{$model->primary_key}] = $model;
+    self::$cache[$model->object_name][$model->primary_key][$model->{$model->primary_key} ?? ''] = $model;
   }
 }

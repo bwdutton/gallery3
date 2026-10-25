@@ -10,7 +10,7 @@
 
 class I18n_Core
 {
-	protected static $locale;
+	protected static $locale = 'en_US';
 	// All the translations will be cached in here, after the first call of get_text()
 	protected static $translations = array();
 

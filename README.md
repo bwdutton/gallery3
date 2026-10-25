@@ -32,7 +32,7 @@ Supported Configuration
 
  - Platform: Linux / Unix.
  - Web server: Apache 2.2 and newer.
- - PHP 7.0 and newer (PHP's safe_mode must be disabled and simplexml,
+ - PHP 8.2 and newer (PHP's safe_mode must be disabled and simplexml,
    filter, and json must be installed).
  - short_open_tag isn't required but additional modules and themes may rely on it.
  - Database: MySQL 5 and newer.
@@ -86,7 +86,7 @@ php installer/index.php [-h host] [-u user] [-p pass] [-d dbname]
 
 ### Optional dependencies
 
-Install composer dependencies to make all of the modules work (currently autorotate, phpmailer).
+Install composer dependencies to make all of the modules work (currently autorotate, phpmailer). In the top level gallery directory where the composer.json file exists run the following:
 
 ```sh
 composer install

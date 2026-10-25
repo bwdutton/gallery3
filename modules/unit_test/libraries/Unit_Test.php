@@ -130,7 +130,7 @@ class Unit_Test_Core {
 					throw new Kohana_Exception('unit_test.test_class_extends', $class);
 
 				// Skip disabled Tests
-				if ($reflector->getConstant('DISABLED') === TRUE)
+				if ($reflector->hasConstant('DISABLED') && $reflector->getConstant('DISABLED') === TRUE)
 					continue;
 
 				// Initialize setup and teardown method triggers

@@ -9,6 +9,8 @@
  */
 class ORM_Validation_Exception_Core extends Database_Exception {
 
+	public $validation;
+
 	/**
 	 * Handles Database Validation Exceptions
 	 *

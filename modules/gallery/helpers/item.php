@@ -456,7 +456,7 @@ class item_Core {
   static function get_display_context($item) {
     if (!request::user_agent("robot")) {
       $args = Cache::instance()->get("display_context_" . $sid = Session::instance()->id());
-      $callback = $args[0];
+      $callback = $args[0] ?? null;
       $args[0] = $item;
     }
 

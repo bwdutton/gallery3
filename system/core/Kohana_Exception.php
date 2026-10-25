@@ -34,7 +34,7 @@ class Kohana_Exception_Core extends Exception {
 	 * @param array translation variables
 	 * @return void
 	 */
-	public function __construct($message, array $variables = NULL, $code = 0)
+	public function __construct($message, ?array $variables = NULL, $code = 0)
 	{
 		$this->instance_identifier = uniqid();
 
