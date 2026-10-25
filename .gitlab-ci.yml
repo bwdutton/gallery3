@@ -76,6 +76,9 @@ test:
 #    mysql image does this for us
 #    - mysql -e "CREATE DATABASE ${DB_DATABASE};" --skip-ssl -u${DB_USER} -p${DB_PASSWORD} -h${DB_HOST}
     - mysql -e "CREATE DATABASE ${DB_DATABASE}_test;" --skip-ssl -u${DB_USER} -p${DB_PASSWORD} -h${DB_HOST}
+  rules:
+    - changes:
+      - "!.github/**/*"
   script:
     - bin/linter.sh
     - bin/phpcs.sh
