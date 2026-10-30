@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Organize_Controller extends Controller {
-  function frame($album_id) {
+  public function frame($album_id) {
     $album = ORM::factory("item", $album_id);
     access::required("view", $album);
     access::required("edit", $album);
@@ -28,7 +28,7 @@ class Organize_Controller extends Controller {
     print $v;
   }
 
-  function dialog($album_id) {
+  public function dialog($album_id) {
     $album = ORM::factory("item", $album_id);
     access::required("view", $album);
     access::required("edit", $album);
@@ -38,7 +38,7 @@ class Organize_Controller extends Controller {
     print $v;
   }
 
-  function tree($selected_album_id) {
+  public function tree($selected_album_id) {
     $root = ORM::factory("item", Input::instance()->post("root_id", 1));
     $selected_album = ORM::factory("item", $selected_album_id);
     access::required("view", $root);
@@ -48,31 +48,31 @@ class Organize_Controller extends Controller {
     json::reply($tree);
   }
 
-  function album_info($album_id) {
+  public function album_info($album_id) {
     $album = ORM::factory("item", $album_id);
     access::required("view", $album);
 
-    $data = array(
+    $data = [
       "sort_column" => $album->sort_column,
       "sort_order" => $album->sort_order,
       "editable" => access::can("edit", $album),
       "title" => (string)html::clean($album->title),
-      "children" => array());
+      "children" => []];
 
     foreach ($album->viewable()->children() as $child) {
       $dims = $child->scale_dimensions(120);
-      $data["children"][] = array(
+      $data["children"][] = [
         "id" => $child->id,
         "thumb_url" => $child->has_thumb() ? $child->thumb_url() : null,
         "width" => $dims[1],
         "height" => $dims[0],
         "type" => $child->type,
-        "title" => (string)html::clean($child->title));
+        "title" => (string)html::clean($child->title)];
     }
     json::reply($data);
   }
 
-  function reparent() {
+  public function reparent() {
     access::verify_csrf();
 
     $input = Input::instance();
@@ -98,13 +98,13 @@ class Organize_Controller extends Controller {
     json::reply(null);
   }
 
-  function set_sort($album_id) {
+  public function set_sort($album_id) {
     access::verify_csrf();
     $album = ORM::factory("item", $album_id);
     access::required("view", $album);
     access::required("edit", $album);
 
-    foreach (array("sort_column", "sort_order") as $key) {
+    foreach (["sort_column", "sort_order"] as $key) {
       if ($val = Input::instance()->post($key)) {
         $album->$key = $val;
       }
@@ -114,7 +114,7 @@ class Organize_Controller extends Controller {
     json::reply(null);
   }
 
-  function rearrange() {
+  public function rearrange() {
     access::verify_csrf();
 
     $input = Input::instance();
@@ -163,7 +163,7 @@ class Organize_Controller extends Controller {
     json::reply(null);
   }
 
-  function delete() {
+  public function delete() {
     access::verify_csrf();
 
     $input = Input::instance();
@@ -178,7 +178,7 @@ class Organize_Controller extends Controller {
     json::reply(null);
   }
 
-  function tag() {
+  public function tag() {
     access::verify_csrf();
     $input = Input::instance();
 
@@ -201,20 +201,20 @@ class Organize_Controller extends Controller {
   }
 
   private function _get_tree($item, $selected) {
-    $tree = array();
+    $tree = [];
     $children = $item->viewable()
-      ->children(null, null, array(array("type", "=", "album")))
+      ->children(null, null, [["type", "=", "album"]])
       ->as_array();
     foreach ($children as $child) {
-      $node = array(
+      $node = [
         "allowDrag" => false,
         "allowDrop" => access::can("edit", $child),
         "editable" => false,
         "expandable" => false,
         "id" => $child->id,
-        "leaf" => $child->children_count(array(array("type", "=", "album"))) == 0,
+        "leaf" => $child->children_count([["type", "=", "album"]]) == 0,
         "text" => (string)html::clean($child->title),
-        "nodeType" => "async");
+        "nodeType" => "async"];
 
       // If the child is in the selected path, open it now.  Else, mark it async.
       if ($child->contains($selected)) {

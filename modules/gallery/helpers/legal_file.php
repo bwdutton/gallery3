@@ -24,8 +24,8 @@ class legal_file_Core {
   private static $movie_extensions;
   private static $photo_types;
   private static $movie_types;
-  private static $blacklist = array("php", "php3", "php4", "php5", "phtml", "phtm", "shtml", "shtm",
-                                    "pl", "cgi", "asp", "sh", "py", "c", "js");
+  private static $blacklist = ["php", "php3", "php4", "php5", "phtml", "phtm", "shtml", "shtm",
+                                    "pl", "cgi", "asp", "sh", "py", "c", "js"];
 
   /**
    * Create a default list of allowed photo MIME types paired with their extensions and then let
@@ -34,12 +34,12 @@ class legal_file_Core {
    *
    * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
-  static function get_photo_types_by_extension($extension=null) {
+  public static function get_photo_types_by_extension($extension=null) {
     if (empty(self::$photo_types_by_extension)) {
       $types_by_extension_wrapper = new stdClass();
-      $types_by_extension_wrapper->types_by_extension = array(
+      $types_by_extension_wrapper->types_by_extension = [
         "jpg" => "image/jpeg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png",
-        "webp" => "image/webp");
+        "webp" => "image/webp"];
       module::event("photo_types_by_extension", $types_by_extension_wrapper);
       foreach (self::$blacklist as $key) {
         unset($types_by_extension_wrapper->types_by_extension[$key]);
@@ -67,12 +67,12 @@ class legal_file_Core {
    *
    * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
-  static function get_movie_types_by_extension($extension=null) {
+  public static function get_movie_types_by_extension($extension=null) {
     if (empty(self::$movie_types_by_extension)) {
       $types_by_extension_wrapper = new stdClass();
-      $types_by_extension_wrapper->types_by_extension = array(
+      $types_by_extension_wrapper->types_by_extension = [
         "flv" => "video/x-flv", "mp4" => "video/mp4", "m4v" => "video/x-m4v",
-        "webm" => "video/webm", "ogv" => "video/ogg");
+        "webm" => "video/webm", "ogv" => "video/ogg"];
       module::event("movie_types_by_extension", $types_by_extension_wrapper);
       foreach (self::$blacklist as $key) {
         unset($types_by_extension_wrapper->types_by_extension[$key]);
@@ -98,7 +98,7 @@ class legal_file_Core {
    *
    * @param string $extension (opt.) - return MIME of extension; if not given, return complete array
    */
-  static function get_types_by_extension($extension=null) {
+  public static function get_types_by_extension($extension=null) {
     $types_by_extension = legal_file::get_photo_types_by_extension();
     if (movie::allow_uploads()) {
       $types_by_extension = array_merge($types_by_extension,
@@ -123,7 +123,7 @@ class legal_file_Core {
    *
    * @param string $extension (opt.) - return true if allowed; if not given, return complete array
    */
-  static function get_photo_extensions($extension=null) {
+  public static function get_photo_extensions($extension=null) {
     if (empty(self::$photo_extensions)) {
       $extensions_wrapper = new stdClass();
       $extensions_wrapper->extensions = array_keys(legal_file::get_photo_types_by_extension());
@@ -144,7 +144,7 @@ class legal_file_Core {
    *
    * @param string $extension (opt.) - return true if allowed; if not given, return complete array
    */
-  static function get_movie_extensions($extension=null) {
+  public static function get_movie_extensions($extension=null) {
     if (empty(self::$movie_extensions)) {
       $extensions_wrapper = new stdClass();
       $extensions_wrapper->extensions = array_keys(legal_file::get_movie_types_by_extension());
@@ -165,7 +165,7 @@ class legal_file_Core {
    *
    * @param string $extension (opt.) - return true if allowed; if not given, return complete array
    */
-  static function get_extensions($extension=null) {
+  public static function get_extensions($extension=null) {
     $extensions = legal_file::get_photo_extensions();
     if (movie::allow_uploads()) {
       $extensions = array_merge($extensions, legal_file::get_movie_extensions());
@@ -183,8 +183,8 @@ class legal_file_Core {
    * Create a merged list of all photo and movie filename filters,
    * (e.g. "*.gif"), based on allowed extensions.
    */
-  static function get_filters($without_asterisk=false) {
-    $filters = array();
+  public static function get_filters($without_asterisk=false) {
+    $filters = [];
     $prefix = $without_asterisk ? '.' : '*.';
     foreach (legal_file::get_extensions() as $extension) {
       array_push($filters, $prefix . $extension, $prefix . strtoupper($extension));
@@ -197,7 +197,7 @@ class legal_file_Core {
    * Can be used to add legal alternatives for default MIME types.
    * (e.g. flv maps to video/x-flv by default, but video/flv is still legal).
    */
-  static function get_photo_types() {
+  public static function get_photo_types() {
     if (empty(self::$photo_types)) {
       $types_wrapper = new stdClass();
       // Need array_unique since types_by_extension can be many-to-one (e.g. jpeg and jpg).
@@ -213,7 +213,7 @@ class legal_file_Core {
    * Can be used to add legal alternatives for default MIME types.
    * (e.g. flv maps to video/x-flv by default, but video/flv is still legal).
    */
-  static function get_movie_types() {
+  public static function get_movie_types() {
     if (empty(self::$movie_types)) {
       $types_wrapper = new stdClass();
       // Need array_unique since types_by_extension can be many-to-one (e.g. jpeg and jpg).
@@ -229,7 +229,7 @@ class legal_file_Core {
    * Change the extension of a filename.  If the original filename has no
    * extension, add the new one to the end.
    */
-  static function change_extension($filename, $new_ext) {
+  public static function change_extension($filename, $new_ext) {
     $filename_no_ext = !empty($filename) ? preg_replace("/\.[^\.\/]*?$/", "", $filename) : '';
     return "{$filename_no_ext}.{$new_ext}";
   }
@@ -237,7 +237,7 @@ class legal_file_Core {
   /**
    * Reduce the given file to having a single extension.
    */
-  static function smash_extensions($filename) {
+  public static function smash_extensions($filename) {
     if (!$filename) {
       // It's harmless, so return it before it causes issues with pathinfo.
       return $filename;
@@ -269,7 +269,7 @@ class legal_file_Core {
    * @param  string $type      (as "photo" or "movie")
    * @return string sanitized filename (or null if bad extension argument)
    */
-  static function sanitize_filename($filename, $extension, $type) {
+  public static function sanitize_filename($filename, $extension, $type) {
     // Check if the type is valid - if so, get the mime types of the
     // original and target extensions; if not, throw an exception.
     $original_extension = !empty($filename) ? pathinfo($filename, PATHINFO_EXTENSION) : '';
@@ -304,7 +304,7 @@ class legal_file_Core {
     $filename = legal_file::smash_extensions($filename);
 
     // It's possible that the filename has no base (e.g. ".jpg") - if so, give it a generic one.
-    if (empty($filename) || (substr($filename, 0, 1) == ".")) {
+    if (empty($filename) || (str_starts_with($filename, "."))) {
       $filename = $type . $filename;  // e.g. "photo.jpg" or "movie.mp4"
     }
 
@@ -318,7 +318,7 @@ class legal_file_Core {
    * @param  string $dirname (with no parent directory)
    * @return string sanitized dirname
    */
-  static function sanitize_dirname($dirname) {
+  public static function sanitize_dirname($dirname) {
     if (is_null($dirname)) return 'album';
 
     // It should be a dirname without a parent directory - remove all slashes (and backslashes).

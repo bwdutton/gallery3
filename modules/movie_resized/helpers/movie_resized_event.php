@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 
 class movie_resized_event_Core {
-  static function movie_img ($movie_img, $obj) {
+  public static function movie_img ($movie_img, $obj) {
     $resize_file = $obj->resize_path().'.mp4';
 
     if (file_exists($resize_file)) {

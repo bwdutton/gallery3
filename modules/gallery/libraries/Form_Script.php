@@ -18,11 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Form_Script_Core extends Forge {
-  protected $data = array(
+  protected $data = [
     "name" => false,
     "type"  => "script",
     "url" => "",
-    "text" => "");
+    "text" => ""];
 
   public function __construct($name) {
     // Set dummy data so we don"t get errors
@@ -32,7 +32,7 @@ class Form_Script_Core extends Forge {
   }
 
   public function __get($key) {
-    return isset($this->data[$key]) ? $this->data[$key] : null;
+    return $this->data[$key] ?? null;
   }
 
   /**
@@ -51,7 +51,7 @@ class Form_Script_Core extends Forge {
   }
 
   public function render($template="forge_template", $custom=false) {
-    $script = array();
+    $script = [];
     if (!empty($this->data["url"])) {
       $script[] = html::script($this->data["url"]);
     }

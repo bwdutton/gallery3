@@ -22,7 +22,7 @@ foreach ($results as $class => $methods) {
   printf("| %-96.96s |\n", $class);
   echo "+", str_repeat("-", 87), "+", str_repeat("-", 10), "+\n";
 
-  foreach (array("score", "total", "passed", "failed", "errors") as $key) {
+  foreach (["score", "total", "passed", "failed", "errors"] as $key) {
     @$totals[$key] += $stats[$class][$key];
   }
 

@@ -9,18 +9,18 @@
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Unit_Test_Core {
+class Unit_Test_Core implements \Stringable {
 
 	// The path(s) to recursively scan for tests
-	protected $paths = array();
+	protected $paths = [];
 
 	// The results of all tests from every test class
-	protected $results = array();
+	protected $results = [];
 
 	// Statistics for every test class
-	protected $stats = array();
+	protected $stats = [];
 
-        public static $lang = array(
+        public static $lang = [
                 'class'                => 'Class',
                 'method'               => 'Method',
                 'invalid_test_path'    => 'Failed to open test path: %s.',
@@ -61,7 +61,7 @@ class Unit_Test_Core {
                 'assert_not_empty'     => 'assert_not_empty: Expected not an empty value, but was given (%s) %s.',
                 'assert_pattern'       => 'assert_pattern: Expected %s to match %s.',
                 'assert_not_pattern'   => 'assert_not_pattern: Expected %s to not match %s.'
-                      );
+                      ];
 	/**
 	 * Sets the test path(s), runs the tests inside and stores the results.
 	 *
@@ -69,7 +69,7 @@ class Unit_Test_Core {
 	 * @param   string     filter (regular expression)
 	 * @return  void
 	 */
-	public function __construct($extra_paths=array(), $filter=null)
+	public function __construct($extra_paths=[], $filter=null)
 	{
 		// Merge possible default test path(s) from config with the rest
 		$paths = array_merge($extra_paths, Kohana::config('unit_test.paths', FALSE, FALSE));
@@ -93,7 +93,7 @@ class Unit_Test_Core {
 			// Recursively iterate over each file in the test path
 			foreach
 			(
-				new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME))
+				new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS))
 				as $path => $file
 			)
 			{
@@ -137,25 +137,25 @@ class Unit_Test_Core {
 				$setup = $teardown = FALSE;
 
 				// Look for valid setup and teardown methods
-				foreach (array('setup', 'teardown') as $method_name)
+				foreach (['setup', 'teardown'] as $method_name)
 				{
 					if ($reflector->hasMethod($method_name))
 					{
 						$method = new ReflectionMethod($class, $method_name);
-						$$method_name = ($method->isPublic() AND ! $method->isStatic() AND $method->getNumberOfRequiredParameters() === 0);
+						${$method_name} = ($method->isPublic() AND ! $method->isStatic() AND $method->getNumberOfRequiredParameters() === 0);
 					}
 				}
 
 				// Initialize test class results and stats
-				$this->results[$class] = array();
-				$this->stats[$class] = array
-				(
+				$this->results[$class] = [];
+				$this->stats[$class] = 
+				[
 					'passed' => 0,
 					'failed' => 0,
 					'errors' => 0,
 					'total' => 0,
 					'score'  => 0,
-				);
+				];
 
 				// Loop through all the class methods
 				foreach ($reflector->getMethods() as $method)
@@ -169,7 +169,7 @@ class Unit_Test_Core {
 					}
 
 					// Test methods should be suffixed with "_test"
-					if (substr($method_name = $method->getName(), -5) !== '_test')
+					if (!str_ends_with($method_name = $method->getName(), '_test'))
 						continue;
 
 					// Instantiate Test class
@@ -254,9 +254,9 @@ class Unit_Test_Core {
 			return sprintf(self::$lang['no_tests_found']);
 
 		// Hide passed tests from the report?
-		$hide_passed = (bool) (($hide_passed !== NULL) ? $hide_passed : Kohana::config('unit_test.hide_passed', FALSE, FALSE));
-		
-		
+		$hide_passed = (bool) ($hide_passed ?? Kohana::config('unit_test.hide_passed', FALSE, FALSE));
+
+
 		if (PHP_SAPI == 'cli')
 		{
 			$report = View::factory('kohana_unit_test_cli');
@@ -277,7 +277,7 @@ class Unit_Test_Core {
 	 *
 	 * @return  string  test report
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		return $this->report();
 	}
@@ -515,8 +515,6 @@ abstract class Unit_Test_Case {
 
 class Kohana_Unit_Test_Exception extends Exception {
 
-	protected $debug = NULL;
-
 	/**
 	 * Sets exception message and debug info.
 	 *
@@ -524,13 +522,10 @@ class Kohana_Unit_Test_Exception extends Exception {
 	 * @param   mixed   debug info
 	 * @return  void
 	 */
-	public function __construct($message, $debug = NULL)
+	public function __construct($message, protected $debug = NULL)
 	{
 		// Failure message
 		parent::__construct((string) $message);
-
-		// Extra user-defined debug info
-		$this->debug = $debug;
 
 		// Overwrite failure location
 		$trace = $this->getTrace();

@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class notification_installer {
-  static function install() {
+  public static function install() {
     $db = Database::instance();
     $db->query("CREATE TABLE IF NOT EXISTS {subscriptions} (
                `id` int(9) NOT NULL auto_increment,
@@ -38,7 +38,7 @@ class notification_installer {
                DEFAULT CHARSET=utf8;");
   }
 
-  static function upgrade($version) {
+  public static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
       $db->query("ALTER TABLE {pending_notifications} ADD COLUMN `locale` char(10) default NULL");
@@ -46,7 +46,7 @@ class notification_installer {
     }
   }
 
-  static function uninstall() {
+  public static function uninstall() {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS {subscriptions};");
     $db->query("DROP TABLE IF EXISTS {pending_notifications};");

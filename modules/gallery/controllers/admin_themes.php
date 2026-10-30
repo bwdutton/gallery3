@@ -32,7 +32,7 @@ class Admin_Themes_Controller extends Admin_Controller {
   }
 
   private function _get_themes() {
-    $themes = array();
+    $themes = [];
     foreach (scandir(THEMEPATH) as $theme_name) {
       if ($theme_name[0] == ".") {
         continue;
@@ -67,11 +67,11 @@ class Admin_Themes_Controller extends Admin_Controller {
     if ($type == "admin" && $info->admin) {
       module::set_var("gallery", "active_admin_theme", $theme_name);
       message::success(t("Successfully changed your admin theme to <b>%theme_name</b>",
-                         array("theme_name" => $info->name)));
+                         ["theme_name" => $info->name]));
     } else if ($type == "site" && $info->site) {
       module::set_var("gallery", "active_site_theme", $theme_name);
       message::success(t("Successfully changed your Gallery theme to <b>%theme_name</b>",
-                         array("theme_name" => $info->name)));
+                         ["theme_name" => $info->name]));
     }
 
     url::redirect("admin/themes");

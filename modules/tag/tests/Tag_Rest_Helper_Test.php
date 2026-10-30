@@ -22,7 +22,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       Database::instance()->query("TRUNCATE {tags}");
       Database::instance()->query("TRUNCATE {items_tags}");
-    } catch (Exception $e) { }
+    } catch (Exception) { }
   }
 
   public function get_test() {
@@ -31,13 +31,13 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request = new stdClass();
     $request->url = rest::url("tag", $tag);
     $this->assert_equal_array(
-      array("url" => rest::url("tag", $tag),
+      ["url" => rest::url("tag", $tag),
             "entity" => $tag->as_array(),
-            "relationships" => array(
-              "items" => array(
+            "relationships" => [
+              "items" => [
                 "url" => rest::url("tag_items", $tag),
-                "members" => array(
-                  rest::url("tag_item", $tag, item::root()))))),
+                "members" => [
+                  rest::url("tag_item", $tag, item::root())]]]],
       tag_rest::get($request));
   }
 
@@ -46,7 +46,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->url = "bogus";
     try {
       tag_rest::get($request);
-    } catch (Kohana_404_Exception $e) {
+    } catch (Kohana_404_Exception) {
       return;  // pass
     }
     $this->assert_true(false, "Shouldn't get here");
@@ -58,12 +58,12 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request = new stdClass();
     $request->url = rest::url("tag", $tag);
     $this->assert_equal_array(
-      array("url" => rest::url("tag", $tag),
+      ["url" => rest::url("tag", $tag),
             "entity" => $tag->as_array(),
-            "relationships" => array(
-              "items" => array(
+            "relationships" => [
+              "items" => [
                 "url" => rest::url("tag_items", $tag),
-                "members" => array()))),
+                "members" => []]]],
       tag_rest::get($request));
   }
 

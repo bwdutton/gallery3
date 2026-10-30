@@ -31,21 +31,20 @@
 // Looks up the name of the tag for the MakerNote (Depends on Manufacturer)
 //====================================================================
 function lookup_Olympus_tag($tag) {
-	switch($tag) {
-		case "0200": $tag = "SpecialMode";break;
-		case "0201": $tag = "JpegQual";break;
-		case "0202": $tag = "Macro";break;
-		case "0203": $tag = "Unknown1";break;
-		case "0204": $tag = "DigiZoom";break;	
-		case "0205": $tag = "Unknown2";break;	
-		case "0206": $tag = "Unknown3";break;	
-		case "0207": $tag = "SoftwareRelease";break;	
-		case "0208": $tag = "PictInfo";break;	
-		case "0209": $tag = "CameraID";break;	
-		case "0f00": $tag = "DataDump";break;	
-		
-		default: $tag = "unknown:".$tag;break;
-	}
+	$tag = match ($tag) {
+        "0200" => "SpecialMode",
+        "0201" => "JpegQual",
+        "0202" => "Macro",
+        "0203" => "Unknown1",
+        "0204" => "DigiZoom",
+        "0205" => "Unknown2",
+        "0206" => "Unknown3",
+        "0207" => "SoftwareRelease",
+        "0208" => "PictInfo",
+        "0209" => "CameraID",
+        "0f00" => "DataDump",
+        default => "unknown:".$tag,
+    };
 	
 	return $tag;
 }
@@ -107,10 +106,10 @@ function parseOlympus($block, &$result, $seek, $globalOffset) {
 	// number of bytes that count the IFD fields differ in each case.
 	// Fixed by Zenphoto 2/24/08
 	$new = false;
-	if (substr($block, 0, 8) == "OLYMPUS\x00") {
+	if (str_starts_with($block, "OLYMPUS\x00")) {
 		$new = true;
-	} else if (substr($block, 0, 7) == "OLYMP\x00\x01"
-		|| substr($block, 0, 7) == "OLYMP\x00\x02") {
+	} else if (str_starts_with($block, "OLYMP\x00\x01")
+		|| str_starts_with($block, "OLYMP\x00\x02")) {
 		$new = false;
 	} else {
 		// Header does not match known Olympus headers.

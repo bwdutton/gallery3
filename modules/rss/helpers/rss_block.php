@@ -18,20 +18,20 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class rss_block_Core {
-  static function get_site_list() {
-    return array("rss_feeds" => t("Available RSS feeds"));
+  public static function get_site_list() {
+    return ["rss_feeds" => t("Available RSS feeds")];
   }
 
-  static function get($block_id, $theme) {
+  public static function get($block_id, $theme) {
     $block = "";
     switch ($block_id) {
     case "rss_feeds":
-      $feeds = array();
+      $feeds = [];
       foreach (module::active() as $module) {
         $class_name = "{$module->name}_rss";
         if (class_exists($class_name) && method_exists($class_name, "available_feeds")) {
           $feeds = array_merge($feeds,
-            call_user_func(array($class_name, "available_feeds"), $theme->item(), $theme->tag()));
+            call_user_func([$class_name, "available_feeds"], $theme->item(), $theme->tag()));
         }
       }
       if (!empty($feeds)) {

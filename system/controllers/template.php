@@ -35,7 +35,7 @@ abstract class Template_Controller extends Controller {
 		if ($this->auto_render == TRUE)
 		{
 			// Render the template immediately after the controller method
-			Event::add('system.post_controller', array($this, '_render'));
+			Event::add('system.post_controller', $this->_render(...));
 		}
 	}
 

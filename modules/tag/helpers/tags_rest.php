@@ -26,8 +26,8 @@ class tags_rest_Core {
    *   num=#
    *     return up to N comments (max 100)
    */
-  static function get($request) {
-    $tags = array();
+  public static function get($request) {
+    $tags = [];
 
     $num = 10;
     $start = 0;
@@ -40,11 +40,11 @@ class tags_rest_Core {
     foreach (ORM::factory("tag")->find_all($num, $start) as $tag) {
       $tags[] = rest::url("tag", $tag);
     }
-    return array("url" => rest::url("tags"),
-                 "members" => $tags);
+    return ["url" => rest::url("tags"),
+                 "members" => $tags];
   }
 
-  static function post($request) {
+  public static function post($request) {
     // The user must have some edit permission somewhere to create a tag.
     if (!identity::active_user()->admin) {
       $query = db::build()->from("access_caches")->and_open();
@@ -68,10 +68,10 @@ class tags_rest_Core {
       $tag->save();
     }
 
-    return array("url" => rest::url("tag", $tag));
+    return ["url" => rest::url("tag", $tag)];
   }
 
-  static function url() {
+  public static function url() {
     return url::abs_site("rest/tags");
   }
 }

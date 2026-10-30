@@ -26,9 +26,9 @@ class identity_Core {
    *
    * @return boolean true if the driver supports updates; false if read only
    */
-  static function providers() {
+  public static function providers() {
     if (empty(self::$available)) {
-      $drivers = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
+      $drivers = new ArrayObject([], ArrayObject::ARRAY_AS_PROPS);
       foreach (module::available() as $module_name => $module) {
         if (file_exists(MODPATH . "{$module_name}/config/identity.php")) {
           $drivers->$module_name = $module->description;
@@ -45,14 +45,14 @@ class identity_Core {
    * @param   string  configuration
    * @return  Identity_Core
    */
-  static function reset() {
+  public static function reset() {
     IdentityProvider::reset();
   }
 
   /**
    * Make sure that we have a session and group_ids cached in the session.
    */
-  static function load_user() {
+  public static function load_user() {
     try {
       // Call IdentityProvider::instance() now to force the load of the user interface classes.
       // We are about to load the active user from the session and which needs the user definition
@@ -75,7 +75,7 @@ class identity_Core {
 
       // Cache the group ids for a day to trade off performance for security updates.
       if (!$session->get("group_ids") || $session->get("group_ids_timeout", 0) < time()) {
-        $ids = array();
+        $ids = [];
         foreach ($user->groups() as $group) {
           $ids[] = $group->id;
         }
@@ -88,7 +88,7 @@ class identity_Core {
                       $e->getMessage() . "\n" . $e->getTraceAsString());
       try {
         Session::instance()->destroy();
-      } catch (Exception $e) {
+      } catch (Exception) {
         // We don't care if there was a problem destroying the session.
       }
       url::redirect(item::root()->abs_url());
@@ -100,8 +100,8 @@ class identity_Core {
    *
    * @return array
    */
-  static function group_ids_for_active_user() {
-    return Session::instance()->get("group_ids", array(1));
+  public static function group_ids_for_active_user() {
+    return Session::instance()->get("group_ids", [1]);
   }
 
   /**
@@ -109,14 +109,12 @@ class identity_Core {
    *
    * @return User_Definition
    */
-  static function active_user() {
+  public static function active_user() {
     // @todo (maybe) cache this object so we're not always doing session lookups.
     $user = Session::instance()->get("user", null);
-    if (!isset($user)) {
-      // Don't do this as a fallback in the Session::get() call because it can trigger unnecessary
-      // work.
-      $user = identity::guest();
-    }
+    // Don't do this as a fallback in the Session::get() call because it can trigger unnecessary
+    // work.
+    $user ??= identity::guest();
     return $user;
   }
 
@@ -124,7 +122,7 @@ class identity_Core {
    * Change the active user.
    * @param User_Definition $user
    */
-  static function set_active_user($user) {
+  public static function set_active_user($user) {
     $session = Session::instance();
     $session->set("user", $user);
     $session->delete("group_ids");
@@ -136,112 +134,112 @@ class identity_Core {
    *
    * @return boolean true if the driver supports updates; false if read only
    */
-  static function is_writable() {
+  public static function is_writable() {
     return IdentityProvider::instance()->is_writable();
   }
 
   /**
    * @see IdentityProvider_Driver::guest.
    */
-  static function guest() {
+  public static function guest() {
     return IdentityProvider::instance()->guest();
   }
 
   /**
    * @see IdentityProvider_Driver::admin_user.
    */
-  static function admin_user() {
+  public static function admin_user() {
     return IdentityProvider::instance()->admin_user();
   }
 
   /**
    * @see IdentityProvider_Driver::create_user.
    */
-  static function create_user($name, $full_name, $password, $email) {
+  public static function create_user($name, $full_name, $password, $email) {
     return IdentityProvider::instance()->create_user($name, $full_name, $password, $email);
   }
 
   /**
    * @see IdentityProvider_Driver::is_correct_password.
    */
-  static function is_correct_password($user, $password) {
+  public static function is_correct_password($user, $password) {
     return IdentityProvider::instance()->is_correct_password($user, $password);
   }
 
   /**
    * @see IdentityProvider_Driver::lookup_user.
    */
-  static function lookup_user($id) {
+  public static function lookup_user($id) {
     return IdentityProvider::instance()->lookup_user($id);
   }
 
   /**
    * @see IdentityProvider_Driver::lookup_user_by_name.
    */
-  static function lookup_user_by_name($name) {
+  public static function lookup_user_by_name($name) {
     return IdentityProvider::instance()->lookup_user_by_name($name);
   }
 
   /**
    * @see IdentityProvider_Driver::create_group.
    */
-  static function create_group($name) {
+  public static function create_group($name) {
     return IdentityProvider::instance()->create_group($name);
   }
 
   /**
    * @see IdentityProvider_Driver::everybody.
    */
-  static function everybody() {
+  public static function everybody() {
     return IdentityProvider::instance()->everybody();
   }
 
   /**
    * @see IdentityProvider_Driver::registered_users.
    */
-  static function registered_users() {
+  public static function registered_users() {
     return IdentityProvider::instance()->registered_users();
   }
 
   /**
    * @see IdentityProvider_Driver::lookup_group.
    */
-  static function lookup_group($id) {
+  public static function lookup_group($id) {
     return IdentityProvider::instance()->lookup_group($id);
   }
 
   /**
    * @see IdentityProvider_Driver::lookup_group_by_name.
    */
-  static function lookup_group_by_name($name) {
+  public static function lookup_group_by_name($name) {
     return IdentityProvider::instance()->lookup_group_by_name($name);
   }
 
   /**
    * @see IdentityProvider_Driver::get_user_list.
    */
-  static function get_user_list($ids) {
+  public static function get_user_list($ids) {
     return IdentityProvider::instance()->get_user_list($ids);
   }
 
   /**
    * @see IdentityProvider_Driver::groups.
    */
-  static function groups() {
+  public static function groups() {
     return IdentityProvider::instance()->groups();
   }
 
   /**
    * @see IdentityProvider_Driver::add_user_to_group.
    */
-  static function add_user_to_group($user, $group) {
+  public static function add_user_to_group($user, $group) {
     return IdentityProvider::instance()->add_user_to_group($user, $group);
   }
 
   /**
    * @see IdentityProvider_Driver::remove_user_to_group.
    */
-  static function remove_user_from_group($user, $group) {
+  public static function remove_user_from_group($user, $group) {
     return IdentityProvider::instance()->remove_user_from_group($user, $group);
   }
 }

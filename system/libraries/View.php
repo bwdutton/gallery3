@@ -10,14 +10,14 @@
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license
  */
-class View_Core {
+class View_Core implements \Stringable {
 
 	// The view file name and type
 	protected $kohana_filename = FALSE;
 	protected $kohana_filetype = FALSE;
 
 	// View variable storage
-	protected $kohana_local_data = array();
+	protected $kohana_local_data = [];
 
 	/**
 	 * Creates a new View using the given parameters.
@@ -87,7 +87,7 @@ class View_Core {
 		{
 			// Check if the filetype is allowed by the configuration
 			if ( ! in_array($type, Kohana::config('view.allowed_filetypes')))
-				throw new Kohana_Exception('The requested filetype, .:type:, is not allowed in your view configuration file', array(':type:' => $type));
+				throw new Kohana_Exception('The requested filetype, .:type:, is not allowed in your view configuration file', [':type:' => $type]);
 
 			// Load the filename and set the content type
 			$this->kohana_filename = Kohana::find_file('views', $name, TRUE, $type);
@@ -145,7 +145,7 @@ class View_Core {
 		if (is_array($key))
 		{
 			// Set the result to an array
-			$result = array();
+			$result = [];
 
 			// Foreach key
 			foreach ($key as $property)
@@ -210,7 +210,7 @@ class View_Core {
 		else
 		{
 			throw new Kohana_Exception('Undefined view variable: :var',
-				array(':var' => $key));
+				[':var' => $key]);
 		}
 	}
 
@@ -219,11 +219,11 @@ class View_Core {
 	 *
 	 * @return  string
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		try
 		{
-			return $this->render();
+			return (string) $this->render();
 		}
 		catch (Exception $e)
 		{

@@ -12,7 +12,7 @@ if ($title) {
 
 if (!function_exists("DrawForm")) {
   function DrawForm($inputs, $level=1) {
-    $error_messages = array();
+    $error_messages = [];
     $prefix = str_repeat("  ", $level);
     $haveGroup = false;
     // On the first level, make sure we have a group if not add the <ul> tag now

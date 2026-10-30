@@ -19,16 +19,16 @@
  */
 
 class tag_rss_Core {
-  static function available_feeds($item, $tag) {
+  public static function available_feeds($item, $tag) {
     if ($tag) {
       $feeds["tag/tag/{$tag->id}"] =
-        t("Tag feed for %tag_name", array("tag_name" => $tag->name));
+        t("Tag feed for %tag_name", ["tag_name" => $tag->name]);
       return $feeds;
     }
-    return array();
+    return [];
   }
 
-  static function feed($feed_id, $offset, $limit, $id) {
+  public static function feed($feed_id, $offset, $limit, $id) {
     if ($feed_id == "tag") {
       $tag = ORM::factory("tag", $id);
       if (!$tag->loaded()) {
@@ -39,8 +39,8 @@ class tag_rss_Core {
       $feed->items = $tag->items($limit, $offset, "photo");
       $feed->max_pages = ceil($tag->count / $limit);
       $feed->title = t("%site_title - %tag_name",
-                       array("site_title" => item::root()->title, "tag_name" => $tag->name));
-      $feed->description = t("Photos related to %tag_name", array("tag_name" => $tag->name));
+                       ["site_title" => item::root()->title, "tag_name" => $tag->name]);
+      $feed->description = t("Photos related to %tag_name", ["tag_name" => $tag->name]);
 
       return $feed;
     }

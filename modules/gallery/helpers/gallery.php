@@ -27,13 +27,13 @@ class gallery_Core {
    * If Gallery is in maintenance mode, then force all non-admins to get routed to a "This site is
    * down for maintenance" page.
    */
-  static function maintenance_mode() {
+  public static function maintenance_mode() {
     if (module::get_var("gallery", "maintenance_mode", 0) &&
         !identity::active_user()->admin) {
       try {
         $class = new ReflectionClass(ucfirst(Router::$controller).'_Controller');
         $allowed = $class->getConstant("ALLOW_MAINTENANCE_MODE") === true;
-      } catch (ReflectionClass $e) {
+      } catch (ReflectionClass) {
         $allowed = false;
       }
       if (!$allowed) {
@@ -56,14 +56,14 @@ class gallery_Core {
    * If the gallery is only available to registered users and the user is not logged in, present
    * the login page.
    */
-  static function private_gallery() {
+  public static function private_gallery() {
     if (identity::active_user()->guest &&
         !access::user_can(identity::guest(), "view", item::root()) &&
         php_sapi_name() != "cli") {
       try {
         $class = new ReflectionClass(ucfirst(Router::$controller).'_Controller');
         $allowed = $class->getConstant("ALLOW_PRIVATE_GALLERY") === true;
-      } catch (ReflectionClass $e) {
+      } catch (ReflectionClass) {
         $allowed = false;
       }
       if (!$allowed) {
@@ -87,7 +87,7 @@ class gallery_Core {
    * "gallery_ready" event.  Any module that wants to perform an action at the start of every
    * request should implement the <module>_event::gallery_ready() handler.
    */
-  static function ready() {
+  public static function ready() {
     // Don't keep a session for robots; it's a waste of database space.
     if (request::user_agent("robot")) {
       Session::instance()->abort_save();
@@ -101,7 +101,7 @@ class gallery_Core {
    * as the "gallery_shutdown" event.  Any module that wants to perform an action at the start of
    * every request should implement the <module>_event::gallery_shutdown() handler.
    */
-  static function shutdown() {
+  public static function shutdown() {
     module::event("gallery_shutdown");
   }
 
@@ -110,7 +110,7 @@ class gallery_Core {
    * @param $timestamp unix timestamp
    * @return string
    */
-  static function date_time($timestamp) {
+  public static function date_time($timestamp) {
     return date(module::get_var("gallery", "date_time_format"), $timestamp);
   }
 
@@ -119,7 +119,7 @@ class gallery_Core {
    * @param $timestamp unix timestamp
    * @return string
    */
-  static function date($timestamp) {
+  public static function date($timestamp) {
     return date(module::get_var("gallery", "date_format"), $timestamp);
   }
 
@@ -128,7 +128,7 @@ class gallery_Core {
    * @param $timestamp unix timestamp
    * @return string
    */
-  static function time($timestamp) {
+  public static function time($timestamp) {
     return date(module::get_var("gallery", "time_format", "H:i:s"), $timestamp);
   }
 
@@ -142,7 +142,7 @@ class gallery_Core {
    * @return  string   if the file is found (relative to the DOCROOT)
    * @return  false    if the file is not found
    */
-  static function find_file($directory, $file, $required=false) {
+  public static function find_file($directory, $file, $required=false) {
     $file_name = substr($file, 0, -strlen($ext = strrchr($file, '.')));
     $file_name = Kohana::find_file($directory, $file_name, $required, substr($ext, 1));
     if (!$file_name) {
@@ -162,7 +162,7 @@ class gallery_Core {
         // is the target directory, and if it is then we're done.  This check makes
         // sure that if Gallery is installed in a directory called "modules" or "themes"
         // We don't parse the directory structure incorrectly.
-        if (in_array($part, array("modules", "themes")) &&
+        if (in_array($part, ["modules", "themes"]) &&
             $idx + 2 < $count &&
             $parts[$idx + 2] == $directory) {
           break;
@@ -178,8 +178,8 @@ class gallery_Core {
    * Set the PATH environment variable to the paths specified.
    * @param  array   Array of paths.  Each array entry can contain a colon separated list of paths.
    */
-  static function set_path_env($paths) {
-    $path_env = array();
+  public static function set_path_env($paths) {
+    $path_env = [];
     foreach ($paths as $path) {
       if ($path) {
         array_push($path_env, $path);
@@ -191,7 +191,7 @@ class gallery_Core {
   /**
    * Return a string describing this version of Gallery and the type of release.
    */
-  static function version_string() {
+  public static function version_string() {
     if (gallery::RELEASE_CHANNEL == "git") {
       $build_number = gallery::build_number();
       return sprintf(
@@ -206,7 +206,7 @@ class gallery_Core {
    * Return the contents of the .build_number file, which should be a single integer
    * or return null if the .build_number file is missing.
    */
-  static function build_number() {
+  public static function build_number() {
     $build_file = DOCROOT . ".build_number";
     if (file_exists($build_file))  {
       $result = parse_ini_file(DOCROOT . ".build_number");
@@ -219,7 +219,7 @@ class gallery_Core {
    * Return true if we should show the profiler at the bottom of the page.  Note that this
    * function is called at database setup time so it cannot rely on the database.
    */
-  static function show_profiler() {
+  public static function show_profiler() {
     return file_exists(VARPATH . "PROFILE");
   }
 
@@ -227,7 +227,7 @@ class gallery_Core {
    * Return true if we should allow Javascript and CSS combining for performance reasons.
    * Typically we want this, but it's convenient for developers to be able to disable it.
    */
-  static function allow_css_and_js_combining() {
+  public static function allow_css_and_js_combining() {
     return !file_exists(VARPATH . "DONT_COMBINE");
   }
 }

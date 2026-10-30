@@ -176,7 +176,7 @@ class utf8_Core {
 	public static function stristr($str, $search)
 	{
 		if (text::is_ascii($str) AND text::is_ascii($search))
-			return stristr($str, $search);
+			return stristr($str, (string) $search);
 
 		if ($search == '')
 			return $str;
@@ -341,7 +341,7 @@ class utf8_Core {
 
 		if (mb_strlen($str) <= $split_length)
 		{
-			return array($str);
+			return [$str];
 		}
 
 		preg_match_all('/.{'.$split_length.'}|[^\x00]{1,'.$split_length.'}$/us', $str, $matches);
@@ -541,7 +541,7 @@ class utf8_Core {
 		$mUcs4  = 0; // cached Unicode character
 		$mBytes = 1; // cached expected number of octets in the current sequence
 
-		$out = array();
+		$out = [];
 
 		$len = strlen($str);
 

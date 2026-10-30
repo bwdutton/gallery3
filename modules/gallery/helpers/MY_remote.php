@@ -19,17 +19,17 @@
  */
 class remote extends remote_Core {
 
-  static function post($url, $post_data_array, $extra_headers=array()) {
+  public static function post($url, $post_data_array, $extra_headers=[]) {
     $post_data_raw = self::_encode_post_data($post_data_array, $extra_headers);
 
     /* Read the web page into a buffer */
-    list ($response_status, $response_headers, $response_body) =
+    [$response_status, $response_headers, $response_body] =
       remote::do_request($url, 'POST', $extra_headers, $post_data_raw);
 
-    return array($response_body, $response_status, $response_headers);
+    return [$response_body, $response_status, $response_headers];
   }
 
-  static function success($response_status) {
+  public static function success($response_status) {
     return preg_match("/^HTTP\/\d+\.\d+\s2\d{2}(\s|$)/", trim($response_status));
   }
 
@@ -62,7 +62,7 @@ class remote extends remote_Core {
    * @todo: Handle redirects? If so, only for GET (i.e. not for POST), and use G2's
    * WebHelper_simple::_parseLocation logic.
    */
-  static function do_request($url, $method='GET', $headers=array(), $body='') {
+  public static function do_request($url, $method='GET', $headers=[], $body='') {
     if (!array_key_exists("User-Agent", $headers)) {
       $headers["User-Agent"] = "Gallery3";
     }
@@ -74,10 +74,10 @@ class remote extends remote_Core {
       $url_components['fsockhost'], $url_components['port'], $errno, $errstr, 5);
     if (empty($handle)) {
       // log "Error $errno: '$errstr' requesting $url";
-      return array(null, null, null);
+      return [null, null, null];
     }
 
-    $header_lines = array('Host: ' . $url_components['host']);
+    $header_lines = ['Host: ' . $url_components['host']];
     foreach ($headers as $key => $value) {
       $header_lines[] = $key . ': ' . $value;
     }
@@ -90,7 +90,7 @@ class remote extends remote_Core {
     if (!$success) {
       // Zero bytes written or false was returned
       // log "fwrite failed in requestWebPage($url)" . ($success === false ? ' - false' : ''
-      return array(null, null, null);
+      return [null, null, null];
     }
     fflush($handle);
 
@@ -101,11 +101,11 @@ class remote extends remote_Core {
     $response_status = trim(fgets($handle, 4096));
     if (empty($response_status)) {
       // 'Empty http response code, maybe timeout'
-      return array(null, null, null);
+      return [null, null, null];
     }
 
     /* Read the headers */
-    $response_headers = array();
+    $response_headers = [];
     while (!feof($handle)) {
       $line = trim(fgets($handle, 4096));
       if (empty($line)) {
@@ -115,10 +115,10 @@ class remote extends remote_Core {
       /* Normalize the line endings */
       $line = str_replace("\r", '', $line);
 
-      list ($key, $value) = explode(':', $line, 2);
+      [$key, $value] = explode(':', $line, 2);
       if (isset($response_headers[$key])) {
         if (!is_array($response_headers[$key])) {
-          $response_headers[$key] = array($response_headers[$key]);
+          $response_headers[$key] = [$response_headers[$key]];
         }
         $response_headers[$key][] = trim($value);
       } else {
@@ -133,7 +133,7 @@ class remote extends remote_Core {
     }
     fclose($handle);
 
-    return array($response_status, $response_headers, $response_body);
+    return [$response_status, $response_headers, $response_body];
   }
 
   /**

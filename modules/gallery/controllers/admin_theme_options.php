@@ -38,7 +38,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
         graphics::remove_rule("gallery", "thumb", "gallery_graphics::resize");
         graphics::add_rule(
           "gallery", "thumb", "gallery_graphics::resize",
-          array("width" => $thumb_size, "height" => $thumb_size, "master" => Image::AUTO),
+          ["width" => $thumb_size, "height" => $thumb_size, "master" => Image::AUTO],
           100);
         module::set_var("gallery", "thumb_size", $thumb_size);
       }
@@ -48,7 +48,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
         graphics::remove_rule("gallery", "resize", "gallery_graphics::resize");
         graphics::add_rule(
           "gallery", "resize", "gallery_graphics::resize",
-          array("width" => $resize_size, "height" => $resize_size, "master" => Image::AUTO),
+          ["width" => $resize_size, "height" => $resize_size, "master" => Image::AUTO],
           100);
         module::set_var("gallery", "resize_size", $resize_size);
       }
@@ -78,11 +78,11 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
   }
 
   private function _get_edit_form_admin() {
-    $form = new Forge("admin/theme_options/save/", "", null, array("id" =>"g-theme-options-form"));
+    $form = new Forge("admin/theme_options/save/", "", null, ["id" =>"g-theme-options-form"]);
     $group = $form->group("edit_theme")->label(t("Theme layout"));
     $group->input("page_size")->label(t("Items per page"))->id("g-page-size")
       ->rules("required|valid_digit")
-      ->callback(array($this, "_valididate_page_size"))
+      ->callback($this->_valididate_page_size(...))
       ->error_messages("required", t("You must enter a number"))
       ->error_messages("valid_digit", t("You must enter a number"))
       ->error_messages("valid_min_value", t("The value must be greater than zero"))
@@ -116,7 +116,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
     return $form;
   }
 
-  function _valididate_page_size($input) {
+  public function _valididate_page_size($input) {
     if ($input->value < 1) {
       $input->add_error("valid_min_value", true);
     }

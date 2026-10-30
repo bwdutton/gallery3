@@ -18,16 +18,16 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class user_installer {
-  static function can_activate() {
-    return array("warn" => array(IdentityProvider::confirmation_message()));
+  public static function can_activate() {
+    return ["warn" => [IdentityProvider::confirmation_message()]];
   }
 
-  static function activate() {
+  public static function activate() {
     IdentityProvider::change_provider("user");
     // Set the latest version in initialize() below
   }
 
-  static function upgrade($version) {
+  public static function upgrade($version) {
     if ($version == 1) {
       module::set_var("user", "mininum_password_length", 5);
       module::set_version("user", $version = 2);
@@ -54,7 +54,7 @@ class user_installer {
     }
   }
 
-  static function uninstall() {
+  public static function uninstall() {
     // Delete all users and groups so that we give other modules an opportunity to clean up
     foreach (ORM::factory("user")->find_all() as $user) {
       $user->delete();
@@ -70,7 +70,7 @@ class user_installer {
     $db->query("DROP TABLE IF EXISTS {groups_users};");
   }
 
-  static function initialize() {
+  public static function initialize() {
     $db = Database::instance();
     $db->query("CREATE TABLE IF NOT EXISTS {users} (
                  `id` int(9) NOT NULL auto_increment,

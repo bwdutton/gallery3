@@ -75,7 +75,7 @@
               error_msg = <?= t("The upload script was not found")->for_js() ?>;
             } else if (errorObj.info == "400") {
               error_msg = <?= t("This photo is too large (max is %size bytes)",
-                                array("size" => $size_limit))->for_js() ?>;
+                                ["size" => $size_limit])->for_js() ?>;
             } else {
               msg += (<?= t("Server error: __INFO__ (__TYPE__)")->for_js() ?>
                 .replace("__INFO__", errorObj.info)
@@ -83,7 +83,7 @@
             }
           } else if (errorObj.type == "File Size") {
             error_msg = <?= t("This photo is too large (max is %size bytes)",
-                              array("size" => $size_limit))->for_js() ?>;
+                              ["size" => $size_limit])->for_js() ?>;
           } else {
             error_msg = <?= t("Server error: __INFO__ (__TYPE__)")->for_js() ?>
                         .replace("__INFO__", errorObj.info)
@@ -124,14 +124,14 @@
     <?php if ($suhosin_session_encrypt): ?>
     <p class="g-error">
       <?= t("Error: your server is configured to use the <a href=\"%encrypt_url\"><code>suhosin.session.encrypt</code></a> setting from <a href=\"%suhosin_url\">Suhosin</a>.  You must disable this setting to upload photos.",
-          array("encrypt_url" => "http://www.hardened-php.net/suhosin/configuration.html#suhosin.session.encrypt",
-      "suhosin_url" => "http://www.hardened-php.net/suhosin/")) ?>
+          ["encrypt_url" => "http://www.hardened-php.net/suhosin/configuration.html#suhosin.session.encrypt",
+      "suhosin_url" => "http://www.hardened-php.net/suhosin/"]) ?>
     </p>
     <?php endif ?>
 
     <?php if (identity::active_user()->admin && !$movies_allowed): ?>
     <p class="g-warning">
-      <?= t("Movie uploading is disabled on your system. <a href=\"%help_url\">Help!</a>", array("help_url" => url::site("admin/movies"))) ?>
+      <?= t("Movie uploading is disabled on your system. <a href=\"%help_url\">Help!</a>", ["help_url" => url::site("admin/movies")]) ?>
     </p>
     <?php endif ?>
   </div>
@@ -147,7 +147,7 @@
   </div>
 
   <div id="g-add-photos-canvas">
-    <button id="g-add-photos-button" class="g-button ui-state-default ui-corner-all" href="#"><?= t("Select photos (%size max per file)...", array("size" => $size_limit)) ?></button>
+    <button id="g-add-photos-button" class="g-button ui-state-default ui-corner-all" href="#"><?= t("Select photos (%size max per file)...", ["size" => $size_limit]) ?></button>
     <span id="g-uploadify"></span>
   </div>
   <div id="g-add-photos-status">
@@ -158,7 +158,7 @@
 
 <div class="no-flash" style="display: none">
   <p>
-    <?= t("Your browser must have Adobe Flash Player version %flash_minimum_version or greater installed to use this feature.", array("flash_minimum_version" => $flash_minimum_version)) ?>
+    <?= t("Your browser must have Adobe Flash Player version %flash_minimum_version or greater installed to use this feature.", ["flash_minimum_version" => $flash_minimum_version]) ?>
   </p>
   <a href="http://www.adobe.com/go/getflashplayer">
     <img src="<?= request::protocol() ?>://www.adobe.com/images/shared/download_buttons/get_flash_player.gif"

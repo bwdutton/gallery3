@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class server_add_installer {
-  static function install() {
+  public static function install() {
     $db = Database::instance();
     $db->query("CREATE TABLE {server_add_entries} (
                   `id` int(9) NOT NULL auto_increment,
@@ -33,7 +33,7 @@ class server_add_installer {
     server_add::check_config();
   }
 
-  static function upgrade($version) {
+  public static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
       $db->query("CREATE TABLE {server_add_files} (
@@ -67,7 +67,7 @@ class server_add_installer {
     }
   }
 
-  static function deactivate() {
+  public static function deactivate() {
     site_status::clear("server_add_configuration");
   }
 }

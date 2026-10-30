@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class notification {
-  static function get_subscription($item_id, $user=null) {
+  public static function get_subscription($item_id, $user=null) {
     if (empty($user)) {
       $user = identity::active_user();
     }
@@ -29,7 +29,7 @@ class notification {
       ->find();
   }
 
-  static function is_watching($item, $user=null) {
+  public static function is_watching($item, $user=null) {
     if (empty($user)) {
       $user = identity::active_user();
     }
@@ -41,7 +41,7 @@ class notification {
       ->loaded();
   }
 
-  static function add_watch($item, $user=null) {
+  public static function add_watch($item, $user=null) {
     if ($item->is_album()) {
       if (empty($user)) {
         $user = identity::active_user();
@@ -53,7 +53,7 @@ class notification {
     }
   }
 
-  static function remove_watch($item, $user=null) {
+  public static function remove_watch($item, $user=null) {
     if ($item->is_album()) {
       if (empty($user)) {
         $user = identity::active_user();
@@ -66,8 +66,8 @@ class notification {
     }
   }
 
-  static function get_subscribers($item) {
-    $subscriber_ids = array();
+  public static function get_subscribers($item) {
+    $subscriber_ids = [];
     foreach (ORM::factory("subscription")
              ->select("user_id")
              ->join("items", "subscriptions.item_id", "items.id")
@@ -79,11 +79,11 @@ class notification {
     }
 
     if (empty($subscriber_ids)) {
-      return array();
+      return [];
     }
     $users = identity::get_user_list($subscriber_ids);
 
-    $subscribers = array();
+    $subscribers = [];
     foreach ($users as $user) {
       if (access::user_can($user, "view", $item) && !empty($user->email)) {
         $subscribers[$user->email] = $user->locale;
@@ -92,73 +92,73 @@ class notification {
     return $subscribers;
   }
 
-  static function send_item_updated($original, $item) {
+  public static function send_item_updated($original, $item) {
     foreach (self::get_subscribers($item) as $email => $locale) {
       $v = new View("item_updated.html");
       $v->original = $original;
       $v->item = $item;
       $v->subject = $item->is_album() ?
-        t("Album \"%title\" updated", array("title" => $original->title, "locale" => $locale)) :
+        t("Album \"%title\" updated", ["title" => $original->title, "locale" => $locale]) :
         ($item->is_photo() ?
-         t("Photo \"%title\" updated", array("title" => $original->title, "locale" => $locale))
-         : t("Movie \"%title\" updated", array("title" => $original->title, "locale" => $locale)));
+         t("Photo \"%title\" updated", ["title" => $original->title, "locale" => $locale])
+         : t("Movie \"%title\" updated", ["title" => $original->title, "locale" => $locale]));
       self::_notify($email, $locale, $item, $v->render(), $v->subject);
     }
   }
 
-  static function send_item_add($item) {
+  public static function send_item_add($item) {
     $parent = $item->parent();
     foreach (self::get_subscribers($item) as $email => $locale) {
       $v = new View("item_added.html");
       $v->item = $item;
       $v->subject = $item->is_album() ?
         t("Album \"%title\" added to \"%parent_title\"",
-          array("title" => $item->title, "parent_title" => $parent->title, "locale" => $locale)) :
+          ["title" => $item->title, "parent_title" => $parent->title, "locale" => $locale]) :
         ($item->is_photo() ?
          t("Photo \"%title\" added to \"%parent_title\"",
-           array("title" => $item->title, "parent_title" => $parent->title, "locale" => $locale)) :
+           ["title" => $item->title, "parent_title" => $parent->title, "locale" => $locale]) :
          t("Movie \"%title\" added to \"%parent_title\"",
-           array("title" => $item->title, "parent_title" => $parent->title, "locale" => $locale)));
+           ["title" => $item->title, "parent_title" => $parent->title, "locale" => $locale]));
       self::_notify($email, $locale, $item, $v->render(), $v->subject);
     }
   }
 
-  static function send_item_deleted($item) {
+  public static function send_item_deleted($item) {
     $parent = $item->parent();
     foreach (self::get_subscribers($item) as $email => $locale) {
       $v = new View("item_deleted.html");
       $v->item = $item;
       $v->subject = $item->is_album() ?
         t("Album \"%title\" removed from \"%parent_title\"",
-          array("title" => $item->title, "parent_title" => $parent->title, "locale" => $locale)) :
+          ["title" => $item->title, "parent_title" => $parent->title, "locale" => $locale]) :
         ($item->is_photo() ?
          t("Photo \"%title\" removed from \"%parent_title\"",
-           array("title" => $item->title, "parent_title" => $parent->title, "locale" => $locale))
+           ["title" => $item->title, "parent_title" => $parent->title, "locale" => $locale])
          : t("Movie \"%title\" removed from \"%parent_title\"",
-             array("title" => $item->title, "parent_title" => $parent->title,
-                   "locale" => $locale)));
+             ["title" => $item->title, "parent_title" => $parent->title,
+                   "locale" => $locale]));
       self::_notify($email, $locale, $item, $v->render(), $v->subject);
     }
   }
 
-  static function send_comment_published($comment) {
+  public static function send_comment_published($comment) {
     $item = $comment->item();
     foreach (self::get_subscribers($item) as $email => $locale) {
       $v = new View("comment_published.html");
       $v->comment = $comment;
       $v->subject = $item->is_album() ?
         t("A new comment was published for album \"%title\"",
-          array("title" => $item->title, "locale" => $locale)) :
+          ["title" => $item->title, "locale" => $locale]) :
       ($item->is_photo() ?
        t("A new comment was published for photo \"%title\"",
-         array("title" => $item->title, "locale" => $locale))
+         ["title" => $item->title, "locale" => $locale])
        : t("A new comment was published for movie \"%title\"",
-           array("title" => $item->title, "locale" => $locale)));
+           ["title" => $item->title, "locale" => $locale]));
       self::_notify($email, $locale, $item, $v->render(), $v->subject);
     }
   }
 
-  static function send_pending_notifications() {
+  public static function send_pending_notifications() {
     foreach (db::build()
              ->select(db::expr("DISTINCT `email`"))
              ->from("pending_notifications")
@@ -188,7 +188,7 @@ class notification {
         Sendmail::factory()
           ->to($email)
           ->subject(t("New activity for %site_name",
-                      array("site_name" => item::root()->title, "locale" => $locale)))
+                      ["site_name" => item::root()->title, "locale" => $locale]))
           ->header("Mime-Version", "1.0")
           ->header("Content-Type", "text/html; charset=UTF-8")
           ->message($text)

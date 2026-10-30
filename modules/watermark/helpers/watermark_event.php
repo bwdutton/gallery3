@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class watermark_event_Core {
-  static function admin_menu($menu, $theme) {
+  public static function admin_menu($menu, $theme) {
     $menu->get("content_menu")
       ->append(
         Menu::factory("link")

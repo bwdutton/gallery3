@@ -61,7 +61,7 @@ class File_Proxy_Controller extends Controller {
 
     // type: albums
     // path: foo/bar.jpg
-    list ($type, $path) = explode("/", $file_uri, 2);
+    [$type, $path] = explode("/", $file_uri, 2);
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
       $e = new Kohana_404_Exception();
       $e->test_fail_code = 2;

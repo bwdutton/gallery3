@@ -20,7 +20,7 @@
 class PhpCodeFilterIterator extends FilterIterator {
   public function accept(): bool {
     $path_name = $this->getInnerIterator()->getPathName();
-    return substr($path_name, -4) == ".php";
+    return str_ends_with($path_name, ".php");
   }
 }
 
@@ -32,25 +32,25 @@ class GalleryCodeFilterIterator extends FilterIterator {
     return !(
       $file_name == "." ||
       $file_name == ".." ||
-      strpos($path_name, DOCROOT . ".git") !== false ||
-      strpos($path_name, DOCROOT . "test") !== false ||
-      strpos($path_name, DOCROOT . "var") !== false ||
-      strpos($path_name, MODPATH . "forge") !== false ||
-      strpos($path_name, MODPATH . "gallery/views/kohana_error_page.php") !== false ||
-      strpos($path_name, MODPATH . "gallery/views/kohana_profiler.php") !== false ||
-      strpos($path_name, MODPATH . "gallery_unit_test/vendor") !== false ||
-      strpos($path_name, MODPATH . "gallery_unit_test/views/kohana_error_page.php") !== false ||
-      strpos($path_name, MODPATH . "gallery_unit_test/views/kohana_unit_test_cli.php") !== false ||
-      strpos($path_name, MODPATH . "unit_test") !== false ||
-      strpos($path_name, MODPATH . "exif/lib") !== false ||
-      strpos($path_name, MODPATH . "user/lib/PasswordHash") !== false ||
-      strpos($path_name, SYSPATH) !== false ||
-      strpos($path_name, MODPATH . "gallery/libraries/HTMLPurifier") !== false ||
-      strpos($path_name, MODPATH . "gallery/vendor/joomla") !== false ||
-      strpos($path_name, MODPATH . "organize/vendor/ext") !== false ||
-      strpos($path_name, DOCROOT . "lib") !== false ||
-      strpos($path_name, DOCROOT . "themes/admin_wind/css/themeroller") !== false ||
-      strpos($path_name, DOCROOT . "themes/wind/css/themeroller") !== false ||
-      substr($path_name, -1, 1) == "~");
+      str_contains($path_name, DOCROOT . ".git") ||
+      str_contains($path_name, DOCROOT . "test") ||
+      str_contains($path_name, DOCROOT . "var") ||
+      str_contains($path_name, MODPATH . "forge") ||
+      str_contains($path_name, MODPATH . "gallery/views/kohana_error_page.php") ||
+      str_contains($path_name, MODPATH . "gallery/views/kohana_profiler.php") ||
+      str_contains($path_name, MODPATH . "gallery_unit_test/vendor") ||
+      str_contains($path_name, MODPATH . "gallery_unit_test/views/kohana_error_page.php") ||
+      str_contains($path_name, MODPATH . "gallery_unit_test/views/kohana_unit_test_cli.php") ||
+      str_contains($path_name, MODPATH . "unit_test") ||
+      str_contains($path_name, MODPATH . "exif/lib") ||
+      str_contains($path_name, MODPATH . "user/lib/PasswordHash") ||
+      str_contains($path_name, SYSPATH) ||
+      str_contains($path_name, MODPATH . "gallery/libraries/HTMLPurifier") ||
+      str_contains($path_name, MODPATH . "gallery/vendor/joomla") ||
+      str_contains($path_name, MODPATH . "organize/vendor/ext") ||
+      str_contains($path_name, DOCROOT . "lib") ||
+      str_contains($path_name, DOCROOT . "themes/admin_wind/css/themeroller") ||
+      str_contains($path_name, DOCROOT . "themes/wind/css/themeroller") ||
+      str_ends_with($path_name, "~"));
   }
 }

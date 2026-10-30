@@ -34,7 +34,7 @@
 class ORM_MPTT_Core extends ORM {
   private $model_name = null;
 
-  function __construct($id=null) {
+  public function __construct($id=null) {
     parent::__construct($id);
     $this->model_name = inflector::singular($this->table_name);
   }
@@ -45,7 +45,7 @@ class ORM_MPTT_Core extends ORM {
    * @chainable
    * @return  ORM
    */
-  function save() {
+  public function save() {
     if (!$this->loaded()) {
       $this->lock();
       $parent = ORM::factory("item", $this->parent_id);
@@ -131,7 +131,7 @@ class ORM_MPTT_Core extends ORM {
    * @param ORM $target
    * @return boolean
    */
-  function contains($target) {
+  public function contains($target) {
     return ($this->left_ptr <= $target->left_ptr && $this->right_ptr >= $target->right_ptr);
   }
 
@@ -140,7 +140,7 @@ class ORM_MPTT_Core extends ORM {
    *
    * @return ORM
    */
-  function parent() {
+  public function parent() {
     if (!$this->parent_id) {
       return null;
     }
@@ -152,7 +152,7 @@ class ORM_MPTT_Core extends ORM {
    *
    * @return array ORM
    */
-  function parents($where=null) {
+  public function parents($where=null) {
     return $this
       ->merge_where($where)
       ->where("left_ptr", "<=", $this->left_ptr)
@@ -172,7 +172,7 @@ class ORM_MPTT_Core extends ORM {
    * @param   array    order_by
    * @return array ORM
    */
-  function children($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
+  public function children($limit=null, $offset=null, $where=null, $order_by=["id" => "ASC"]) {
     return $this
       ->merge_where($where)
       ->where("parent_id", "=", $this->id)
@@ -187,7 +187,7 @@ class ORM_MPTT_Core extends ORM {
    * @param   array    additional where clauses
    * @return array ORM
    */
-  function children_count($where=null) {
+  public function children_count($where=null) {
     return $this
       ->merge_where($where)
       ->where("parent_id", "=", $this->id)
@@ -203,7 +203,7 @@ class ORM_MPTT_Core extends ORM {
    * @param   array    order_by
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
+  public function descendants($limit=null, $offset=null, $where=null, $order_by=["id" => "ASC"]) {
     return $this
       ->merge_where($where)
       ->where("left_ptr", ">", $this->left_ptr)
@@ -218,7 +218,7 @@ class ORM_MPTT_Core extends ORM {
    * @param    array    additional where clauses
    * @return   integer  child count
    */
-  function descendants_count($where=null) {
+  public function descendants_count($where=null) {
     return $this
       ->merge_where($where)
       ->where("left_ptr", ">", $this->left_ptr)

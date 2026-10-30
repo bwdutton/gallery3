@@ -18,11 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class tag_block_Core {
-  static function get_site_list() {
-    return array("tag" => t("Popular tags"));
+  public static function get_site_list() {
+    return ["tag" => t("Popular tags")];
   }
 
-  static function get($block_id, $theme) {
+  public static function get($block_id, $theme) {
     $block = "";
     switch ($block_id) {
     case "tag":

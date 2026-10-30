@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class test_Core {
-  static function random_album_unsaved($parent=null) {
+  public static function random_album_unsaved($parent=null) {
     $rand = test::random_string(6);
 
     $album = ORM::factory("item");
@@ -29,11 +29,11 @@ class test_Core {
     return $album;
   }
 
-  static function random_album($parent=null) {
+  public static function random_album($parent=null) {
     return test::random_album_unsaved($parent)->save()->reload();
   }
 
-  static function random_movie_unsaved($parent=null) {
+  public static function random_movie_unsaved($parent=null) {
     $rand = test::random_string(6);
     $photo = ORM::factory("item");
     $photo->type = "movie";
@@ -44,11 +44,11 @@ class test_Core {
     return $photo;
   }
 
-  static function random_movie($parent=null) {
+  public static function random_movie($parent=null) {
     return test::random_movie_unsaved($parent)->save()->reload();
   }
 
-  static function random_photo_unsaved($parent=null) {
+  public static function random_photo_unsaved($parent=null) {
     $rand = test::random_string(6);
     $photo = ORM::factory("item");
     $photo->type = "photo";
@@ -59,13 +59,13 @@ class test_Core {
     return $photo;
   }
 
-  static function random_photo($parent=null) {
+  public static function random_photo($parent=null) {
     return test::random_photo_unsaved($parent)->save()->reload();
   }
 
   // If a test compares photo file contents (i.e. file_get_contents), it's best to use this
   // function to guarantee uniqueness.
-  static function random_unique_photo_unsaved($parent=null) {
+  public static function random_unique_photo_unsaved($parent=null) {
     $rand = test::random_string(6);
     $photo = ORM::factory("item");
     $photo->type = "photo";
@@ -87,20 +87,20 @@ class test_Core {
     return $photo;
   }
 
-  static function random_unique_photo($parent=null) {
+  public static function random_unique_photo($parent=null) {
     return test::random_unique_photo_unsaved($parent)->save()->reload();
   }
 
-  static function random_user($password="password") {
+  public static function random_user($password="password") {
     $rand = "name_" . test::random_string(6);
     return identity::create_user($rand, $rand, $password, "$rand@rand.com");
   }
 
-  static function random_group() {
+  public static function random_group() {
     return identity::create_group(test::random_string(6));
   }
 
-  static function random_name($item=null) {
+  public static function random_name($item=null) {
     $rand = "name_" . test::random_string(6);
     if ($item && $item->is_photo()) {
       $rand .= ".jpg";
@@ -108,31 +108,31 @@ class test_Core {
     return $rand;
   }
 
-  static function starts_with($outer, $inner) {
-    return strpos($outer, $inner) === 0;
+  public static function starts_with($outer, $inner) {
+    return str_starts_with($outer, $inner);
   }
 
-  static function call_and_capture($callback) {
+  public static function call_and_capture($callback) {
     ob_start();
     call_user_func($callback);
     return ob_get_clean();
   }
 
-  static function random_tag() {
+  public static function random_tag() {
     $tag = ORM::factory("tag");
-    $tag->name = test::lorem_ipsum(rand(2, 4));
+    $tag->name = test::lorem_ipsum(random_int(2, 4));
 
     // Reload so that ORM coerces all fields into strings.
     return $tag->save()->reload();
   }
 
-  static function diff($a, $b) {
+  public static function diff($a, $b) {
     fwrite(fopen($a_name = tempnam("/tmp", "test"), "w"), $a);
     fwrite(fopen($b_name = tempnam("/tmp", "test"), "w"), $b);
     return shell_exec("diff $a_name $b_name");
   }
 
-  static function random_string($length) {
+  public static function random_string($length) {
     $buf = "";
     do {
       $buf .= random::hash();
@@ -140,7 +140,7 @@ class test_Core {
     return substr($buf, 0, $length);
   }
 
-  static function lorem_ipsum($num) {
+  public static function lorem_ipsum($num) {
     static $lorem_ipsum = null;
     if (!$lorem_ipsum) {
       require_once(MODPATH . "gallery_unit_test/vendor/LoremIpsum.class.php");

@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class item_Core {
-  static function move($source, $target) {
+  public static function move($source, $target) {
     access::required("view", $source);
     access::required("view", $target);
     access::required("edit", $source);
@@ -47,25 +47,25 @@ class item_Core {
       case "album":
         message::info(
           t("Album <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
-            array("old_name" => $orig_name, "new_name" => $source->name)));
+            ["old_name" => $orig_name, "new_name" => $source->name]));
         break;
 
       case "photo":
         message::info(
           t("Photo <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
-            array("old_name" => $orig_name, "new_name" => $source->name)));
+            ["old_name" => $orig_name, "new_name" => $source->name]));
         break;
 
       case "movie":
         message::info(
           t("Movie <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
-            array("old_name" => $orig_name, "new_name" => $source->name)));
+            ["old_name" => $orig_name, "new_name" => $source->name]));
         break;
       }
     }
   }
 
-  static function make_album_cover($item) {
+  public static function make_album_cover($item) {
     $parent = $item->parent();
     access::required("view", $item);
     access::required("view", $parent);
@@ -90,7 +90,7 @@ class item_Core {
     // album cover.  So find any parent albums that had the old item as their album cover and
     // switch them over to the new item.
     if ($old_album_cover_id) {
-      foreach ($item->parents(array(array("album_cover_item_id", "=", $old_album_cover_id)))
+      foreach ($item->parents([["album_cover_item_id", "=", $old_album_cover_id]])
                as $ancestor) {
         if (access::can("edit", $ancestor)) {
           $ancestor->album_cover_item_id = $parent->album_cover_item_id;
@@ -101,7 +101,7 @@ class item_Core {
     }
   }
 
-  static function remove_album_cover($album) {
+  public static function remove_album_cover($album) {
     access::required("view", $album);
     access::required("edit", $album);
 
@@ -116,7 +116,7 @@ class item_Core {
    * @param string $filename
    * @return string title
    */
-  static function convert_filename_to_title($filename) {
+  public static function convert_filename_to_title($filename) {
     $title = strtr($filename, "_", " ");
     $title = preg_replace("/\..{3,4}$/", "", $title);
     $title = preg_replace("/ +/", " ", $title);
@@ -127,7 +127,7 @@ class item_Core {
    * Convert a filename into something we can use as a url component.
    * @param string $filename
    */
-  static function convert_filename_to_slug($filename) {
+  public static function convert_filename_to_slug($filename) {
     $result = str_replace("&", "-and-", $filename);
     $result = str_replace(" ", "-", $result);
 
@@ -148,12 +148,12 @@ class item_Core {
    * @param object $item
    * @return string form
    */
-  static function get_delete_form($item) {
+  public static function get_delete_form($item) {
     $page_type = Input::instance()->get("page_type");
     $from_id = Input::instance()->get("from_id");
     $form = new Forge(
       "quick/delete/$item->id?page_type=$page_type&from_id=$from_id", "",
-      "post", array("id" => "g-confirm-delete"));
+      "post", ["id" => "g-confirm-delete"]);
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
     $form->script("")
@@ -164,7 +164,7 @@ class item_Core {
   /**
    * Get the next weight value
    */
-  static function get_max_weight() {
+  public static function get_max_weight() {
     // Guard against an empty result when we create the first item.  It's unfortunate that we
     // have to check this every time.
     // @todo: figure out a better way to bootstrap the weight.
@@ -180,11 +180,11 @@ class item_Core {
    * viewable by the active user.
    * @chainable
    */
-  static function viewable($model) {
-    $view_restrictions = array();
+  public static function viewable($model) {
+    $view_restrictions = [];
     if (!identity::active_user()->admin) {
       foreach (identity::group_ids_for_active_user() as $id) {
-        $view_restrictions[] = array("items.view_$id", "=", access::ALLOW);
+        $view_restrictions[] = ["items.view_$id", "=", access::ALLOW];
       }
     }
 
@@ -209,7 +209,7 @@ class item_Core {
    * @param string $var_subdir
    * @return object Item_Model
    */
-  static function find_by_path($path, $var_subdir="albums") {
+  public static function find_by_path($path, $var_subdir="albums") {
     $path = trim($path, "/");
 
     // The root path name is NULL not "", hence this workaround.
@@ -234,7 +234,7 @@ class item_Core {
     foreach (explode("/", $path) as $part) {
       $encoded_array[] = rawurlencode($part);
     }
-    $encoded_path = join("/", $encoded_array);
+    $encoded_path = implode("/", $encoded_array);
     if ($search_full_name) {
       $item = ORM::factory("item")
         ->where("relative_path_cache", "=", $encoded_path)
@@ -298,7 +298,7 @@ class item_Core {
    * @param string $url the relative url fragment
    * @return Item_Model
    */
-  static function find_by_relative_url($relative_url) {
+  public static function find_by_relative_url($relative_url) {
     // In most cases, we'll have an exact match in the relative_url_cache item field.
     // but failing that, walk down the tree until we find it.  The fallback code will fix caches
     // as it goes, so it'll never be run frequently.
@@ -321,7 +321,7 @@ class item_Core {
    * Return the root Item_Model
    * @return Item_Model
    */
-  static function root() {
+  public static function root() {
     return model_cache::get("item", 1);
   }
 
@@ -334,7 +334,7 @@ class item_Core {
    * no item.  You should try running this a few times in a loop if you
    * don't get an item back.
    */
-  static function random_query() {
+  public static function random_query() {
     // Pick a random number and find the item that's got nearest smaller number.
     // This approach works best when the random numbers in the system are roughly evenly
     // distributed so this is going to be more efficient with larger data sets.
@@ -351,7 +351,7 @@ class item_Core {
    * @param Item_Model $item
    * @param array      $where an array of arrays, each compatible with ORM::where()
    */
-  static function get_position($item, $where=array()) {
+  public static function get_position($item, $where=[]) {
     $album = $item->parent();
 
     if (!strcasecmp($album->sort_order, "DESC")) {
@@ -393,7 +393,7 @@ class item_Core {
                ->where("parent_id", "=", $album->id)
                ->where($sort_column, "=", $item->$sort_column)
                ->merge_where($where)
-               ->order_by(array("id" => "ASC"))
+               ->order_by(["id" => "ASC"])
                ->find_all() as $row) {
         $position++;
         if ($row->id == $item->id) {
@@ -409,7 +409,7 @@ class item_Core {
       //
       // Reproduce the children() functionality here using Database directly to
       // avoid loading the whole ORM for each row.
-      $order_by = array($album->sort_column => $album->sort_order);
+      $order_by = [$album->sort_column => $album->sort_order];
       // Use id as a tie breaker
       if ($album->sort_column != "id") {
         $order_by["id"] = "ASC";
@@ -435,25 +435,25 @@ class item_Core {
   /**
    * Set the display context callback for any future item renders.
    */
-  static function set_display_context_callback() {
+  public static function set_display_context_callback() {
     if (!request::user_agent("robot")) {
       $args = func_get_args();
       Cache::instance()->set("display_context_" . $sid = Session::instance()->id(), $args,
-                             array("display_context"));
+                             ["display_context"]);
     }
   }
 
   /**
    * Get rid of the display context callback
    */
-  static function clear_display_context_callback() {
+  public static function clear_display_context_callback() {
     Cache::instance()->delete("display_context_" . $sid = Session::instance()->id());
   }
 
   /**
    * Call the display context callback for the given item
    */
-  static function get_display_context($item) {
+  public static function get_display_context($item) {
     if (!request::user_agent("robot")) {
       $args = Cache::instance()->get("display_context_" . $sid = Session::instance()->id());
       $callback = $args[0] ?? null;
@@ -462,7 +462,7 @@ class item_Core {
 
     if (empty($callback)) {
       $callback = "Albums_Controller::get_display_context";
-      $args = array($item);
+      $args = [$item];
     }
     return call_user_func_array($callback, $args);
   }
@@ -471,7 +471,7 @@ class item_Core {
    * Reset all child weights of a given album to a monotonically increasing sequence based on the
    * current sort order of the album.
    */
-  static function resequence_child_weights($album) {
+  public static function resequence_child_weights($album) {
     $weight = 0;
     foreach ($album->children() as $child) {
       $child->weight = ++$weight;

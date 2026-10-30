@@ -10,13 +10,13 @@
     </a>
     <?php if ($comment->author()->guest): ?>
     <?= t("on %date_time, %name said",
-          array("date_time" => gallery::date_time($comment->created),
-                "name" => html::clean($comment->author_name()))) ?>
+          ["date_time" => gallery::date_time($comment->created),
+                "name" => html::clean($comment->author_name())]) ?>
     <?php else: ?>
     <?= t("on %date_time,  <a href=\"%url\">%name</a> said",
-          array("date_time" => gallery::date_time($comment->created),
+          ["date_time" => gallery::date_time($comment->created),
                 "url" => user_profile::url($comment->author_id),
-                "name" => html::clean($comment->author_name()))) ?>
+                "name" => html::clean($comment->author_name())]) ?>
     <?php endif ?>
   </p>
   <div>

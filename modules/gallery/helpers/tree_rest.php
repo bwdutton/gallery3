@@ -35,50 +35,50 @@ class tree_rest_Core {
    *    In the entity section only return these fields for each item.
    *    Default is all fields.
    */
-  static function get($request) {
+  public static function get($request) {
     $item = rest::resolve($request->url);
     access::required("view", $item);
 
-    $query_params = array();
+    $query_params = [];
     $p = $request->params;
-    $where = array();
+    $where = [];
     if (isset($p->type)) {
-      $where[] = array("type", "=", $p->type);
+      $where[] = ["type", "=", $p->type];
       $query_params[] = "type={$p->type}";
     }
 
     if (isset($p->depth)) {
       $lowest_depth = $item->level + $p->depth;
-      $where[] = array("level", "<=", $lowest_depth);
+      $where[] = ["level", "<=", $lowest_depth];
       $query_params[] = "depth={$p->depth}";
     }
 
-    $fields = array();
+    $fields = [];
     if (isset($p->fields)) {
       $fields = explode(",", $p->fields);
       $query_params[] = "fields={$p->fields}";
     }
 
-    $entity = array(array("url" => rest::url("item", $item),
-                           "entity" => $item->as_restful_array($fields)));
-    $members = array();
+    $entity = [["url" => rest::url("item", $item),
+                           "entity" => $item->as_restful_array($fields)]];
+    $members = [];
     foreach ($item->viewable()->descendants(null, null, $where) as $child) {
-      $entity[] = array("url" => rest::url("item", $child),
-                        "entity" => $child->as_restful_array($fields));
+      $entity[] = ["url" => rest::url("item", $child),
+                        "entity" => $child->as_restful_array($fields)];
       if (isset($lowest_depth) && $child->level == $lowest_depth) {
         $members[] = url::merge_querystring(rest::url("tree", $child), $query_params);
       }
     }
 
-    $result = array(
+    $result = [
       "url" => $request->url,
       "entity" => $entity,
       "members" => $members,
-      "relationships" => rest::relationships("tree", $item));
+      "relationships" => rest::relationships("tree", $item)];
     return $result;
   }
 
-  static function resolve($id) {
+  public static function resolve($id) {
     $item = ORM::factory("item", $id);
     if (!access::can("view", $item)) {
       throw new Kohana_404_Exception();
@@ -86,7 +86,7 @@ class tree_rest_Core {
     return $item;
   }
 
-  static function url($item) {
+  public static function url($item) {
     return url::abs_site("rest/tree/{$item->id}");
   }
 }

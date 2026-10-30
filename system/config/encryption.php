@@ -31,9 +31,9 @@
  *
  * 	For more information about mcrypt modes and cipers see the [mcrypt php docs](http://php.net/mcrypt).
  */
-$config['default'] = array
-(
+$config['default'] = 
+[
 	'key'    => 'K0H@NA+PHP_7hE-SW!FtFraM3w0R|<',
 	'mode'   => MCRYPT_MODE_NOFB,
 	'cipher' => MCRYPT_RIJNDAEL_128
-);
+];

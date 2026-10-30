@@ -23,7 +23,7 @@ class random_Core {
    * Return a random 32 byte hash value.
    * @param string extra entropy data
    */
-  static function hash($length=32) {
+  public static function hash($length=32) {
     require_once(MODPATH . "gallery/vendor/joomla/crypt.php");
     return md5(JCrypt::genRandomBytes($length));
   }
@@ -31,7 +31,7 @@ class random_Core {
   /**
    * Return a random floating point number between 0 and 1
    */
-  static function percent() {
+  public static function percent() {
     return ((float)mt_rand()) / (float)mt_getrandmax();
   }
 
@@ -39,7 +39,7 @@ class random_Core {
    * Return a random number between $min and $max.  If $min and $max are not specified,
    * return a random number between 0 and mt_getrandmax()
    */
-  static function int($min=null, $max=null) {
+  public static function int($min=null, $max=null) {
     if ($min || $max) {
       return mt_rand($min, $max);
     }

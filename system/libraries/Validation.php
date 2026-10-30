@@ -10,25 +10,25 @@
 class Validation_Core extends ArrayObject {
 
 	// Filters
-	protected $pre_filters = array();
-	protected $post_filters = array();
+	protected $pre_filters = [];
+	protected $post_filters = [];
 
 	// Rules and callbacks
-	protected $rules = array();
-	protected $callbacks = array();
+	protected $rules = [];
+	protected $callbacks = [];
 
 	// Rules that are allowed to run on empty fields
-	protected $empty_rules = array('required', 'matches');
+	protected $empty_rules = ['required', 'matches'];
 
 	// Errors
-	protected $errors = array();
-	protected $messages = array();
+	protected $errors = [];
+	protected $messages = [];
 
 	// Field labels
-	protected $labels = array();
+	protected $labels = [];
 
 	// Fields that are expected to be arrays
-	protected $array_fields = array();
+	protected $array_fields = [];
 
 	/**
 	 * Creates a new Validation instance.
@@ -60,8 +60,8 @@ class Validation_Core extends ArrayObject {
 	 */
 	public function __clone()
 	{
-		$this->errors = array();
-		$this->messages = array();
+		$this->errors = [];
+		$this->messages = [];
 	}
 
 	/**
@@ -97,7 +97,7 @@ class Validation_Core extends ArrayObject {
 		));
 
 		// Remove wildcard fields
-		$fields = array_diff($fields, array('*'));
+		$fields = array_diff($fields, ['*']);
 
 		return $fields;
 	}
@@ -128,7 +128,7 @@ class Validation_Core extends ArrayObject {
 		// Get field names
 		$fields = $this->field_names();
 
-		$safe = array();
+		$safe = [];
 		foreach ($fields as $field)
 		{
 			if ($choices === NULL OR isset($choices[$field]))
@@ -221,7 +221,7 @@ class Validation_Core extends ArrayObject {
 	{
 		if (is_string($callback))
 		{
-			if (strpos($callback, '::') !== FALSE)
+			if (str_contains($callback, '::'))
 			{
 				$callback = explode('::', $callback);
 			}
@@ -233,12 +233,12 @@ class Validation_Core extends ArrayObject {
 			elseif (method_exists($this, $callback))
 			{
 				// The callback exists in Validation
-				$callback = array($this, $callback);
+				$callback = [$this, $callback];
 			}
 			elseif (method_exists('valid', $callback))
 			{
 				// The callback exists in valid::
-				$callback = array('valid', $callback);
+				$callback = ['valid', $callback];
 			}
 		}
 
@@ -249,7 +249,7 @@ class Validation_Core extends ArrayObject {
 				if (is_object($callback[0]))
 				{
 					// Object instance syntax
-					$name = get_class($callback[0]).'->'.$callback[1];
+					$name = $callback[0]::class.'->'.$callback[1];
 				}
 				else
 				{
@@ -263,7 +263,7 @@ class Validation_Core extends ArrayObject {
 				$name = $callback;
 			}
 
-			throw new Kohana_Exception('Callback %name% used for Validation is not callable', array('%name%' => $name));
+			throw new Kohana_Exception('Callback %name% used for Validation is not callable', ['%name%' => $name]);
 		}
 
 		return $callback;
@@ -283,7 +283,7 @@ class Validation_Core extends ArrayObject {
 		if ($field === TRUE OR $field === '*')
 		{
 			// Use wildcard
-			$fields = array('*');
+			$fields = ['*'];
 		}
 		else
 		{
@@ -318,7 +318,7 @@ class Validation_Core extends ArrayObject {
 		if ($field === TRUE)
 		{
 			// Use wildcard
-			$fields = array('*');
+			$fields = ['*'];
 		}
 		else
 		{
@@ -410,7 +410,7 @@ class Validation_Core extends ArrayObject {
 			$rule = $this->callback($rule);
 
 			// Add the rule, with args, to the field
-			$this->rules[$field][] = array($rule, $args, $false_rule);
+			$this->rules[$field][] = [$rule, $args, $false_rule];
 		}
 
 		return $this;
@@ -464,11 +464,8 @@ class Validation_Core extends ArrayObject {
 	 */
 	public function validate($object = NULL, $field_name = NULL)
 	{
-		if ($object === NULL)
-		{
-			// Use the current object
-			$object = $this;
-		}
+		// Use the current object
+        $object ??= $this;
 
 		$array = $this->safe_array();
 
@@ -498,7 +495,7 @@ class Validation_Core extends ArrayObject {
 			foreach ($callbacks as $callback)
 			{
 				// Separate the callback, arguments and is false bool
-				list ($callback, $args, $is_false) = $callback;
+				[$callback, $args, $is_false] = $callback;
 
 				// Function or method name of the rule
 				$rule = is_array($callback) ? $callback[1] : $callback;
@@ -619,7 +616,7 @@ class Validation_Core extends ArrayObject {
 		$this->exchangeArray($array);
 
 		// Return TRUE if there are no errors
-		return $this->errors === array();
+		return $this->errors === [];
 	}
 
 	/**
@@ -633,7 +630,7 @@ class Validation_Core extends ArrayObject {
 	 */
 	public function add_error($field, $name, $args = NULL)
 	{
-		$this->errors[$field] = array($name, $args);
+		$this->errors[$field] = [$name, $args];
 
 		return $this;
 	}
@@ -648,7 +645,7 @@ class Validation_Core extends ArrayObject {
 	{
 		if ($file === NULL)
 		{
-			$errors = array();
+			$errors = [];
 			foreach($this->errors as $field => $error)
 			{
 				$errors[$field] = $error[0];
@@ -657,16 +654,16 @@ class Validation_Core extends ArrayObject {
 		}
 		else
 		{
-			$errors = array();
+			$errors = [];
 			foreach ($this->errors as $input => $error)
 			{
 				// Locations to check for error messages
-				$error_locations = array
-				(
+				$error_locations = 
+				[
 					"validation/{$file}.{$input}.{$error[0]}",
 					"validation/{$file}.{$input}.default",
 					"validation/default.{$error[0]}"
-				);
+				];
 
 				if (($message = Kohana::message($error_locations[0])) !== $error_locations[0])
 				{
@@ -687,7 +684,7 @@ class Validation_Core extends ArrayObject {
 				}
 
 				// Start the translation values list
-				$values = array(':field' => __($this->labels[$input]));
+				$values = [':field' => __($this->labels[$input])];
 
 				if ( ! empty($error[1]))
 				{
@@ -742,7 +739,7 @@ class Validation_Core extends ArrayObject {
 	{
 		foreach ($inputs as $key)
 		{
-			if ($str !== (isset($this[$key]) ? $this[$key] : NULL))
+			if ($str !== ($this[$key] ?? NULL))
 				return FALSE;
 		}
 
@@ -766,7 +763,7 @@ class Validation_Core extends ArrayObject {
 
 		if (count($length) > 1)
 		{
-			list ($min, $max) = $length;
+			[$min, $max] = $length;
 
 			if ($size >= $min AND $size <= $max)
 			{

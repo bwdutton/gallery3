@@ -102,12 +102,12 @@ class Session_Database_Driver implements Session_Driver {
 		if ( ! Session::$should_save)
 			return TRUE;
 
-		$data = array
-		(
+		$data = 
+		[
 			'session_id' => $id,
 			'last_activity' => time(),
 			'data' => ($this->encrypt === NULL) ? base64_encode($data) : $this->encrypt->encode($data)
-		);
+		];
 
 		if ($this->session_id === NULL)
 		{

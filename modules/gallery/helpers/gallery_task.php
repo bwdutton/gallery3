@@ -34,9 +34,9 @@ class gallery_task_Core {
   const FIX_STATE_RUN_MISSING_ACCESS_CACHES = 13;
   const FIX_STATE_DONE = 14;
 
-  static function available_tasks() {
+  public static function available_tasks() {
     $dirty_count = graphics::find_dirty_images_query()->count_records();
-    $tasks = array();
+    $tasks = [];
     $tasks[] = Task_Definition::factory()
                  ->callback("gallery_task::rebuild_dirty_images")
                  ->name(t("Rebuild Images"))
@@ -72,8 +72,8 @@ class gallery_task_Core {
    * Task that rebuilds all dirty images.
    * @param Task_Model the task
    */
-  static function rebuild_dirty_images($task) {
-    $errors = array();
+  public static function rebuild_dirty_images($task) {
+    $errors = [];
     try {
       // Choose the dirty images in a random order so that if we run this task multiple times
       // concurrently each task is rebuilding different images simultaneously.
@@ -90,7 +90,7 @@ class gallery_task_Core {
       }
 
       $completed = $task->get("completed", 0);
-      $ignored = $task->get("ignored", array());
+      $ignored = $task->get("ignored", []);
 
       $i = 0;
 
@@ -112,10 +112,10 @@ class gallery_task_Core {
             $completed++;
 
             $errors[] = t("Successfully rebuilt images for '%title'",
-                          array("title" => html::purify($item->title)));
+                          ["title" => html::purify($item->title)]);
           } catch (Exception $e) {
             $errors[] = t("Unable to rebuild images for '%title'",
-                          array("title" => html::purify($item->title)));
+                          ["title" => html::purify($item->title)]);
             $errors[] = (string)$e;
             $ignored[$item->id] = 1;
           }
@@ -129,7 +129,7 @@ class gallery_task_Core {
       $task->status = t2("Updated: 1 image. Total: %total_count.",
                          "Updated: %count images. Total: %total_count.",
                          $completed,
-                         array("total_count" => $total_count));
+                         ["total_count" => $total_count]);
 
       if ($completed < $total_count) {
         $task->percent_complete = (int)(100 * ($completed + count($ignored)) / $total_count);
@@ -157,20 +157,20 @@ class gallery_task_Core {
     }
   }
 
-  static function update_l10n($task) {
-    $errors = array();
+  public static function update_l10n($task) {
+    $errors = [];
     try {
       $start = microtime(true);
       $data = Cache::instance()->get("update_l10n_cache:{$task->id}");
       if ($data) {
-        list($dirs, $files, $cache, $num_fetched) = unserialize($data);
+        [$dirs, $files, $cache, $num_fetched] = unserialize($data);
       }
       $i = 0;
 
       switch ($task->get("mode", "init")) {
       case "init":  // 0%
-        $dirs = array("gallery", "modules", "themes", "installer");
-        $files = $cache = array();
+        $dirs = ["gallery", "modules", "themes", "installer"];
+        $files = $cache = [];
         $num_fetched = 0;
         $task->set("mode", "find_files");
         $task->status = t("Finding files");
@@ -178,7 +178,7 @@ class gallery_task_Core {
 
       case "find_files":  // 0% - 10%
         while (($dir = array_pop($dirs)) && microtime(true) - $start < 0.5) {
-          if (in_array(basename($dir), array("tests", "lib"))) {
+          if (in_array(basename($dir), ["tests", "lib"])) {
             continue;
           }
 
@@ -247,8 +247,8 @@ class gallery_task_Core {
 
       if (!$task->done) {
         Cache::instance()->set("update_l10n_cache:{$task->id}",
-                               serialize(array($dirs, $files, $cache, $num_fetched)),
-                               array("l10n"));
+                               serialize([$dirs, $files, $cache, $num_fetched]),
+                               ["l10n"]);
       } else {
         Cache::instance()->delete("update_l10n_cache:{$task->id}");
       }
@@ -268,12 +268,12 @@ class gallery_task_Core {
    * Task that removes old files from var/logs and var/tmp.
    * @param Task_Model the task
    */
-  static function file_cleanup($task) {
-    $errors = array();
+  public static function file_cleanup($task) {
+    $errors = [];
     try {
       $start = microtime(true);
       $data = Cache::instance()->get("file_cleanup_cache:{$task->id}");
-      $files = $data ? unserialize($data) : array();
+      $files = $data ? unserialize($data) : [];
       $i = 0;
       $current = 0;
       $total = 0;
@@ -282,7 +282,7 @@ class gallery_task_Core {
       case "init":
         $threshold = time() - 1209600; // older than 2 weeks
         // Note that this code is roughly duplicated in gallery_event::gallery_shutdown
-        foreach(array("logs", "tmp") as $dir) {
+        foreach(["logs", "tmp"] as $dir) {
           $dir = VARPATH . $dir;
           if ($dh = opendir($dir)) {
             while (($file = readdir($dh)) !== false) {
@@ -305,7 +305,7 @@ class gallery_task_Core {
         $task->set("current", 0);
         $task->set("total", count($files));
         Cache::instance()->set("file_cleanup_cache:{$task->id}", serialize($files),
-                               array("file_cleanup"));
+                               ["file_cleanup"]);
         if (count($files) == 0) {
           break;
         }
@@ -315,7 +315,7 @@ class gallery_task_Core {
         $total = $task->get("total");
         while ($current < $total && microtime(true) - $start < 1) {
           @unlink($files[$current]);
-          $task->log(t("%file removed", array("file" => $files[$current++])));
+          $task->log(t("%file removed", ["file" => $files[$current++]]));
         }
         $task->percent_complete = $current / $total * 100;
         $task->set("current", $current);
@@ -323,7 +323,7 @@ class gallery_task_Core {
 
       $task->status = t2("Removed: 1 file. Total: %total_count.",
                          "Removed: %count files. Total: %total_count.",
-                         $current, array("total_count" => $total));
+                         $current, ["total_count" => $total]);
 
       if ($total == $current) {
         $task->done = true;
@@ -342,7 +342,7 @@ class gallery_task_Core {
     }
   }
 
-  static function fix($task) {
+  public static function fix($task) {
     $start = microtime(true);
 
     $total = $task->get("total");
@@ -357,8 +357,8 @@ class gallery_task_Core {
       $total += db::build()->where("type", "=", "album")->count_records("items");
 
       // one operation for each dupe slug, dupe name, dupe base name, and missing access cache
-      foreach (array("find_dupe_slugs", "find_dupe_names", "find_dupe_base_names",
-                     "find_missing_access_caches") as $func) {
+      foreach (["find_dupe_slugs", "find_dupe_names", "find_dupe_base_names",
+                     "find_missing_access_caches"] as $func) {
         foreach (self::$func() as $row) {
           $total++;
         }
@@ -419,7 +419,7 @@ class gallery_task_Core {
 
           $level++;
           foreach (db::build()
-                   ->select(array("id", "type"))
+                   ->select(["id", "type"])
                    ->from("items")
                    ->where("parent_id", "=", $id)
                    ->order_by("left_ptr", "DESC") // DESC since array_pop effectively reverses them
@@ -462,10 +462,10 @@ class gallery_task_Core {
 
 
       case self::FIX_STATE_START_DUPE_SLUGS:
-        $stack = array();
+        $stack = [];
         foreach (self::find_dupe_slugs() as $row) {
-          list ($parent_id, $slug) = explode(":", $row->parent_slug, 2);
-          $stack[] = join(":", array($parent_id, $slug));
+          [$parent_id, $slug] = explode(":", $row->parent_slug, 2);
+          $stack[] = implode(":", [$parent_id, $slug]);
         }
         if ($stack) {
           $task->set("stack", implode(" ", $stack));
@@ -477,7 +477,7 @@ class gallery_task_Core {
 
       case self::FIX_STATE_RUN_DUPE_SLUGS:
         $stack = explode(" ", $task->get("stack"));
-        list ($parent_id, $slug) = explode(":", array_pop($stack));
+        [$parent_id, $slug] = explode(":", array_pop($stack));
 
         // We want to leave the first one alone and update all conflicts to be random values.
         $fixed = 0;
@@ -489,7 +489,7 @@ class gallery_task_Core {
           $task->log("Fixing conflicting slug for item id {$conflict->id}");
           db::build()
             ->update("items")
-            ->set("slug", $slug . "-" . (string)rand(1000, 9999))
+            ->set("slug", $slug . "-" . (string)random_int(1000, 9999))
             ->where("id", "=", $conflict->id)
             ->execute();
 
@@ -509,10 +509,10 @@ class gallery_task_Core {
         break;
 
       case self::FIX_STATE_START_DUPE_NAMES:
-        $stack = array();
+        $stack = [];
         foreach (self::find_dupe_names() as $row) {
-          list ($parent_id, $name) = explode(":", $row->parent_name, 2);
-          $stack[] = join(":", array($parent_id, $name));
+          [$parent_id, $name] = explode(":", $row->parent_name, 2);
+          $stack[] = implode(":", [$parent_id, $name]);
         }
         if ($stack) {
           $task->set("stack", implode(" ", $stack));
@@ -525,7 +525,7 @@ class gallery_task_Core {
       case self::FIX_STATE_RUN_DUPE_NAMES:
         // NOTE: This does *not* attempt to fix the file system!
         $stack = explode(" ", $task->get("stack"));
-        list ($parent_id, $name) = explode(":", array_pop($stack));
+        [$parent_id, $name] = explode(":", array_pop($stack));
 
         $fixed = 0;
         // We want to leave the first one alone and update all conflicts to be random values.
@@ -544,7 +544,7 @@ class gallery_task_Core {
           }
           db::build()
             ->update("items")
-            ->set("name", $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension)
+            ->set("name", $item_base_name . "-" . (string)random_int(1000, 9999) . $item_extension)
             ->where("id", "=", $conflict->id)
             ->execute();
 
@@ -564,10 +564,10 @@ class gallery_task_Core {
         break;
 
       case self::FIX_STATE_START_DUPE_BASE_NAMES:
-        $stack = array();
+        $stack = [];
         foreach (self::find_dupe_base_names() as $row) {
-          list ($parent_id, $base_name) = explode(":", $row->parent_base_name, 2);
-          $stack[] = join(":", array($parent_id, $base_name));
+          [$parent_id, $base_name] = explode(":", $row->parent_base_name, 2);
+          $stack[] = implode(":", [$parent_id, $base_name]);
         }
         if ($stack) {
           $task->set("stack", implode(" ", $stack));
@@ -580,7 +580,7 @@ class gallery_task_Core {
       case self::FIX_STATE_RUN_DUPE_BASE_NAMES:
         // NOTE: This *does* attempt to fix the file system!  So, it must go *after* run_dupe_names.
         $stack = explode(" ", $task->get("stack"));
-        list ($parent_id, $base_name) = explode(":", array_pop($stack));
+        [$parent_id, $base_name] = explode(":", array_pop($stack));
         $base_name_escaped = Database::escape_for_like($base_name);
 
         $fixed = 0;
@@ -603,15 +603,15 @@ class gallery_task_Core {
           // file system.  Let's use the item save logic to rebuild the paths and rename the files
           // if possible.
           try {
-            $conflict->name = $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension;
+            $conflict->name = $item_base_name . "-" . (string)random_int(1000, 9999) . $item_extension;
             $conflict->validate();
             // If we get here, we're safe to proceed with save
             $conflict->save();
-          } catch (Exception $e) {
+          } catch (Exception) {
             // Didn't work.  Edit database directly without fixing file system.
             db::build()
               ->update("items")
-              ->set("name", $item_base_name . "-" . (string)rand(1000, 9999) . $item_extension)
+              ->set("name", $item_base_name . "-" . (string)random_int(1000, 9999) . $item_extension)
               ->where("id", "=", $conflict->id)
               ->execute();
           }
@@ -632,7 +632,7 @@ class gallery_task_Core {
         break;
 
       case self::FIX_STATE_START_ALBUMS:
-        $stack = array();
+        $stack = [];
         foreach (db::build()
                  ->select("id")
                  ->from("items")
@@ -676,7 +676,7 @@ class gallery_task_Core {
         break;
 
       case self::FIX_STATE_START_REBUILD_ITEM_CACHES:
-        $stack = array();
+        $stack = [];
         foreach (self::find_empty_item_caches(500) as $row) {
           $stack[] = $row->id;
         }
@@ -708,7 +708,7 @@ class gallery_task_Core {
         break;
 
       case self::FIX_STATE_START_MISSING_ACCESS_CACHES:
-        $stack = array();
+        $stack = [];
         foreach (self::find_missing_access_caches_limited(500) as $row) {
           $stack[] = $row->id;
         }
@@ -758,41 +758,41 @@ class gallery_task_Core {
       $task->percent_complete = round(100 * $completed / $total);
     }
     $task->status = t2("One operation complete", "%count / %total operations complete", $completed,
-                       array("total" => $total));
+                       ["total" => $total]);
   }
 
-  static function find_dupe_slugs() {
+  public static function find_dupe_slugs() {
     return db::build()
       ->select_distinct(
-        array("parent_slug" => db::expr("CONCAT(`parent_id`, ':', LOWER(`slug`))")))
+        ["parent_slug" => db::expr("CONCAT(`parent_id`, ':', LOWER(`slug`))")])
       ->select("id")
-      ->select(array("C" => 'COUNT("*")'))
+      ->select(["C" => 'COUNT("*")'])
       ->from("items")
       ->having('COUNT("*")', ">", 1)
       ->group_by("parent_slug", "id")
       ->execute();
   }
 
-  static function find_dupe_names() {
+  public static function find_dupe_names() {
     // looking for photos, movies, and albums
     return db::build()
       ->select_distinct(
-        array("parent_name" => db::expr("CONCAT(`parent_id`, ':', LOWER(`name`))")))
+        ["parent_name" => db::expr("CONCAT(`parent_id`, ':', LOWER(`name`))")])
       ->select("id")
-      ->select(array("C" => 'COUNT("*")'))
+      ->select(["C" => 'COUNT("*")'])
       ->from("items")
       ->having('COUNT("*")', ">", 1)
       ->group_by("parent_name", "id")
       ->execute();
   }
 
-  static function find_dupe_base_names() {
+  public static function find_dupe_base_names() {
     // looking for photos or movies, not albums
     return db::build()
       ->select_distinct(
-        array("parent_base_name" => db::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
+        ["parent_base_name" => db::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")])
       ->select("id")
-      ->select(array("C" => 'COUNT("*")'))
+      ->select(["C" => 'COUNT("*")'])
       ->from("items")
       ->where("type", "<>", "album")
       ->having('COUNT("*")', ">", 1)
@@ -800,7 +800,7 @@ class gallery_task_Core {
       ->execute();
   }
 
-  static function find_empty_item_caches($limit) {
+  public static function find_empty_item_caches($limit) {
     return db::build()
       ->select("items.id")
       ->from("items")
@@ -810,11 +810,11 @@ class gallery_task_Core {
       ->execute();
   }
 
-  static function find_missing_access_caches() {
+  public static function find_missing_access_caches() {
     return self::find_missing_access_caches_limited(1 << 16);
   }
 
-  static function find_missing_access_caches_limited($limit) {
+  public static function find_missing_access_caches_limited($limit) {
     return db::build()
       ->select("items.id")
       ->from("items")

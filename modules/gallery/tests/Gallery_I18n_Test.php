@@ -22,10 +22,10 @@ class Gallery_I18n_Test extends Gallery_Unit_Test_Case {
   private $i18n;
 
   public function setup() {
-    $config = array(
+    $config = [
         'root_locale' => 'en',
         'default_locale' => 'te_ST',
-        'locale_dir' => VARPATH . 'locale/');
+        'locale_dir' => VARPATH . 'locale/'];
     $this->i18n = Gallery_I18n::instance($config);
 
     db::build()
@@ -33,16 +33,16 @@ class Gallery_I18n_Test extends Gallery_Unit_Test_Case {
       ->where("locale", "=", "te_ST")
       ->execute();
 
-    $messages_te_ST = array(
-        array('Hello world', 'Hallo Welt'),
-        array(array('one' => 'One item has been added',
-                    'other' => '%count elements have been added'),
-              array('one' => 'Ein Element wurde hinzugefuegt.',
-                    'other' => '%count Elemente wurden hinzugefuegt.')),
-        array('Hello %name, how are you today?', 'Hallo %name, wie geht es Dir heute?'));
+    $messages_te_ST = [
+        ['Hello world', 'Hallo Welt'],
+        [['one' => 'One item has been added',
+                    'other' => '%count elements have been added'],
+              ['one' => 'Ein Element wurde hinzugefuegt.',
+                    'other' => '%count Elemente wurden hinzugefuegt.']],
+        ['Hello %name, how are you today?', 'Hallo %name, wie geht es Dir heute?']];
 
     foreach ($messages_te_ST as $data) {
-      list ($message, $translation) = $data;
+      [$message, $translation] = $data;
       $entry = ORM::factory("incoming_translation");
       $entry->key = Gallery_I18n::get_message_key($message);
       $entry->message = serialize($message);
@@ -76,35 +76,35 @@ class Gallery_I18n_Test extends Gallery_Unit_Test_Case {
   }
 
   public function translate_plural_other_test() {
-    $result = $this->i18n->translate(array('one' => 'One item has been added',
-                                           'other' => '%count elements have been added'),
-                                     array('count' => 5));
+    $result = $this->i18n->translate(['one' => 'One item has been added',
+                                           'other' => '%count elements have been added'],
+                                     ['count' => 5]);
     $this->assert_equal('5 Elemente wurden hinzugefuegt.', $result);
   }
 
   public function translate_plural_one_test() {
-    $result = $this->i18n->translate(array('one' => 'One item has been added',
-                                           'other' => '%count elements have been added'),
-                                     array('count' => 1));
+    $result = $this->i18n->translate(['one' => 'One item has been added',
+                                           'other' => '%count elements have been added'],
+                                     ['count' => 1]);
     $this->assert_equal('Ein Element wurde hinzugefuegt.', $result);
   }
 
   public function translate_interpolate_test() {
-    $result = $this->i18n->translate('Hello %name, how are you today?', array('name' => 'John'));
+    $result = $this->i18n->translate('Hello %name, how are you today?', ['name' => 'John']);
     $this->assert_equal('Hallo John, wie geht es Dir heute?', $result);
   }
 
   public function translate_interpolate_missing_value_test() {
-    $result = $this->i18n->translate('Hello %name, how are you today?', array('foo' => 'bar'));
+    $result = $this->i18n->translate('Hello %name, how are you today?', ['foo' => 'bar']);
     $this->assert_equal('Hallo %name, wie geht es Dir heute?', $result);
   }
 
   public function translate_plural_zero_test() {
     // te_ST has the same plural rules as en and de.
     // For count 0, plural form "other" should be used.
-    $result = $this->i18n->translate(array('one' => 'One item has been added',
-                                           'other' => '%count elements have been added'),
-                                     array('count' => 0));
+    $result = $this->i18n->translate(['one' => 'One item has been added',
+                                           'other' => '%count elements have been added'],
+                                     ['count' => 0]);
     $this->assert_equal('0 Elemente wurden hinzugefuegt.', $result);
   }
 }

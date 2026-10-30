@@ -15,27 +15,27 @@ class Form_Input_Core {
 	public $method;
 
 	// Element data
-	protected $data = array
-	(
+	protected $data = 
+	[
 		'type'    => 'text',
 		'class'   => 'textbox',
 		'value'   => ''
-	);
+	];
 
 	// Protected data keys
-	protected $protect = array();
+	protected $protect = [];
 
 	// Validation rules, matches, and callbacks
-	protected $rules = array();
-	protected $matches = array();
-	protected $callbacks = array();
+	protected $rules = [];
+	protected $matches = [];
+	protected $callbacks = [];
 
 	// Validation check
 	protected $is_valid;
 
 	// Errors
-	protected $errors = array();
-	protected $error_messages = array();
+	protected $errors = [];
+	protected $error_messages = [];
 
 	/**
 	 * Sets the input element name.
@@ -59,7 +59,7 @@ class Form_Input_Core {
 			$rules  = $args[0];
 			$action = substr($rules, 0, 1);
 
-			if (in_array($action, array('-', '+', '=')))
+			if (in_array($action, ['-', '+', '=']))
 			{
 				// Remove the action from the rules
 				$rules = substr($rules, 1);
@@ -255,10 +255,7 @@ class Form_Input_Core {
 	 */
 	public function add_error($key, $val)
 	{
-		if ( ! isset($this->errors[$key]))
-		{
-			$this->errors[$key] = $val;
-		}
+		$this->errors[$key] ??= $val;
 
 		return $this;
 	}
@@ -302,9 +299,9 @@ class Form_Input_Core {
 
 		// Return single error
 		if ( ! is_array($this->error_messages) AND ! empty($this->errors))
-			return array($this->error_messages);
+			return [$this->error_messages];
 
-		$messages = array();
+		$messages = [];
 		foreach ($this->errors as $func => $args)
 		{
 			if (is_string($args))
@@ -314,7 +311,7 @@ class Form_Input_Core {
 			else
 			{
 				// Force args to be an array
-				$args = is_array($args) ? $args : array();
+				$args = is_array($args) ? $args : [];
 
 				// Add the label or name to the beginning of the args
 				array_unshift($args, $this->label ? mb_strtolower($this->label) : $this->name);
@@ -335,9 +332,9 @@ class Form_Input_Core {
 							// Fetch an i18n error message
                                                         $error = 'validation.'.$func;
 							break;
-						case substr($func, 0, 6) === 'valid_':
+						case str_starts_with($func, 'valid_'):
 							// Strip 'valid_' from func name
-							$func = (substr($func, 0, 6) === 'valid_') ? substr($func, 6) : $func;
+							$func = (str_starts_with($func, 'valid_')) ? substr($func, 6) : $func;
 						case 'alpha':
 						case 'alpha_dash':
 						case 'digit':
@@ -364,7 +361,7 @@ class Form_Input_Core {
 	 *
 	 * @return  string|bool
 	 */
-	protected function input_value($name = array())
+	protected function input_value($name = [])
 	{
 		// Get the Input instance
 		$input = Input::instance();
@@ -433,7 +430,7 @@ class Form_Input_Core {
 					$rule = substr($rule, 0, $offset);
 				}
 
-				if (substr($rule, 0, 6) === 'valid_' AND method_exists('valid', substr($rule, 6)))
+				if (str_starts_with($rule, 'valid_') AND method_exists('valid', substr($rule, 6)))
 				{
 					$func = substr($rule, 6);
 
@@ -450,18 +447,11 @@ class Form_Input_Core {
 					if (isset($args))
 					{
 						// Manually call up to 2 args for speed
-						switch (count($args))
-						{
-							case 1:
-								$this->$rule($args[0]);
-							break;
-							case 2:
-								$this->$rule($args[0], $args[1]);
-							break;
-							default:
-								call_user_func_array(array($this, $rule), $args);
-							break;
-						}
+						match (count($args)) {
+                            1 => $this->$rule($args[0]),
+                            2 => $this->$rule($args[0], $args[1]),
+                            default => call_user_func_array([$this, $rule], $args),
+                        };
 					}
 					else
 					{
@@ -490,7 +480,7 @@ class Form_Input_Core {
 				if ($this->value != $input->value)
 				{
 					// Field does not match
-					$this->errors['matches'] = array($input->label ? mb_strtolower($input->label) : $input->name);
+					$this->errors['matches'] = [$input->label ? mb_strtolower($input->label) : $input->name];
 					break;
 				}
 			}
@@ -536,18 +526,18 @@ class Form_Input_Core {
 		{
 			if ($length != $min)
 			{
-				$this->errors['exact_length'] = array($min);
+				$this->errors['exact_length'] = [$min];
 			}
 		}
 		else
 		{
 			if ($length < $min)
 			{
-				$this->errors['min_length'] = array($min);
+				$this->errors['min_length'] = [$min];
 			}
 			elseif ($length > $max)
 			{
-				$this->errors['max_length'] = array($max);
+				$this->errors['max_length'] = [$max];
 			}
 		}
 	}

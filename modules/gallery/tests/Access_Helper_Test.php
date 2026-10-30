@@ -30,18 +30,18 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
       if (!empty($group)) {
         $group->delete();
       }
-    } catch (Exception $e) { }
+    } catch (Exception) { }
 
     try {
       access::delete_permission("access_test");
-    } catch (Exception $e) { }
+    } catch (Exception) { }
 
     try {
       $user = identity::lookup_user_by_name("access_test");
       if (!empty($user)) {
         $user->delete();
       }
-    } catch (Exception $e) { }
+    } catch (Exception) { }
 
     // Reset some permissions that we mangle below
     access::allow(identity::everybody(), "view", item::root());
@@ -154,7 +154,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   public function cant_reset_root_item_test() {
     try {
       access::reset(identity::everybody(), "view", ORM::factory("item", 1));
-    } catch (Exception $e) {
+    } catch (Exception) {
       return;
     }
     $this->assert_true(false, "Should not be able to reset root intent");

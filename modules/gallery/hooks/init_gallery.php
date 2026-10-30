@@ -28,21 +28,21 @@ if (!file_exists(VARPATH . "database.php")) {
 // anything else database related.
 try {
   Database::instance()->connect();
-} catch (Kohana_PHP_Exception $e) {
+} catch (Kohana_PHP_Exception) {
   print "Database configuration error.  Please check var/database.php";
   exit;
 }
 
-Event::add("system.ready", array("Gallery_I18n", "instance"));
-Event::add("system.ready", array("module", "load_modules"));
-Event::add("system.ready", array("gallery", "ready"));
-Event::add("system.post_routing", array("url", "parse_url"));
-Event::add("system.post_routing", array("gallery", "maintenance_mode"));
-Event::add("system.post_routing", array("gallery", "private_gallery"));
-Event::add("system.shutdown", array("gallery", "shutdown"));
+Event::add("system.ready", ["Gallery_I18n", "instance"]);
+Event::add("system.ready", ["module", "load_modules"]);
+Event::add("system.ready", ["gallery", "ready"]);
+Event::add("system.post_routing", ["url", "parse_url"]);
+Event::add("system.post_routing", ["gallery", "maintenance_mode"]);
+Event::add("system.post_routing", ["gallery", "private_gallery"]);
+Event::add("system.shutdown", ["gallery", "shutdown"]);
 
 // @todo once we convert to Kohana 2.4 this doesn't have to be here
-set_error_handler(array("gallery_error", "error_handler"));
+set_error_handler(["gallery_error", "error_handler"]);
 
 // Override the cookie if we have a session id in the URL.
 // @todo This should probably be an event callback

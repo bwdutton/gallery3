@@ -34,16 +34,16 @@ class Admin_View_Core extends Gallery_View {
       $theme_name = Input::instance()->get("theme");
       if ($theme_name &&
           file_exists(THEMEPATH . $theme_name) &&
-          strpos(realpath(THEMEPATH . $theme_name), THEMEPATH) == 0) {
+          str_starts_with(realpath(THEMEPATH . $theme_name), THEMEPATH)) {
         $this->theme_name = $theme_name;
       }
     }
     $this->sidebar = "";
-    $this->set_global(array("theme" => $this,
+    $this->set_global(["theme" => $this,
                             "user" => identity::active_user(),
                             "page_type" => "admin",
                             "page_subtype" => $name,
-                            "page_title" => null));
+                            "page_title" => null]);
   }
 
   public function admin_menu() {
@@ -51,7 +51,7 @@ class Admin_View_Core extends Gallery_View {
     module::event("admin_menu", $menu, $this);
 
     $settings_menu = $menu->get("settings_menu");
-    uasort($settings_menu->elements, array("Menu", "title_comparator"));
+    uasort($settings_menu->elements, ["Menu", "title_comparator"]);
 
     return $menu->render();
   }
@@ -92,23 +92,16 @@ class Admin_View_Core extends Gallery_View {
     case "admin_head":
     case "body_attributes":
     case "html_attributes":
-      $blocks = array();
+      $blocks = [];
       if (method_exists("gallery_theme", $function)) {
-        switch (count($args)) {
-        case 0:
-          $blocks[] = gallery_theme::$function($this);
-          break;
-        case 1:
-          $blocks[] = gallery_theme::$function($this, $args[0]);
-          break;
-        case 2:
-          $blocks[] = gallery_theme::$function($this, $args[0], $args[1]);
-          break;
-        default:
-          $blocks[] = call_user_func_array(
-            array("gallery_theme", $function),
-            array_merge(array($this), $args));
-        }
+        $blocks[] = match (count($args)) {
+            0 => gallery_theme::$function($this),
+            1 => gallery_theme::$function($this, $args[0]),
+            2 => gallery_theme::$function($this, $args[0], $args[1]),
+            default => call_user_func_array(
+              ["gallery_theme", $function],
+              array_merge([$this], $args)),
+        };
       }
 
       foreach (module::active() as $module) {
@@ -118,16 +111,16 @@ class Admin_View_Core extends Gallery_View {
         $helper_class = "{$module->name}_theme";
         if (class_exists($helper_class) && method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
-            array($helper_class, $function),
-            array_merge(array($this), $args));
+            [$helper_class, $function],
+            array_merge([$this], $args));
         }
       }
 
       $helper_class = theme::$admin_theme_name . "_theme";
       if (class_exists($helper_class) && method_exists($helper_class, $function)) {
         $blocks[] = call_user_func_array(
-          array($helper_class, $function),
-          array_merge(array($this), $args));
+          [$helper_class, $function],
+          array_merge([$this], $args));
       }
 
       if (Session::instance()->get("debug")) {

@@ -8,7 +8,7 @@
  * @license    http://kohanaphp.com/license
  */
 
-$messages = array(
+$messages = [
 	'required'      => 'The :field field is required',
 	'length'        => 'The :field field must be between :param1 and :param2 characters long',
 	'depends_on'    => 'The :field field requires the :param1 field',
@@ -22,4 +22,4 @@ $messages = array(
 	'numeric '      => 'The :field field must be a valid number',
 	'url'           => 'The :field field must be a valid url',
 	'phone'         => 'The :field field must be a valid phone number',
-);
+];

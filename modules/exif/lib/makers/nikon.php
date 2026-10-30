@@ -33,78 +33,76 @@
 function lookup_Nikon_tag($tag,$model) {
 	
 	if($model==0) {
-		switch($tag) {
-			case "0003": $tag = "Quality";break;
-			case "0004": $tag = "ColorMode";break;
-			case "0005": $tag = "ImageAdjustment";break;
-			case "0006": $tag = "CCDSensitivity";break;	
-			case "0007": $tag = "WhiteBalance";break;	
-			case "0008": $tag = "Focus";break;	
-			case "0009": $tag = "Unknown2";break;	
-			case "000a": $tag = "DigitalZoom";break;	
-			case "000b": $tag = (string) t("Converter");break;	
-			
-			default: $tag = "unknown:".$tag;break;
-		}
+		$tag = match ($tag) {
+            "0003" => "Quality",
+            "0004" => "ColorMode",
+            "0005" => "ImageAdjustment",
+            "0006" => "CCDSensitivity",
+            "0007" => "WhiteBalance",
+            "0008" => "Focus",
+            "0009" => "Unknown2",
+            "000a" => "DigitalZoom",
+            "000b" => (string) t("Converter"),
+            default => "unknown:".$tag,
+        };
 	} else if($model==1) {
-		switch($tag) {
-			case "0002": $tag = "ISOSetting";break;
-			case "0003": $tag = "ColorMode";break;
-			case "0004": $tag = "Quality";break;
-			case "0005": $tag = "Whitebalance";break;
-			case "0006": $tag = "ImageSharpening";break;
-			case "0007": $tag = "FocusMode";break;
-			case "0008": $tag = "FlashSetting";break;
-			case "0009": $tag = "FlashMode";break;
-			case "000b": $tag = "WhiteBalanceFine";break;
-			case "000c": $tag = "WB_RBLevels";break;
-			case "000d": $tag = "ProgramShift";break;
-			case "000e": $tag = "ExposureDifference";break;
-			case "000f": $tag = "ISOSelection";break;
-			case "0010": $tag = "DataDump";break;
-			case "0011": $tag = "NikonPreview";break;
-			case "0012": $tag = "FlashExposureComp";break;
-			case "0013": $tag = "ISOSetting2";break;
-			case "0014": $tag = "ColorBalanceA";break;
-			case "0016": $tag = "ImageBoundary";break;
-			case "0017": $tag = "FlashExposureComp";break;
-			case "0018": $tag = "FlashExposureBracketValue";break;
-			case "0019": $tag = "ExposureBracketValue";break;
-			case "001a": $tag = "ImageProcessing";break;
-			case "001b": $tag = "CropHiSpeed";break;
-			case "001c": $tag = "ExposureTuning";break;
-			case "001d": $tag = "SerialNumber";break;
-			case "001e": $tag = "ColorSpace";break;
-			case "001f": $tag = "VRInfo";break;
-			case "0020": $tag = "ImageAuthentication";break;
-			case "0022": $tag = "ActiveD-Lighting";break;
-			case "0023": $tag = "PictureControl";break;
-			case "0024": $tag = "WorldTime";break;
-			case "0025": $tag = "ISOInfo";break;
-			case "002a": $tag = "VignetteControl";break;
-			case "002b": $tag = "DistortInfo";break;
-			case "0080": $tag = "ImageAdjustment";break;
-			case "0081": $tag = "ToneCompensation";break;
-			case "0082": $tag = "Adapter";break;
-			case "0083": $tag = "LensType";break;
-			case "0084": $tag = "LensInfo";break;
-			case "0085": $tag = "ManualFocusDistance";break; 
-			case "0086": $tag = "DigitalZoom";break;
-			case "0087": $tag = "FlashUsed";break;
-			case "0088": $tag = "AFFocusPosition";break;
-			case "0089": $tag = "ShootingMode";break;
-			case "008b": $tag = "LensFStops";break;
-			case "008c": $tag = "ContrastCurve";break;
-			case "008d": $tag = "ColorMode";break;
-			case "0090": $tag = "LightType";break;
-			case "0092": $tag = "HueAdjustment";break;
-			case "0093": $tag = "NEFCompression";break;
-			case "0094": $tag = "Saturation";break;
-			case "0095": $tag = "NoiseReduction";break;
-			case "009a": $tag = "SensorPixelSize";break;
-			
-			default: $tag = "unknown:".$tag;break;
-		}
+		$tag = match ($tag) {
+            "0002" => "ISOSetting",
+            "0003" => "ColorMode",
+            "0004" => "Quality",
+            "0005" => "Whitebalance",
+            "0006" => "ImageSharpening",
+            "0007" => "FocusMode",
+            "0008" => "FlashSetting",
+            "0009" => "FlashMode",
+            "000b" => "WhiteBalanceFine",
+            "000c" => "WB_RBLevels",
+            "000d" => "ProgramShift",
+            "000e" => "ExposureDifference",
+            "000f" => "ISOSelection",
+            "0010" => "DataDump",
+            "0011" => "NikonPreview",
+            "0012" => "FlashExposureComp",
+            "0013" => "ISOSetting2",
+            "0014" => "ColorBalanceA",
+            "0016" => "ImageBoundary",
+            "0017" => "FlashExposureComp",
+            "0018" => "FlashExposureBracketValue",
+            "0019" => "ExposureBracketValue",
+            "001a" => "ImageProcessing",
+            "001b" => "CropHiSpeed",
+            "001c" => "ExposureTuning",
+            "001d" => "SerialNumber",
+            "001e" => "ColorSpace",
+            "001f" => "VRInfo",
+            "0020" => "ImageAuthentication",
+            "0022" => "ActiveD-Lighting",
+            "0023" => "PictureControl",
+            "0024" => "WorldTime",
+            "0025" => "ISOInfo",
+            "002a" => "VignetteControl",
+            "002b" => "DistortInfo",
+            "0080" => "ImageAdjustment",
+            "0081" => "ToneCompensation",
+            "0082" => "Adapter",
+            "0083" => "LensType",
+            "0084" => "LensInfo",
+            "0085" => "ManualFocusDistance",
+            "0086" => "DigitalZoom",
+            "0087" => "FlashUsed",
+            "0088" => "AFFocusPosition",
+            "0089" => "ShootingMode",
+            "008b" => "LensFStops",
+            "008c" => "ContrastCurve",
+            "008d" => "ColorMode",
+            "0090" => "LightType",
+            "0092" => "HueAdjustment",
+            "0093" => "NEFCompression",
+            "0094" => "Saturation",
+            "0095" => "NoiseReduction",
+            "009a" => "SensorPixelSize",
+            default => "unknown:".$tag,
+        };
 	} 
 	
 	return $tag;
@@ -158,70 +156,70 @@ function formatNikonData($type,$tag,$intel,$model,$data) {
 			switch ($tag) {
 				case "0003":
 					if ($model==0) { //Quality
-						switch ($data) {
-							case 1:		$data = (string) t("VGA Basic");	break;
-							case 2:		$data = (string) t("VGA Normal");	break;
-							case 3:		$data = (string) t("VGA Fine");	break;
-							case 4:		$data = (string) t("SXGA Basic");	break;
-							case 5:		$data = (string) t("SXGA Normal");	break;
-							case 6:		$data = (string) t("SXGA Fine");	break;
-							default:	$data = (string) t("Unknown").": ".$data;	break;
-						}
+						$data = match ($data) {
+                            1 => (string) t("VGA Basic"),
+                            2 => (string) t("VGA Normal"),
+                            3 => (string) t("VGA Fine"),
+                            4 => (string) t("SXGA Basic"),
+                            5 => (string) t("SXGA Normal"),
+                            6 => (string) t("SXGA Fine"),
+                            default => (string) t("Unknown").": ".$data,
+                        };
 					}
 					break;
 				case "0004":
 					if ($model==0) { //Color
-						switch ($data) {
-							case 1:		$data = (string) t("Color");	break;
-							case 2:		$data = (string) t("Monochrome");	break;
-							default:	$data = (string) t("Unknown").": ".$data;	break;
-						}
+						$data = match ($data) {
+                            1 => (string) t("Color"),
+                            2 => (string) t("Monochrome"),
+                            default => (string) t("Unknown").": ".$data,
+                        };
 					}
 					break;
 				case "0005":
 					if ($model==0) { //Image Adjustment
-						switch ($data) {
-							case 0:		$data = (string) t("Normal");	break;
-							case 1:		$data = (string) t("Bright+");	break;
-							case 2:		$data = (string) t("Bright-");	break;
-							case 3:		$data = (string) t("Contrast+");	break;
-							case 4:		$data = (string) t("Contrast-");	break;
-							default:	$data = (string) t("Unknown").": ".$data;	break;
-						}
+						$data = match ($data) {
+                            0 => (string) t("Normal"),
+                            1 => (string) t("Bright+"),
+                            2 => (string) t("Bright-"),
+                            3 => (string) t("Contrast+"),
+                            4 => (string) t("Contrast-"),
+                            default => (string) t("Unknown").": ".$data,
+                        };
 					}
 					break;
 				case "0006":
 					if ($model==0) { //CCD Sensitivity
-						switch($data) {
-							case 0:		$data = "ISO-80";	break;
-							case 2:		$data = "ISO-160";	break;
-							case 4:		$data = "ISO-320";	break;
-							case 5:		$data = "ISO-100";	break;
-							default:	$data = (string) t("Unknown").": ".$data;	break;
-						}
+						$data = match ($data) {
+                            0 => "ISO-80",
+                            2 => "ISO-160",
+                            4 => "ISO-320",
+                            5 => "ISO-100",
+                            default => (string) t("Unknown").": ".$data,
+                        };
 					}
 					break;
 				case "0007":
 					if ($model==0) { //White Balance
-						switch ($data) {
-							case 0:		 $data = (string) t("Auto");	break;
-							case 1:		$data = (string) t("Preset");	break;
-							case 2:		$data = (string) t("Daylight");	break;
-							case 3:		$data = (string) t("Incandescence");	break;
-							case 4:		$data = (string) t("Fluorescence");	break;
-							case 5:		$data = (string) t("Cloudy");	break;
-							case 6:		$data = (string) t("SpeedLight");	break;
-							default:	$data = (string) t("Unknown").": ".$data;	break;
-						}
+						$data = match ($data) {
+                            0 => (string) t("Auto"),
+                            1 => (string) t("Preset"),
+                            2 => (string) t("Daylight"),
+                            3 => (string) t("Incandescence"),
+                            4 => (string) t("Fluorescence"),
+                            5 => (string) t("Cloudy"),
+                            6 => (string) t("SpeedLight"),
+                            default => (string) t("Unknown").": ".$data,
+                        };
 					}
 					break;
 				case "000b":
 					if ($model==0) { //Converter
-						switch ($data) {
-							case 0:	$data = (string) t("None");	break;
-							case 1:	$data = (string) t("Fisheye");	break;
-							default:	$data = (string) t("Unknown").": ".$data;	break;
-						}
+						$data = match ($data) {
+                            0 => (string) t("None"),
+                            1 => (string) t("Fisheye"),
+                            default => (string) t("Unknown").": ".$data,
+                        };
 					}
 					break;
 			}
@@ -252,15 +250,15 @@ function formatNikonData($type,$tag,$intel,$model,$data) {
 				case "0083":
 					if ($model==1) { //Lens Type
 						$data = hexdec(substr($data,0,2));
-						switch ($data) {
-							case 0: $data = (string) t("AF non D"); break;
-							case 1: $data = (string) t("Manual"); break;
-							case 2: $data = "AF-D or AF-S"; break;
-							case 6: $data = "AF-D G"; break;
-							case 10: $data = "AF-D VR"; break;
-							case 14: $data = "AF-D G VR"; break;
-							default: $data = (string) t("Unknown").": ".$data; break;
-						}
+						$data = match ($data) {
+                            0 => (string) t("AF non D"),
+                            1 => (string) t("Manual"),
+                            2 => "AF-D or AF-S",
+                            6 => "AF-D G",
+                            10 => "AF-D VR",
+                            14 => "AF-D G VR",
+                            default => (string) t("Unknown").": ".$data,
+                        };
 					}
 					break;
 				case "0087":

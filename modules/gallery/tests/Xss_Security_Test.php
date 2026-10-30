@@ -19,10 +19,10 @@
  */
 class Xss_Security_Test extends Gallery_Unit_Test_Case {
   public function find_unescaped_variables_in_views_test() {
-    $found = array();
+    $found = [];
     foreach (glob("*/*/views/*.php") as $view) {
       // List of all tokens without whitespace, simplifying parsing.
-      $tokens = array();
+      $tokens = [];
       foreach (token_get_all(file_get_contents($view)) as $token) {
         if (!is_array($token) || ($token[0] != T_WHITESPACE)) {
           $tokens[] = $token;
@@ -46,7 +46,7 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
           $inline_html = $token[1];
           // T_INLINE_HTML blocks can be split. Need to handle the case
           // where one token has "<scr" and the next has "ipt"
-          while (self::_token_matches(array(T_INLINE_HTML), $tokens, $token_number + 1)) {
+          while (self::_token_matches([T_INLINE_HTML], $tokens, $token_number + 1)) {
             $token_number++;
             $token = $tokens[$token_number];
             $inline_html .= $token[1];
@@ -135,17 +135,17 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
         } else if ($frame && $token[0] == T_VARIABLE) {
           $frame->expr_append($token[1]);
           if ($token[1] == '$theme') {
-            if (self::_token_matches(array(T_OBJECT_OPERATOR, "->"), $tokens, $token_number + 1) &&
-                self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+            if (self::_token_matches([T_OBJECT_OPERATOR, "->"], $tokens, $token_number + 1) &&
+                self::_token_matches([T_STRING], $tokens, $token_number + 2) &&
                 in_array($tokens[$token_number + 2][1],
-                         array("thumb_proportion", "site_menu", "album_menu", "tag_menu", "photo_menu",
+                         ["thumb_proportion", "site_menu", "album_menu", "tag_menu", "photo_menu",
                                "context_menu", "pager", "site_status", "messages", "album_blocks",
                                "album_bottom", "album_top", "body_attributes", "credits",
                                "dynamic_bottom", "dynamic_top", "footer", "head", "header_bottom",
                                "header_top", "page_bottom", "page_top", "photo_blocks", "photo_bottom",
                                "photo_top", "resize_bottom", "resize_top", "sidebar_blocks", "sidebar_bottom",
                                "sidebar_top", "thumb_bottom", "thumb_info", "thumb_top",
-                               "movie_menu")) &&
+                               "movie_menu"]) &&
                 self::_token_matches("(", $tokens, $token_number + 3)) {
 
               $method = $tokens[$token_number + 2][1];
@@ -155,13 +155,13 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
               $token = $tokens[$token_number];
 
               $frame->is_safe_html(true);
-            } else if (self::_token_matches(array(T_OBJECT_OPERATOR, "->"), $tokens, $token_number + 1) &&
-                       self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+            } else if (self::_token_matches([T_OBJECT_OPERATOR, "->"], $tokens, $token_number + 1) &&
+                       self::_token_matches([T_STRING], $tokens, $token_number + 2) &&
                        in_array($tokens[$token_number + 2][1],
-                                array("css", "script", "url")) &&
+                                ["css", "script", "url"]) &&
                        self::_token_matches("(", $tokens, $token_number + 3) &&
                        // Only allow constant strings here
-                       self::_token_matches(array(T_CONSTANT_ENCAPSED_STRING), $tokens, $token_number + 4)) {
+                       self::_token_matches([T_CONSTANT_ENCAPSED_STRING], $tokens, $token_number + 4)) {
 
               $method = $tokens[$token_number + 2][1];
               $frame->expr_append("->$method(");
@@ -175,7 +175,7 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
         } else if ($frame && $token[0] == T_STRING) {
           $frame->expr_append($token[1]);
           // t() and t2() are special in that they're guaranteed to return a SafeString().
-          if (in_array($token[1], array("t", "t2"))) {
+          if (in_array($token[1], ["t", "t2"])) {
             if (self::_token_matches("(", $tokens, $token_number + 1)) {
               $frame->is_safe_html(true);
               $frame->expr_append("(");
@@ -185,9 +185,9 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
             }
           } else if ($token[1] == "SafeString") {
             // Looking for SafeString::of(...
-            if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-                self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
-                in_array($tokens[$token_number + 2][1], array("of", "purify")) &&
+            if (self::_token_matches([T_DOUBLE_COLON, "::"], $tokens, $token_number + 1) &&
+                self::_token_matches([T_STRING], $tokens, $token_number + 2) &&
+                in_array($tokens[$token_number + 2][1], ["of", "purify"]) &&
                 self::_token_matches("(", $tokens, $token_number + 3)) {
               // Not checking for of_safe_html(). We want such calls to be marked dirty (thus reviewed).
 
@@ -209,11 +209,11 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
             }
           } else if ($token[1] == "url") {
             // url methods return safe HTML
-            if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-                self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+            if (self::_token_matches([T_DOUBLE_COLON, "::"], $tokens, $token_number + 1) &&
+                self::_token_matches([T_STRING], $tokens, $token_number + 2) &&
                 in_array($tokens[$token_number + 2][1],
-                         array("site", "current", "base", "file", "abs_site", "abs_current",
-                               "abs_file", "merge")) &&
+                         ["site", "current", "base", "file", "abs_site", "abs_current",
+                               "abs_file", "merge"]) &&
                 self::_token_matches("(", $tokens, $token_number + 3)) {
               $frame->is_safe_html(true);
               $frame->is_safe_href_attr(true);
@@ -226,10 +226,10 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
               $token = $tokens[$token_number];
             }
           } else if ($token[1] == "html") {
-            if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-                self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+            if (self::_token_matches([T_DOUBLE_COLON, "::"], $tokens, $token_number + 1) &&
+                self::_token_matches([T_STRING], $tokens, $token_number + 2) &&
                 in_array($tokens[$token_number + 2][1],
-                         array("clean", "purify", "js_string", "clean_attribute")) &&
+                         ["clean", "purify", "js_string", "clean_attribute"]) &&
                 self::_token_matches("(", $tokens, $token_number + 3)) {
               // Not checking for mark_clean(). We want such calls to be marked dirty (thus reviewed).
 
@@ -252,9 +252,9 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
         } else if ($frame && $token[0] == T_OBJECT_OPERATOR) {
           $frame->expr_append($token[1]);
 
-          if (self::_token_matches(array(T_STRING), $tokens, $token_number + 1) &&
+          if (self::_token_matches([T_STRING], $tokens, $token_number + 1) &&
               in_array($tokens[$token_number + 1][1],
-                       array("for_js", "for_html", "purified_html", "for_html_attr")) &&
+                       ["for_js", "for_html", "purified_html", "for_html_attr"]) &&
               self::_token_matches("(", $tokens, $token_number + 2)) {
             $method = $tokens[$token_number + 1][1];
             $frame->expr_append("$method(");
@@ -382,85 +382,72 @@ class Xss_Security_Test extends Gallery_Unit_Test_Case {
 
 class Xss_Security_Test_Frame {
   private $_expr = "";
-  private $_in_script_block = false;
   private $_is_safe_html = false;
   private $_is_safe_js = false;
-  private $_in_href_attribute = false;
   private $_is_safe_href_attr = false;
-  private $_in_attribute_js_context = false;
-  private $_in_attribute = false;
-  private $_preceded_by_quote = false;
   private $_is_safe_attr = false;
-  private $_line;
 
-  function __construct($line_number, $in_script_block,
-                       $href_attribute_start, $in_attribute_js_context,
-                       $in_attribute, $preceded_by_quote) {
-    $this->_line = $line_number;
-    $this->_in_script_block = $in_script_block;
-    $this->_in_href_attribute = $href_attribute_start;
-    $this->_in_attribute_js_context = $in_attribute_js_context;
-    $this->_in_attribute = $in_attribute;
-    $this->_preceded_by_quote = $preceded_by_quote;
+  public function __construct(private $_line, private $_in_script_block, private $_in_href_attribute, private $_in_attribute_js_context, private $_in_attribute, private $_preceded_by_quote)
+  {
   }
 
-  function expr() {
+  public function expr() {
     return $this->_expr;
   }
 
-  function expr_append($append_value) {
+  public function expr_append($append_value) {
     return $this->_expr .= $append_value;
   }
 
-  function in_script_block() {
+  public function in_script_block() {
     return $this->_in_script_block;
   }
 
-  function in_href_attribute() {
+  public function in_href_attribute() {
     return $this->_in_href_attribute;
   }
 
-  function in_attribute() {
+  public function in_attribute() {
     return $this->_in_attribute;
   }
 
-  function in_attribute_js_context() {
+  public function in_attribute_js_context() {
     return $this->_in_attribute_js_context;
   }
 
-  function is_safe_html($new_val=NULL) {
+  public function is_safe_html($new_val=NULL) {
     if ($new_val !== NULL) {
       $this->_is_safe_html = (bool) $new_val;
     }
     return $this->_is_safe_html;
   }
 
-  function is_safe_href_attr($new_val=NULL) {
+  public function is_safe_href_attr($new_val=NULL) {
     if ($new_val !== NULL) {
       $this->_is_safe_href_attr  = (bool) $new_val;
     }
     return $this->_is_safe_href_attr;
   }
 
-  function is_safe_attr($new_val=NULL) {
+  public function is_safe_attr($new_val=NULL) {
     if ($new_val !== NULL) {
       $this->_is_safe_attr  = (bool) $new_val;
     }
     return $this->_is_safe_attr;
   }
 
-  function is_safe_js($new_val=NULL) {
+  public function is_safe_js($new_val=NULL) {
     if ($new_val !== NULL) {
       $this->_is_safe_js = (bool) $new_val;
     }
     return $this->_is_safe_js;
   }
 
-  function preceded_by_quote() {
+  public function preceded_by_quote() {
     return $this->_preceded_by_quote;
   }
 
-  function line() {
+  public function line() {
     return $this->_line;
   }
 }

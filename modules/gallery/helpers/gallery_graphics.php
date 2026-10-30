@@ -26,7 +26,7 @@ class gallery_graphics_Core {
    * @param array      $options
    * @param Item_Model $item (optional)
    */
-  static function rotate($input_file, $output_file, $options, $item=null) {
+  public static function rotate($input_file, $output_file, $options, $item=null) {
     graphics::init_toolkit();
 
     $temp_file = system::temp_filename("rotate_", pathinfo($output_file, PATHINFO_EXTENSION));
@@ -41,9 +41,7 @@ class gallery_graphics_Core {
         throw new Exception("@todo EMPTY_INPUT_FILE");
       }
 
-      if (!isset($options["degrees"])) {
-        $options["degrees"] = 0;
-      }
+      $options["degrees"] ??= 0;
 
       // Rotate the image.  This also implicitly converts its format if needed.
       Image::factory($input_file)
@@ -64,7 +62,7 @@ class gallery_graphics_Core {
    * @param array      $options
    * @param Item_Model $item (optional)
    */
-  static function resize($input_file, $output_file, $options, $item=null) {
+  public static function resize($input_file, $output_file, $options, $item=null) {
     graphics::init_toolkit();
 
     $temp_file = system::temp_filename("resize_", pathinfo($output_file, PATHINFO_EXTENSION));
@@ -79,7 +77,7 @@ class gallery_graphics_Core {
         throw new Exception("@todo EMPTY_INPUT_FILE");
       }
 
-      list ($input_width, $input_height, $input_mime, $input_extension) =
+      [$input_width, $input_height, $input_mime, $input_extension] =
         photo::get_file_metadata($input_file);
       if ($input_width && $input_height &&
           (empty($options["width"]) || empty($options["height"]) || empty($options["master"]) ||
@@ -128,7 +126,7 @@ class gallery_graphics_Core {
    * @param array      $options
    * @param Item_Model $item (optional)
    */
-  static function composite($input_file, $output_file, $options, $item=null) {
+  public static function composite($input_file, $output_file, $options, $item=null) {
     try {
       graphics::init_toolkit();
 
@@ -141,10 +139,10 @@ class gallery_graphics_Core {
       } else {
         // No events made an image - proceed with standard process.
 
-        list ($width, $height) = photo::get_file_metadata($input_file);
-        list ($w_width, $w_height) = photo::get_file_metadata($options["file"]);
+        [$width, $height] = photo::get_file_metadata($input_file);
+        [$w_width, $w_height] = photo::get_file_metadata($options["file"]);
 
-        $pad = isset($options["padding"]) ? $options["padding"] : 10;
+        $pad = $options["padding"] ?? 10;
         $top = $pad;
         $left = $pad;
         $y_center = max($height / 2 - $w_height / 2, $pad);

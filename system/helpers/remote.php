@@ -58,7 +58,7 @@ class remote_Core {
 		// Close the connection
 		fclose($remote);
 
-		return isset($response) ? $response : FALSE;
+		return $response ?? FALSE;
 	}
 
 } // End remote

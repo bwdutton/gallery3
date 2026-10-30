@@ -30,7 +30,7 @@ class Password_Controller extends Controller {
       if ($form->validate()) {
         $this->_send_reset($form);
       } else {
-        json::reply(array("result" => "error", "html" => (string)$form));
+        json::reply(["result" => "error", "html" => (string)$form]);
       }
     } else {
       print $form;
@@ -70,26 +70,26 @@ class Password_Controller extends Controller {
 
       log::success(
         "user",
-        t("Password reset email sent for user %name", array("name" => $user->name)));
+        t("Password reset email sent for user %name", ["name" => $user->name]));
     } else if (!$user) {
       // Don't include the username here until you're sure that it's XSS safe
       log::warning(
                    "user", t("Password reset email requested for user %user_name, which does not exist.",
-                             array("user_name" => $user_name)));
+                             ["user_name" => $user_name]));
     } else  {
       log::warning(
           "user", t("Password reset failed for %user_name (has no email address on record).",
-                    array("user_name" => $user->name)));
+                    ["user_name" => $user->name]));
     }
 
     // Always pretend that an email has been sent to avoid leaking
     // information on what user names are actually real.
     message::success(t("Password reset email sent"));
-    json::reply(array("result" => "success"));
+    json::reply(["result" => "success"]);
   }
 
   private static function _reset_form() {
-    $form = new Forge(url::current(true), "", "post", array("id" => "g-reset-form"));
+    $form = new Forge(url::current(true), "", "post", ["id" => "g-reset-form"]);
     $group = $form->group("reset")->label(t("Reset Password"));
     $group->input("name")->label(t("Username"))->id("g-name")->class(null)
       ->rules("required")
@@ -102,7 +102,7 @@ class Password_Controller extends Controller {
   private function _new_password_form($hash=null) {
     $template = new Theme_View("page.html", "other", "reset");
 
-    $form = new Forge("password/do_reset", "", "post", array("id" => "g-change-password-form"));
+    $form = new Forge("password/do_reset", "", "post", ["id" => "g-change-password-form"]);
     $group = $form->group("reset")->label(t("Change Password"));
     $hidden = $group->hidden("hash");
     if (!empty($hash)) {

@@ -18,12 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class user_theme_Core {
-  static function head($theme) {
+  public static function head($theme) {
     return $theme->css("user.css")
       . $theme->script("password_strength.js");
   }
 
-  static function admin_head($theme) {
+  public static function admin_head($theme) {
     return $theme->css("user.css")
       . $theme->script("password_strength.js");
   }

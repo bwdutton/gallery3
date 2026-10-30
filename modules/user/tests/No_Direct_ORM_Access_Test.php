@@ -26,7 +26,7 @@ class No_Direct_ORM_Access_Test extends Gallery_Unit_Test_Case {
         new GalleryCodeFilterIterator(
           new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(DOCROOT)))));
-    $errors = array();
+    $errors = [];
     foreach ($dir as $file) {
       //if (basename(dirname($file)) == "helpers") {
       $file_as_string = file_get_contents($file);
@@ -40,7 +40,7 @@ class No_Direct_ORM_Access_Test extends Gallery_Unit_Test_Case {
       $file_as_string = null;
     }
     if ($errors) {
-      $this->assert_false(true, "Direct access to the users table found:\n" . join("\n", $errors));
+      $this->assert_false(true, "Direct access to the users table found:\n" . implode("\n", $errors));
     }
   }
 
@@ -50,7 +50,7 @@ class No_Direct_ORM_Access_Test extends Gallery_Unit_Test_Case {
         new GalleryCodeFilterIterator(
           new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(DOCROOT)))));
-    $errors = array();
+    $errors = [];
     foreach ($dir as $file) {
       $file_as_string = file_get_contents($file);
       if (preg_match("/ORM::factory\\(\"group\"/", $file_as_string)) {
@@ -63,7 +63,7 @@ class No_Direct_ORM_Access_Test extends Gallery_Unit_Test_Case {
       $file_as_string = null;
     }
     if ($errors) {
-      $this->assert_false(true, "Direct access to the groups table found:\n" . join("\n", $errors));
+      $this->assert_false(true, "Direct access to the groups table found:\n" . implode("\n", $errors));
     }
   }
 
@@ -72,6 +72,6 @@ class No_Direct_ORM_Access_Test extends Gallery_Unit_Test_Case {
 class UserModuleFilterIterator extends FilterIterator {
   public function accept(): bool {
     $path_name = $this->getInnerIterator()->getPathName();
-    return strpos($path_name, "/modules/user") === false;
+    return !str_contains($path_name, "/modules/user");
   }
 }

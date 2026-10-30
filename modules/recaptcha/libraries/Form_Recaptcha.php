@@ -20,10 +20,10 @@
 class Form_Recaptcha_Core extends Form_Input {
   private $_error = null;
 
-  protected $data = array(
+  protected $data = [
     'name'  => '',
     'value' => '',
-  );
+  ];
 
   public function __construct($name) {
     parent::__construct($name);

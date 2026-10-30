@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class system_Core {
-  private static $files_marked_for_deletion = array();
+  private static $files_marked_for_deletion = [];
 
   /**
    * Return the path to an executable version of the named binary, or null.
@@ -34,13 +34,13 @@ class system_Core {
    * @param  string $priority_path (optional)
    * @return string path to binary if found; null if not found
    */
-  static function find_binary($binary, $priority_path=null) {
+  public static function find_binary($binary, $priority_path=null) {
     $bin_path = DOCROOT . "bin";
 
     if ($priority_path) {
-      $paths = array($priority_path, $bin_path);
+      $paths = [$priority_path, $bin_path];
     } else {
-      $paths = array($bin_path);
+      $paths = [$bin_path];
     }
     $paths = array_merge($paths,
       explode(":", getenv("PATH")),
@@ -72,7 +72,7 @@ class system_Core {
    * Unless specified with the $delete_later argument, it will be marked
    * for deletion at shutdown using system::delete_later.
    */
-  static function temp_filename($prefix="", $extension="", $delete_later=true) {
+  public static function temp_filename($prefix="", $extension="", $delete_later=true) {
     do {
       $basename = tempnam(TMPPATH, $prefix);
       if (!$basename) {
@@ -96,14 +96,14 @@ class system_Core {
    * Mark a file for deletion at shutdown time.  This is useful for temp files, where we can delay
    * the deletion time until shutdown to keep page load time quick.
    */
-  static function delete_later($filename) {
+  public static function delete_later($filename) {
     self::$files_marked_for_deletion[] = $filename;
   }
 
   /**
    * Delete all files marked using system::delete_later.  This is called at gallery shutdown.
    */
-  static function delete_marked_files() {
+  public static function delete_marked_files() {
     foreach (self::$files_marked_for_deletion as $filename) {
       // We want to suppress all errors, as it's possible that some of these
       // files may have been deleted/moved before we got here.

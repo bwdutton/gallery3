@@ -184,21 +184,21 @@ class Legal_File_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function sanitize_filename_with_invalid_arguments_test() {
-    $types = array(
-      array("flv", "photo"),
-      array("jpg", "movie"),
-      array("php", "photo"),
-      array(null, "movie"),
-      array("jpg", "album"),
-      array("jpg", null),
-    );
+    $types = [
+      ["flv", "photo"],
+      ["jpg", "movie"],
+      ["php", "photo"],
+      [null, "movie"],
+      ["jpg", "album"],
+      ["jpg", null],
+    ];
 
     foreach ($types as $ary) {
-      list($extension, $type) = $ary;
+      [$extension, $type] = $ary;
       try {
         legal_file::sanitize_filename("foo.jpg", $extension, $type);
         $this->assert_true(false, "Shouldn't get here");
-      } catch (Exception $e) {
+      } catch (Exception) {
         // pass
       }
     }

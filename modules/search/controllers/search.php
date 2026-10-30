@@ -51,7 +51,7 @@ class Search_Controller extends Controller {
 
     $offset = ($page - 1) * $page_size;
 
-    list ($count, $result) =
+    [$count, $result] =
       search::search_within_album($q_with_more_terms, $album, $page_size, $offset);
 
     $max_pages = max(ceil($count / $page_size), 1);
@@ -59,14 +59,14 @@ class Search_Controller extends Controller {
     $template = new Theme_View("page.html", "collection", "search");
     $root = item::root();
     $template->set_global(
-      array("page" => $page,
+      ["page" => $page,
             "max_pages" => $max_pages,
             "page_size" => $page_size,
-            "breadcrumbs" => array(
+            "breadcrumbs" => [
               Breadcrumb::instance($root->title, $root->url())->set_first(),
               Breadcrumb::instance($q, url::abs_site("search?q=" . urlencode($q)))->set_last(),
-            ),
-            "children_count" => $count));
+            ],
+            "children_count" => $count]);
 
     $template->content = new View("search.html");
     $template->content->album = $album;
@@ -78,19 +78,19 @@ class Search_Controller extends Controller {
     item::set_display_context_callback("Search_Controller::get_display_context", $album, $q);
   }
 
-  static function get_display_context($item, $album, $q) {
+  public static function get_display_context($item, $album, $q) {
     $q_with_more_terms = search::add_query_terms($q);
     $position = search::get_position_within_album($item, $q_with_more_terms, $album);
 
     if ($position > 1) {
-      list ($count, $result_data) =
+      [$count, $result_data] =
         search::search_within_album($q_with_more_terms, $album, 3, $position - 2);
-      list ($previous_item, $ignore, $next_item) = $result_data;
+      [$previous_item, $ignore, $next_item] = $result_data;
     } else {
       $previous_item = null;
-      list ($count, $result_data) =
+      [$count, $result_data] =
         search::search_within_album($q_with_more_terms, $album, 1, $position);
-      list ($next_item) = $result_data;
+      [$next_item] = $result_data;
     }
 
     $search_url = url::abs_site("search" .
@@ -99,24 +99,20 @@ class Search_Controller extends Controller {
       "&show={$item->id}");
     $root = item::root();
 
-    return array("position" => $position,
+    return ["position" => $position,
                  "previous_item" => $previous_item,
                  "next_item" => $next_item,
                  "sibling_count" => $count,
-                 "siblings_callback" => array("Search_Controller::get_siblings", array($q, $album)),
-                 "breadcrumbs" => array(
+                 "siblings_callback" => ["Search_Controller::get_siblings", [$q, $album]],
+                 "breadcrumbs" => [
                    Breadcrumb::instance($root->title, $root->url())->set_first(),
-                   Breadcrumb::instance(t("Search: %q", array("q" => $q)), $search_url),
-                   Breadcrumb::instance($item->title, $item->url())->set_last()));
+                   Breadcrumb::instance(t("Search: %q", ["q" => $q]), $search_url),
+                   Breadcrumb::instance($item->title, $item->url())->set_last()]];
   }
 
-  static function get_siblings($q, $album, $limit, $offset) {
-    if (!isset($limit)) {
-      $limit = 100;
-    }
-    if (!isset($offset)) {
-      $offset = 1;
-    }
+  public static function get_siblings($q, $album, $limit, $offset) {
+    $limit ??= 100;
+    $offset ??= 1;
     $result = search::search_within_album(search::add_query_terms($q), $album, $limit, $offset);
     return $result[1];
   }

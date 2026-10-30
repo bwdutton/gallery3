@@ -25,7 +25,7 @@ use lsolesen\pel\PelTag;
 use lsolesen\pel\PelTiff;
 
 class autorotate {
-  static function rotate_item($item='') {
+  public static function rotate_item($item='') {
 
     // Only try to rotate photos based on EXIF
     if ($item->is_photo() && $item->mime_type == "image/jpeg") {
@@ -47,7 +47,7 @@ class autorotate {
 
         if($degrees) {
           $tmpfile = tempnam(TMPPATH, "rotate");
-          gallery_graphics::rotate($item->file_path(), $tmpfile, array("degrees" => $degrees));
+          gallery_graphics::rotate($item->file_path(), $tmpfile, ["degrees" => $degrees]);
 
           // Update EXIF info
           $data = new PelDataWindow(file_get_contents($tmpfile));

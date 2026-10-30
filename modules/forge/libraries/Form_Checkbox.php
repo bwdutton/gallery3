@@ -11,15 +11,15 @@
  */
 class Form_Checkbox_Core extends Form_Input {
 
-	protected $data = array
-	(
+	protected $data = 
+	[
 		'type' => 'checkbox',
 		'class' => 'checkbox',
 		'value' => '1',
 		'checked' => FALSE,
-	);
+	];
 
-	protected $protect = array('type');
+	protected $protect = ['type'];
 
 	public function __get($key)
 	{

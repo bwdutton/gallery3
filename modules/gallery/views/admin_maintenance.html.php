@@ -9,11 +9,11 @@
       <ul id="g-action-status" class="g-message-block">
         <?php if (module::get_var("gallery", "maintenance_mode")): ?>
         <li class="g-warning">
-          <?= t("Maintenance mode is <b>on</b>.  Non admins cannot access your Gallery.  <a href=\"%enable_maintenance_mode_url\">Turn off maintenance mode</a>", array("enable_maintenance_mode_url" => url::site("admin/maintenance/maintenance_mode/0?csrf=$csrf"))) ?>
+          <?= t("Maintenance mode is <b>on</b>.  Non admins cannot access your Gallery.  <a href=\"%enable_maintenance_mode_url\">Turn off maintenance mode</a>", ["enable_maintenance_mode_url" => url::site("admin/maintenance/maintenance_mode/0?csrf=$csrf")]) ?>
         </li>
         <?php else: ?>
         <li class="g-info">
-          <?= t("Maintenance mode is off.  User access is permitted.  <a href=\"%enable_maintenance_mode_url\">Turn on maintenance mode</a>", array("enable_maintenance_mode_url" => url::site("admin/maintenance/maintenance_mode/1?csrf=$csrf"))) ?>
+          <?= t("Maintenance mode is off.  User access is permitted.  <a href=\"%enable_maintenance_mode_url\">Turn on maintenance mode</a>", ["enable_maintenance_mode_url" => url::site("admin/maintenance/maintenance_mode/1?csrf=$csrf")]) ?>
         </li>
         <?php endif ?>
       </ul>
@@ -101,7 +101,7 @@
             <?php elseif ($task->state == "stalled"): ?>
             <?= t("Stalled") ?>
             <?php else: ?>
-            <?= t("%percent_complete% Complete", array("percent_complete" => $task->percent_complete)) ?>
+            <?= t("%percent_complete% Complete", ["percent_complete" => $task->percent_complete]) ?>
             <?php endif ?>
           </td>
           <td>

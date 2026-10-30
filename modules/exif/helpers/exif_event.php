@@ -18,19 +18,19 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class exif_event_Core {
-  static function item_created($item) {
+  public static function item_created($item) {
     if (!$item->is_album()) {
       exif::extract($item);
     }
   }
 
-  static function item_updated_data_file($item) {
+  public static function item_updated_data_file($item) {
     if (!$item->is_album()) {
       exif::extract($item);
     }
   }
 
-  static function item_deleted($item) {
+  public static function item_deleted($item) {
     db::build()
       ->delete("exif_records")
       ->where("item_id", "=", $item->id)

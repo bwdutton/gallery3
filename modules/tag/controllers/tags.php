@@ -40,14 +40,14 @@ class Tags_Controller extends Controller {
         }
       }
 
-      json::reply(array("result" => "success", "cloud" => (string)tag::cloud(30)));
+      json::reply(["result" => "success", "cloud" => (string)tag::cloud(30)]);
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      json::reply(["result" => "error", "html" => (string)$form]);
     }
   }
 
   public function autocomplete() {
-    $tags = array();
+    $tags = [];
     $tag_parts = explode(",", Input::instance()->get("term"));
     $tag_part = ltrim(end($tag_parts));
     $tag_list = ORM::factory("tag")

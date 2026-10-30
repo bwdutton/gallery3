@@ -24,22 +24,22 @@ class l10n_client_Core {
     return "http://galleryproject.org/translations/$path";
   }
 
-  static function server_api_key_url() {
+  public static function server_api_key_url() {
     return self::_server_url("userkey/" . self::client_token());
   }
 
-  static function client_token() {
+  public static function client_token() {
     return md5("l10n_client_client_token" . access::private_key());
   }
 
-  static function api_key($api_key=null) {
+  public static function api_key($api_key=null) {
     if ($api_key !== null) {
       module::set_var("gallery", "l10n_client_key", $api_key);
     }
     return module::get_var("gallery", "l10n_client_key", "");
   }
 
-  static function server_uid($api_key=null) {
+  public static function server_uid($api_key=null) {
     $api_key = $api_key == null ? l10n_client::api_key() : $api_key;
     $parts = explode(":", $api_key);
     return empty($parts) ? 0 : $parts[0];
@@ -50,29 +50,29 @@ class l10n_client_Core {
     return md5($api_key . $payload . l10n_client::client_token());
   }
 
-  static function validate_api_key($api_key) {
+  public static function validate_api_key($api_key) {
     $version = "1.0";
     $url = self::_server_url("status");
     $signature = self::_sign($version, $api_key);
 
     try {
-      list ($response_data, $response_status) = remote::post(
-        $url, array("version" => $version,
+      [$response_data, $response_status] = remote::post(
+        $url, ["version" => $version,
                     "client_token" => l10n_client::client_token(),
                     "signature" => $signature,
-                    "uid" => l10n_client::server_uid($api_key)));
+                    "uid" => l10n_client::server_uid($api_key)]);
     } catch (ErrorException $e) {
       // Log the error, but then return a "can't make connection" error
       Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
     if (!isset($response_data) && !isset($response_status)) {
-      return array(false, false);
+      return [false, false];
     }
 
     if (!remote::success($response_status)) {
-      return array(true, false);
+      return [true, false];
     }
-    return array(true, true);
+    return [true, true];
   }
 
   /**
@@ -84,9 +84,9 @@ class l10n_client_Core {
    * @return The number of messages for which we didn't fetch
    *     translations for.
    */
-  static function fetch_updates(&$num_fetched) {
+  public static function fetch_updates(&$num_fetched) {
     $request = new stdClass();
-    $request->locales = array();
+    $request->locales = [];
     $request->messages = new stdClass();
 
     $locales = locales::installed();
@@ -132,7 +132,7 @@ class l10n_client_Core {
 
     $request_data = json_encode($request);
     $url = self::_server_url("fetch");
-    list ($response_data, $response_status) = remote::post($url, array("data" => $request_data));
+    [$response_data, $response_status] = remote::post($url, ["data" => $request_data]);
     if (!remote::success($response_status)) {
       throw new Exception("@todo TRANSLATIONS_FETCH_REQUEST_FAILED " . $response_status);
     }
@@ -188,7 +188,7 @@ class l10n_client_Core {
     return $num_remaining;
   }
 
-  static function submit_translations() {
+  public static function submit_translations() {
     // Request format (HTTP POST):
     //   client_token = <client_token>
     //   uid = <l10n server user id>
@@ -222,11 +222,11 @@ class l10n_client_Core {
     $url = self::_server_url("submit");
     $signature = self::_sign($request_data);
 
-    list ($response_data, $response_status) = remote::post(
-      $url, array("data" => $request_data,
+    [$response_data, $response_status] = remote::post(
+      $url, ["data" => $request_data,
                   "client_token" => l10n_client::client_token(),
                   "signature" => $signature,
-                  "uid" => l10n_client::server_uid()));
+                  "uid" => l10n_client::server_uid()]);
 
     if (!remote::success($response_status)) {
       throw new Exception("@todo TRANSLATIONS_SUBMISSION_FAILED " . $response_status);
@@ -248,76 +248,23 @@ class l10n_client_Core {
   /**
    * Plural forms.
    */
-  static function plural_forms($locale) {
+  public static function plural_forms($locale) {
     $parts = explode('_', $locale);
     $language = $parts[0];
 
     // Data from CLDR 1.6 (http://unicode.org/cldr/data/common/supplemental/plurals.xml).
     // Docs: http://www.unicode.org/cldr/data/charts/supplemental/language_plural_rules.html
-    switch ($language) {
-      case 'az':
-      case 'fa':
-      case 'hu':
-      case 'ja':
-      case 'ko':
-      case 'my':
-      case 'to':
-      case 'tr':
-      case 'vi':
-      case 'yo':
-      case 'zh':
-      case 'bo':
-      case 'dz':
-      case 'id':
-      case 'jv':
-      case 'ka':
-      case 'km':
-      case 'kn':
-      case 'ms':
-      case 'th':
-        return array('other');
-
-      case 'ar':
-        return array('zero', 'one', 'two', 'few', 'many', 'other');
-
-      case 'lv':
-        return array('zero', 'one', 'other');
-
-      case 'ga':
-      case 'se':
-      case 'sma':
-      case 'smi':
-      case 'smj':
-      case 'smn':
-      case 'sms':
-        return array('one', 'two', 'other');
-
-      case 'ro':
-      case 'mo':
-      case 'lt':
-      case 'cs':
-      case 'sk':
-      case 'pl':
-        return array('one', 'few', 'other');
-
-      case 'hr':
-      case 'ru':
-      case 'sr':
-      case 'uk':
-      case 'be':
-      case 'bs':
-      case 'sh':
-      case 'mt':
-        return array('one', 'few', 'many', 'other');
-
-      case 'sl':
-        return array('one', 'two', 'few', 'other');
-
-      case 'cy':
-        return array('one', 'two', 'many', 'other');
-
-      default: // en, de, etc.
-        return array('one', 'other');
-    }
+    return match ($language) {
+        'az', 'fa', 'hu', 'ja', 'ko', 'my', 'to', 'tr', 'vi', 'yo', 'zh', 'bo', 'dz', 'id', 'jv', 'ka', 'km', 'kn', 'ms', 'th' => ['other'],
+        'ar' => ['zero', 'one', 'two', 'few', 'many', 'other'],
+        'lv' => ['zero', 'one', 'other'],
+        'ga', 'se', 'sma', 'smi', 'smj', 'smn', 'sms' => ['one', 'two', 'other'],
+        'ro', 'mo', 'lt', 'cs', 'sk', 'pl' => ['one', 'few', 'other'],
+        'hr', 'ru', 'sr', 'uk', 'be', 'bs', 'sh', 'mt' => ['one', 'few', 'many', 'other'],
+        'sl' => ['one', 'two', 'few', 'other'],
+        'cy' => ['one', 'two', 'many', 'other'],
+        // en, de, etc.
+        default => ['one', 'other'],
+    };
   }
 }

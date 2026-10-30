@@ -32,32 +32,31 @@
 //====================================================================
 function lookup_Panasonic_tag($tag) {
 	
-	switch($tag) {
-		case "0001": $tag = "Quality";break;
-		case "0002": $tag = "FirmwareVersion";break;
-		case "0003": $tag = "WhiteBalance";break;
-		case "0007": $tag = "FocusMode";break;
-		case "000f": $tag = "AFMode";break;	
-		case "001a": $tag = "ImageStabilizer";break;	
-		case "001c": $tag = "MacroMode";break;	
-		case "001f": $tag = "ShootingMode";break;	
-		case "0020": $tag = "Audio";break;	
-		case "0021": $tag = "DataDump";break;
-		case "0023": $tag = "WhiteBalanceBias";break;	
-		case "0024": $tag = "FlashBias";break;	
-		case "0025": $tag = "SerialNumber";break;	
-		case "0028": $tag = "ColourEffect";break;	
-		case "002a": $tag = "BurstMode";break;	
-		case "002b": $tag = "SequenceNumber";break;	
-		case "002c": $tag = "Contrast";break;	
-		case "002d": $tag = "NoiseReduction";break;	
-		case "002e": $tag = "SelfTimer";break;	
-		case "0030": $tag = "Rotation";break;	
-		case "0032": $tag = "ColorMode";break;	
-		case "0036": $tag = "TravelDay";break;	
-		
-		default: $tag = "unknown:".$tag;break;
-	}
+	$tag = match ($tag) {
+        "0001" => "Quality",
+        "0002" => "FirmwareVersion",
+        "0003" => "WhiteBalance",
+        "0007" => "FocusMode",
+        "000f" => "AFMode",
+        "001a" => "ImageStabilizer",
+        "001c" => "MacroMode",
+        "001f" => "ShootingMode",
+        "0020" => "Audio",
+        "0021" => "DataDump",
+        "0023" => "WhiteBalanceBias",
+        "0024" => "FlashBias",
+        "0025" => "SerialNumber",
+        "0028" => "ColourEffect",
+        "002a" => "BurstMode",
+        "002b" => "SequenceNumber",
+        "002c" => "Contrast",
+        "002d" => "NoiseReduction",
+        "002e" => "SelfTimer",
+        "0030" => "Rotation",
+        "0032" => "ColorMode",
+        "0036" => "TravelDay",
+        default => "unknown:".$tag,
+    };
 	
 	return $tag;
 }

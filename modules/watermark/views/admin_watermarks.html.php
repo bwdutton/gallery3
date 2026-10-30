@@ -19,10 +19,10 @@
       <div class="g-photo">
         <img width="<?= $width ?>" height="<?= $height ?>" src="<?= $url ?>" />
         <p>
-          <?= t("Position: %position", array("position" => watermark::position($position))) ?>
+          <?= t("Position: %position", ["position" => watermark::position($position)]) ?>
         </p>
         <p>
-          <?= t("Transparency: %transparency%", array("transparency" => module::get_var("watermark", "transparency"))) ?>
+          <?= t("Transparency: %transparency%", ["transparency" => module::get_var("watermark", "transparency")]) ?>
         </p>
       </div>
       <div class="controls">

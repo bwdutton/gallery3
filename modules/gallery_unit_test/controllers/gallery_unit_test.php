@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Unit_Test_Controller extends Controller {
-  function index() {
+  public function index() {
     if (!TEST_MODE) {
       throw new Kohana_404_Exception();
     }
@@ -99,9 +99,9 @@ class Gallery_Unit_Test_Controller extends Controller {
       $active_modules = module::$active;
 
       // Reset our caches
-      module::$modules = array();
-      module::$active = array();
-      module::$var_cache = array();
+      module::$modules = [];
+      module::$active = [];
+      module::$var_cache = [];
       $db->clear_cache();
 
       // Rest the cascading class path
@@ -114,9 +114,9 @@ class Gallery_Unit_Test_Controller extends Controller {
 
       module::install("user");
       module::activate("user");
-      $modules = $paths = array();
+      $modules = $paths = [];
       foreach (module::available() as $module_name => $unused) {
-        if (in_array($module_name, array("gallery", "user"))) {
+        if (in_array($module_name, ["gallery", "user"])) {
           $paths[] = MODPATH . "{$module_name}/tests";
           continue;
         }
@@ -151,7 +151,7 @@ class Gallery_Unit_Test_Controller extends Controller {
       $failed = 1;
     } else {
       $failed = 0;
-      foreach ($unit_test->stats as $class => $stats) {
+      foreach ($unit_test->stats as $stats) {
         $failed += ($stats["failed"] + $stats["errors"]);
       }
     }

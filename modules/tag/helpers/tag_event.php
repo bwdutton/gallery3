@@ -24,8 +24,8 @@ class tag_event_Core {
    *
    * @param Item_Model $photo
    */
-  static function item_created($photo) {
-    $tags = array();
+  public static function item_created($photo) {
+    $tags = [];
     if ($photo->is_photo()) {
       $path = $photo->file_path();
       $size = getimagesize($photo->file_path(), $info);
@@ -57,19 +57,19 @@ class tag_event_Core {
     return;
   }
 
-  static function item_deleted($item) {
+  public static function item_deleted($item) {
     tag::clear_all($item);
     if (!batch::in_progress()) {
       tag::compact();
     }
   }
 
-  static function batch_complete() {
+  public static function batch_complete() {
     tag::compact();
   }
 
-  static function item_edit_form($item, $form) {
-    $tag_names = array();
+  public static function item_edit_form($item, $form) {
+    $tag_names = [];
     foreach (tag::item_tags($item) as $tag) {
       $tag_names[] = $tag->name;
     }
@@ -79,7 +79,7 @@ class tag_event_Core {
     $form->script("")->text(self::_get_autocomplete_js());
   }
 
-  static function item_edit_form_completed($item, $form) {
+  public static function item_edit_form_completed($item, $form) {
     tag::clear_all($item);
     if (!is_null($form->edit_item->tags->value)) {
       foreach (explode(",", $form->edit_item->tags->value) as $tag_name) {
@@ -92,7 +92,7 @@ class tag_event_Core {
     tag::compact();
   }
 
-  static function admin_menu($menu, $theme) {
+  public static function admin_menu($menu, $theme) {
     $menu->get("content_menu")
       ->append(Menu::factory("link")
                ->id("tags")
@@ -100,13 +100,13 @@ class tag_event_Core {
                ->url(url::site("admin/tags")));
   }
 
-  static function item_index_data($item, $data) {
+  public static function item_index_data($item, $data) {
     foreach (tag::item_tags($item) as $tag) {
       $data[] = $tag->name;
     }
   }
 
-  static function add_photos_form($album, $form) {
+  public static function add_photos_form($album, $form) {
     $group = $form->add_photos;
 
     $group->input("tags")
@@ -116,7 +116,7 @@ class tag_event_Core {
     $group->script("")->text(self::_get_autocomplete_js());
   }
 
-  static function add_photos_form_completed($item, $form) {
+  public static function add_photos_form_completed($item, $form) {
     $group = $form->add_photos;
 
     foreach (explode(",", $group->tags->value) as $tag_name) {
@@ -127,18 +127,18 @@ class tag_event_Core {
     }
   }
 
-  static function info_block_get_metadata($block, $item) {
-    $tags = array();
+  public static function info_block_get_metadata($block, $item) {
+    $tags = [];
     foreach (tag::item_tags($item) as $tag) {
       $tags[] = "<a href=\"{$tag->url()}\">" .
         html::clean($tag->name) . "</a>";
     }
     if ($tags) {
       $info = $block->content->metadata;
-      $info["tags"] = array(
+      $info["tags"] = [
         "label" => t("Tags:"),
         "value" => implode(", ", $tags)
-      );
+      ];
       $block->content->metadata = $info;
     }
   }

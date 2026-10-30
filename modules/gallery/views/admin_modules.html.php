@@ -43,7 +43,7 @@
   </script>
   <h1> <?= t("Gallery Modules") ?> </h1>
   <p>
-    <?= t("Power up your Gallery by <a href=\"%url\">adding more modules</a>! Each module provides new cool features.", array("url" => "http://codex.galleryproject.org/Category:Gallery_3:Modules")) ?>
+    <?= t("Power up your Gallery by <a href=\"%url\">adding more modules</a>! Each module provides new cool features.", ["url" => "http://codex.galleryproject.org/Category:Gallery_3:Modules"]) ?>
   </p>
 
   <?php if ($obsolete_modules_message): ?>
@@ -65,7 +65,7 @@
         </tr>
         <?php foreach ($available as $module_name => $module_info):  ?>
         <tr class="<?= text::alternate("g-odd", "g-even") ?>">
-          <?php $data = array("name" => $module_name); ?>
+          <?php $data = ["name" => $module_name]; ?>
           <?php if ($module_info->locked) $data["disabled"] = 1; ?>
           <td> <?= form::checkbox($data, '1', module::is_active($module_name)) ?> </td>
           <td> <?= t($module_info->name) ?> </td>

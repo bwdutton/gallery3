@@ -26,8 +26,8 @@ class comments_rest_Core {
    *   num=#
    *     return up to N comments (max 100)
    */
-  static function get($request) {
-    $comments = array();
+  public static function get($request) {
+    $comments = [];
 
     $p = $request->params;
     $num = isset($p->num) ? min((int)$p->num, 100) : 10;
@@ -36,12 +36,12 @@ class comments_rest_Core {
     foreach (ORM::factory("comment")->viewable()->find_all($num, $start) as $comment) {
       $comments[] = rest::url("comment", $comment);
     }
-    return array("url" => rest::url("comments"),
-                 "members" => $comments);
+    return ["url" => rest::url("comments"),
+                 "members" => $comments];
   }
 
 
-  static function post($request) {
+  public static function post($request) {
     $entity = $request->params->entity;
 
     $item = rest::resolve($entity->item);
@@ -53,10 +53,10 @@ class comments_rest_Core {
     $comment->text = $entity->text;
     $comment->save();
 
-    return array("url" => rest::url("comment", $comment));
+    return ["url" => rest::url("comment", $comment)];
   }
 
-  static function url() {
+  public static function url() {
     return url::abs_site("rest/comments");
   }
 }

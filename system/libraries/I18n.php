@@ -12,12 +12,12 @@ class I18n_Core
 {
 	protected static $locale = 'en_US';
 	// All the translations will be cached in here, after the first call of get_text()
-	protected static $translations = array();
+	protected static $translations = [];
 
 	public static function set_locale($locale)
 	{
 		// Reset the translations array
-		I18n::$translations = array();
+		I18n::$translations = [];
 
 		I18n::$locale = $locale;
 	}

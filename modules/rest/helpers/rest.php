@@ -20,7 +20,7 @@
 class rest_Core {
   const API_VERSION = "3.0";
 
-  static function reply($data=array()) {
+  public static function reply($data=[]) {
     Session::instance()->abort_save();
 
     header("X-Gallery-API-Version: " . rest::API_VERSION);
@@ -32,7 +32,7 @@ class rest_Core {
     case "jsonp":
       if (!($callback = Input::instance()->get("callback", ""))) {
         throw new Rest_Exception(
-          "Bad Request", 400, array("errors" => array("callback" => "missing")));
+          "Bad Request", 400, ["errors" => ["callback" => "missing"]]);
       }
 
       if (preg_match('/^[$A-Za-z_][0-9A-Za-z_]*$/', $callback) == 1) {
@@ -40,7 +40,7 @@ class rest_Core {
         print "$callback(" . json_encode($data) . ")";
       } else {
         throw new Rest_Exception(
-          "Bad Request", 400, array("errors" => array("callback" => "invalid")));
+          "Bad Request", 400, ["errors" => ["callback" => "invalid"]]);
       }
       break;
 
@@ -66,7 +66,7 @@ class rest_Core {
     }
   }
 
-  static function set_active_user($access_key) {
+  public static function set_active_user($access_key) {
     if (empty($access_key)) {
       if (module::get_var("rest", "allow_guest_access")) {
         identity::set_active_user(identity::guest());
@@ -92,7 +92,7 @@ class rest_Core {
     identity::set_active_user($user);
   }
 
-  static function reset_access_key() {
+  public static function reset_access_key() {
     $key = ORM::factory("user_access_key")
       ->where("user_id", "=", identity::active_user()->id)
       ->find();
@@ -102,7 +102,7 @@ class rest_Core {
     return rest::access_key();
   }
 
-  static function access_key() {
+  public static function access_key() {
     $key = ORM::factory("user_access_key")
       ->where("user_id", "=", identity::active_user()->id)
       ->find();
@@ -126,7 +126,7 @@ class rest_Core {
    * @param string  the fully qualified REST url
    * @return mixed  the corresponding object (usually a model of some kind)
    */
-  static function resolve($url) {
+  public static function resolve($url) {
     if ($suffix = Kohana::config('core.url_suffix')) {
       $relative_url = substr($url, strlen(url::abs_site("rest")) - strlen($suffix));
     } else {
@@ -145,7 +145,7 @@ class rest_Core {
       throw new Kohana_404_Exception($url);
     }
 
-    return call_user_func(array($class, "resolve"), !empty($components[2]) ? $components[2] : null);
+    return call_user_func([$class, "resolve"], !empty($components[2]) ? $components[2] : null);
   }
 
   /**
@@ -153,7 +153,7 @@ class rest_Core {
    * @param  string  resource type (eg, "item", "tag")
    * @param  object  resource
    */
-  static function url() {
+  public static function url() {
     $args = func_get_args();
     $resource_type = array_shift($args);
 
@@ -162,9 +162,9 @@ class rest_Core {
       throw new Rest_Exception("Bad Request", 400);
     }
 
-    $url = call_user_func_array(array($class, "url"), $args);
+    $url = call_user_func_array([$class, "url"], $args);
     if (Input::instance()->get("output") == "html") {
-      if (strpos($url, "?") === false) {
+      if (!str_contains($url, "?")) {
         $url .= "?output=html";
       } else {
         $url .= "&output=html";
@@ -173,13 +173,13 @@ class rest_Core {
     return $url;
   }
 
-  static function relationships($resource_type, $resource) {
-    $results = array();
+  public static function relationships($resource_type, $resource) {
+    $results = [];
     foreach (module::active() as $module) {
       foreach (glob(MODPATH . "{$module->name}/helpers/*_rest.php") as $filename) {
         $class = str_replace(".php", "", basename($filename));
         if (class_exists($class) && method_exists($class, "relationships")) {
-          if ($tmp = call_user_func(array($class, "relationships"), $resource_type, $resource)) {
+          if ($tmp = call_user_func([$class, "relationships"], $resource_type, $resource)) {
             $results = array_merge($results, $tmp);
           }
         }

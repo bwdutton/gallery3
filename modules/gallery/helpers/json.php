@@ -24,7 +24,7 @@ class json_Core {
    *
    * @param  mixed $message string or object to json encode and print
    */
-  static function reply($message) {
+  public static function reply($message) {
     header("Content-Type: application/json; charset=" . Kohana::CHARSET);
     print json_encode($message);
   }

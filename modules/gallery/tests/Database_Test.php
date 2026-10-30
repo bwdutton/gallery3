@@ -18,14 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Database_Test extends Gallery_Unit_Test_Case {
-  function setup() {
+  public function setup() {
     $config = Kohana_Config::instance();
     $config->set("database.mock.connection.type", "mock");
     $config->set("database.mock.cache", false);
     $config->set("database.mock.table_prefix", "g_");
   }
 
-  function simple_where_test() {
+  public function simple_where_test() {
     $sql = db::build("mock")
       ->select("some_column")
       ->from("some_table")
@@ -36,7 +36,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
     $this->assert_same("SELECT [some_column] FROM [some_table] WHERE [a] = [1] AND [b] = [2]", $sql);
   }
 
-  function compound_where_test() {
+  public function compound_where_test() {
     $sql = db::build("mock")
       ->select()
       ->where("outer1", "=", 1)
@@ -52,7 +52,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
       $sql);
   }
 
-  function group_first_test() {
+  public function group_first_test() {
     $sql = db::build("mock")
       ->select()
       ->and_open()
@@ -68,7 +68,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
       $sql);
   }
 
-  function where_array_test() {
+  public function where_array_test() {
     $sql = db::build("mock")
       ->select()
       ->where("outer1", "=", 1)
@@ -84,7 +84,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
       $sql);
   }
 
-  function notlike_test() {
+  public function notlike_test() {
     $sql = db::build("mock")
       ->select()
       ->where("outer1", "=", 1)
@@ -98,7 +98,7 @@ class Database_Test extends Gallery_Unit_Test_Case {
       $sql);
   }
 
-  function prefix_replacement_test() {
+  public function prefix_replacement_test() {
     $db = Database::instance("mock");
     $converted = $db->add_table_prefixes("CREATE TABLE IF NOT EXISTS {test} (
                    `id` int(9) NOT NULL auto_increment,
@@ -130,25 +130,25 @@ class Database_Test extends Gallery_Unit_Test_Case {
     $this->assert_same($expected, $sql);
   }
 
-  function prefix_replacement_for_rename_table_test() {
+  public function prefix_replacement_for_rename_table_test() {
     $db = Database::instance("mock");
     $this->assert_same(
       "RENAME TABLE `g_test` TO `g_new_test`",
       $db->add_table_prefixes("RENAME TABLE {test} TO {new_test}"));
   }
 
-  function prefix_no_replacement_test() {
+  public function prefix_no_replacement_test() {
     $sql = db::build("mock")
       ->from("test_tables")
       ->where("1", "=", "1")
-      ->set(array("name" => "Test Name"))
+      ->set(["name" => "Test Name"])
       ->update()
       ->compile();
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same("UPDATE [test_tables] SET [name] = [Test Name] WHERE [1] = [1]", $sql);
   }
 
-  function escape_for_like_test() {
+  public function escape_for_like_test() {
     // Note: literal double backslash is written as \\\
     $this->assert_same('basic\_test', Database::escape_for_like("basic_test"));
     $this->assert_same('\\\100\%\_test/', Database::escape_for_like('\100%_test/'));
@@ -178,7 +178,7 @@ class Database_Mock extends Database {
   }
 
   public function list_tables() {
-    return array("test");
+    return ["test"];
   }
 
   public function quote_column($val, $alias=null) {

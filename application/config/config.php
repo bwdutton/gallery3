@@ -40,17 +40,16 @@
  *
  * Rawurlencode each of the elements to avoid breaking the page layout.
  */
-$config["site_domain"] = getEnv('SITE_DOMAIN') ? getEnv('SITE_DOMAIN') :
-  implode("/", array_map("rawurlencode", explode("/",
-      substr($_SERVER["SCRIPT_NAME"], 0,
-             strpos($_SERVER["SCRIPT_NAME"], basename($_SERVER["SCRIPT_FILENAME"]))))));
+$config["site_domain"] = getEnv('SITE_DOMAIN') ?: implode("/", array_map(rawurlencode(...), explode("/",
+    substr($_SERVER["SCRIPT_NAME"], 0,
+           strpos($_SERVER["SCRIPT_NAME"], basename($_SERVER["SCRIPT_FILENAME"]))))));
 
 /**
  * Force a default protocol to be used by the site. If no site_protocol is
  * specified, then the current protocol is used, or when possible, only an
  * absolute path (with no protocol/domain) is used.
  */
-$config["site_protocol"] = getEnv('SITE_PROTOCOL') ? getEnv('SITE_PROTOCOL') : "";
+$config["site_protocol"] = getEnv('SITE_PROTOCOL') ?: "";
 
 /**
  * Name of the front controller for this application. Default: index.php
@@ -143,18 +142,18 @@ $config["extension_prefix"] = "MY_";
  * An optional list of Config Drivers to use, they "fallback" to the one below them if they
  * dont work so the first driver is tried then so on until it hits the built in "array" driver and fails
  */
-$config['config_drivers'] = array();
+$config['config_drivers'] = [];
 
 /**
  * Additional resource paths, or "modules". Each path can either be absolute
  * or relative to the docroot. Modules can include any resource that can exist
  * in your application directory, configuration files, controllers, views, etc.
  */
-$config["modules"] = array(
+$config["modules"] = [
   MODPATH . "forge",
   MODPATH . "kohana23_compat",
   MODPATH . "gallery",  // gallery must be *last* in the order
-);
+];
 
 if (TEST_MODE) {
   $config["site_domain"] = '.';
@@ -162,6 +161,6 @@ if (TEST_MODE) {
   $config["index_page"] = 'index.php';
 
   array_splice($config["modules"], 0, 0,
-               array(MODPATH . "gallery_unit_test",
-                     MODPATH . "unit_test"));
+               [MODPATH . "gallery_unit_test",
+                     MODPATH . "unit_test"]);
 }

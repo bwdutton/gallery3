@@ -19,7 +19,7 @@
  */
 class tag_task_Core {
 
-  static function available_tasks() {
+  public static function available_tasks() {
     $tasks[] = Task_Definition::factory()
       ->callback("tag_task::clean_up_tags")
       ->name(t("Clean up tags"))
@@ -32,8 +32,8 @@ class tag_task_Core {
    * Fix up tag counts and delete any tags that have no associated items.
    * @param Task_Model the task
    */
-  static function clean_up_tags($task) {
-    $errors = array();
+  public static function clean_up_tags($task) {
+    $errors = [];
     try {
       $start = microtime(true);
       $last_tag_id = $task->get("last_tag_id", null);

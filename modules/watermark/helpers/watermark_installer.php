@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class watermark_installer {
-  static function install() {
+  public static function install() {
     $db = Database::instance();
     $db->query("CREATE TABLE IF NOT EXISTS {watermarks} (
                  `id` int(9) NOT NULL auto_increment,
@@ -35,7 +35,7 @@ class watermark_installer {
     @mkdir(VARPATH . "modules/watermark");
   }
 
-  static function uninstall() {
+  public static function uninstall() {
     Database::instance()->query("DROP TABLE {watermarks}");
     dir::unlink(VARPATH . "modules/watermark");
   }

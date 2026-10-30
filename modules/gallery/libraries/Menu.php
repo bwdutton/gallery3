@@ -23,11 +23,10 @@ class Menu_Element {
   public $css_id;
   public $css_class;
   public $id;
-  public $type;
   public $view;
 
-  public function __construct($type) {
-    $this->type = $type;
+  public function __construct(public $type)
+  {
   }
 
   /**
@@ -96,7 +95,7 @@ class Menu_Element {
  */
 class Menu_Element_Link extends Menu_Element {
   public function render() {
-    $view = new View(isset($this->view) ? $this->view : "menu_link.html");
+    $view = new View($this->view ?? "menu_link.html");
     $view->menu = $this;
     return $view;
   }
@@ -118,7 +117,7 @@ class Menu_Element_Ajax_Link extends Menu_Element {
   }
 
   public function render() {
-    $view = new View(isset($this->view) ? $this->view : "menu_ajax_link.html");
+    $view = new View($this->view ?? "menu_ajax_link.html");
     $view->menu = $this;
     return $view;
   }
@@ -129,7 +128,7 @@ class Menu_Element_Ajax_Link extends Menu_Element {
  */
 class Menu_Element_Dialog extends Menu_Element {
   public function render() {
-    $view = new View(isset($this->view) ? $this->view : "menu_dialog.html");
+    $view = new View($this->view ?? "menu_dialog.html");
     $view->menu = $this;
     return $view;
   }
@@ -172,7 +171,7 @@ class Menu_Core extends Menu_Element {
 
   public function __construct($type) {
     parent::__construct($type);
-    $this->elements = array();
+    $this->elements = [];
     $this->is_root = $type == "root";
   }
 
@@ -188,7 +187,7 @@ class Menu_Core extends Menu_Element {
    * Add a new element to this menu, after the specific element
    */
   public function add_after($target_id, $new_menu_element) {
-    $copy = array();
+    $copy = [];
     foreach ($this->elements as $id => $menu_element) {
       $copy[$id] = $menu_element;
       if ($id == $target_id) {
@@ -203,7 +202,7 @@ class Menu_Core extends Menu_Element {
    * Add a new element to this menu, before the specific element
    */
   public function add_before($target_id, $new_menu_element) {
-    $copy = array();
+    $copy = [];
     foreach ($this->elements as $id => $menu_element) {
       if ($id == $target_id) {
         $copy[$new_menu_element->id] = $new_menu_element;
@@ -247,12 +246,12 @@ class Menu_Core extends Menu_Element {
   }
 
   public function render() {
-    $view = new View(isset($this->view) ? $this->view : "menu.html");
+    $view = new View($this->view ?? "menu.html");
     $view->menu = $this;
     return $view;
   }
 
-  static function title_comparator($a, $b) {
+  public static function title_comparator($a, $b) {
     return strnatcasecmp((string)$a->label, (string)$b->label);
   }
 }

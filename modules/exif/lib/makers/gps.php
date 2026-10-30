@@ -32,42 +32,40 @@
 //====================================================================
 function lookup_GPS_tag($tag) {
 
-	switch($tag) {
-		case "0000": $tag = "Version";break;
-		case "0001": $tag = "Latitude Reference";break;			//north or south
-		case "0002": $tag = "Latitude";break;					//dd mm.mm or dd mm ss
-		case "0003": $tag = "Longitude Reference";break;		//east or west
-		case "0004": $tag = "Longitude";break;					//dd mm.mm or dd mm ss
-		case "0005": $tag = "Altitude Reference";break;			//sea level or below sea level
-		case "0006": $tag = "Altitude";break;					//positive rational number
-		case "0007": $tag = "Time";break;						//three positive rational numbers
-		case "0008": $tag = "Satellite";break;					//text string up to 999 bytes long
-		case "0009": $tag = "ReceiveStatus";break;				//in progress or interop
-		case "000a": $tag = "MeasurementMode";break;			//2D or 3D
-		case "000b": $tag = "MeasurementPrecision";break;		//positive rational number
-		case "000c": $tag = "SpeedUnit";break;					//KPH, MPH, knots
-		case "000d": $tag = "ReceiverSpeed";break;				//positive rational number	
-		case "000e": $tag = "MovementDirectionRef";break;		//true or magnetic north
-		case "000f": $tag = "MovementDirection";break;			//positive rational number
-		case "0010": $tag = "ImageDirectionRef";break;			//true or magnetic north
-		case "0011": $tag = "ImageDirection";break;				//positive rational number
-		case "0012": $tag = "GeodeticSurveyData";break;			//text string up to 999 bytes long
-		case "0013": $tag = "DestLatitudeRef";break;			//north or south
-		case "0014": $tag = "DestinationLatitude";break;		//three positive rational numbers
-		case "0015": $tag = "DestLongitudeRef";break;			//east or west
-		case "0016": $tag = "DestinationLongitude";break;		//three positive rational numbers
-		case "0017": $tag = "DestBearingRef";break;				//true or magnetic north
-		case "0018": $tag = "DestinationBearing";break;			//positive rational number
-		case "0019": $tag = "DestDistanceRef";break;			//km, miles, knots
-		case "001a": $tag = "DestinationDistance";break;		//positive rational number
-		case "001b": $tag = "ProcessingMethod";break;			
-		case "001c": $tag = "AreaInformation";break;
-		case "001d": $tag = "Datestamp";break;					//text string 10 bytes long
-		case "001e": $tag = "DifferentialCorrection";break;		//integer in range 0-65535
-		
-		
-		default: $tag = "unknown:".$tag;break;
-	}
+	$tag = match ($tag) {
+        "0000" => "Version",
+        "0001" => "Latitude Reference",
+        "0002" => "Latitude",
+        "0003" => "Longitude Reference",
+        "0004" => "Longitude",
+        "0005" => "Altitude Reference",
+        "0006" => "Altitude",
+        "0007" => "Time",
+        "0008" => "Satellite",
+        "0009" => "ReceiveStatus",
+        "000a" => "MeasurementMode",
+        "000b" => "MeasurementPrecision",
+        "000c" => "SpeedUnit",
+        "000d" => "ReceiverSpeed",
+        "000e" => "MovementDirectionRef",
+        "000f" => "MovementDirection",
+        "0010" => "ImageDirectionRef",
+        "0011" => "ImageDirection",
+        "0012" => "GeodeticSurveyData",
+        "0013" => "DestLatitudeRef",
+        "0014" => "DestinationLatitude",
+        "0015" => "DestLongitudeRef",
+        "0016" => "DestinationLongitude",
+        "0017" => "DestBearingRef",
+        "0018" => "DestinationBearing",
+        "0019" => "DestDistanceRef",
+        "001a" => "DestinationDistance",
+        "001b" => "ProcessingMethod",
+        "001c" => "AreaInformation",
+        "001d" => "Datestamp",
+        "001e" => "DifferentialCorrection",
+        default => "unknown:".$tag,
+    };
 	
 	return $tag;
 }
@@ -84,7 +82,7 @@ function formatGPSData($type,$tag,$intel,$data) {
 
 	} else if($type=="URATIONAL" || $type=="SRATIONAL") {
 		if($tag=="0002" || $tag=="0004" || $tag=='0007') { //Latitude, Longitude, Time
-			$datum = array();
+			$datum = [];
 			for ($i=0;$i<strlen($data);$i=$i+8) {
 				array_push($datum,substr($data, $i, 8));
 			}
@@ -186,7 +184,7 @@ function parseGPS($block,&$result,$offset,$seek, $globalOffset) {
 		if($bytesofdata<=4) {
 			$data = $value;
 		} else {
-			if (strpos('unknown',$tag_name) !== false || $bytesofdata > 1024) {
+			if (str_contains('unknown',$tag_name) || $bytesofdata > 1024) {
 				$result['Errors'] = $result['Errors']++;
 				$data = '';
 				$type = 'ASCII';

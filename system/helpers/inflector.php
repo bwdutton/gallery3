@@ -10,7 +10,7 @@
 class inflector_Core {
 
 	// Cached inflections
-	protected static $cache = array();
+	protected static $cache = [];
 
 	// Uncountable and irregular words
 	protected static $uncountable;
@@ -106,7 +106,7 @@ class inflector_Core {
 		{
 			$str = substr($str, 0, -3).'y';
 		}
-		elseif (substr($str, -1) === 's' AND substr($str, -2) !== 'ss')
+		elseif (str_ends_with($str, 's') AND !str_ends_with($str, 'ss'))
 		{
 			$str = substr($str, 0, -1);
 		}
@@ -246,7 +246,7 @@ class inflector_Core {
 	 */
 	public static function humanize($str)
 	{
-		return trim(preg_replace('/[_-\s]+/', ' ', $str));
+		return trim(preg_replace('/[_\-\s]+/', ' ', $str));
 	}
 
 } // End inflector

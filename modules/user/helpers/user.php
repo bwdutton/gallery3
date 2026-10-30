@@ -31,7 +31,7 @@ class user_Core {
    *
    * @return User_Model
    */
-  static function guest() {
+  public static function guest() {
     return model_cache::get("user", 1);
   }
 
@@ -40,7 +40,7 @@ class user_Core {
    *
    * @return User_Model
    */
-  static function admin_user() {
+  public static function admin_user() {
     $active = identity::active_user();
     if ($active->admin) {
       return $active;
@@ -56,7 +56,7 @@ class user_Core {
    * @param string $password a plaintext password
    * @return boolean true if the password is correct
    */
-  static function is_correct_password($user, $password) {
+  public static function is_correct_password($user, $password) {
     $valid = $user->password;
 
     // Try phpass first, since that's what we generate.
@@ -84,13 +84,13 @@ class user_Core {
     return false;
   }
 
-  static function valid_password($password_input) {
+  public static function valid_password($password_input) {
     if (!user::is_correct_password(identity::active_user(), $password_input->value)) {
       $password_input->add_error("invalid_password", 1);
     }
   }
 
-  static function valid_username($text_input) {
+  public static function valid_username($text_input) {
     if (!self::lookup_by_name($text_input->value)) {
       $text_input->add_error("invalid_username", 1);
     }
@@ -101,7 +101,7 @@ class user_Core {
    * @param string $password a plaintext password
    * @return string hashed password
    */
-  static function hash_password($password) {
+  public static function hash_password($password) {
     require_once(MODPATH . "user/lib/PasswordHash.php");
     $hashGenerator = new PasswordHash(10, true);
     return $hashGenerator->HashPassword($password);
@@ -112,7 +112,7 @@ class user_Core {
    * @param integer      $id the user id
    * @return User_Model  the user object, or null if the id was invalid.
    */
-  static function lookup($id) {
+  public static function lookup($id) {
     return self::_lookup_user_by_field("id", $id);
   }
 
@@ -121,7 +121,7 @@ class user_Core {
    * @param integer      $name the user name
    * @return User_Model  the user object, or null if the name was invalid.
    */
-  static function lookup_by_name($name) {
+  public static function lookup_by_name($name) {
     return self::_lookup_user_by_field("name", $name);
   }
 
@@ -130,7 +130,7 @@ class user_Core {
    * @param integer      $hash the user hash value
    * @return User_Model  the user object, or null if the name was invalid.
    */
-  static function lookup_by_hash($hash) {
+  public static function lookup_by_hash($hash) {
     return self::_lookup_user_by_field("hash", $hash);
   }
 
@@ -139,17 +139,14 @@ class user_Core {
    * @param mixed      filters (@see Database.php
    * @return array     the user list.
    */
-  static function get_user_list($filter=array()) {
+  public static function get_user_list($filter=[]) {
     $user = ORM::factory("user");
 
     foreach($filter as $method => $args) {
-      switch ($method) {
-      case "in":
-        $user->in($args[0], $args[1]);
-        break;
-      default:
-        $user->$method($args);
-      }
+      match ($method) {
+          "in" => $user->in($args[0], $args[1]),
+          default => $user->$method($args),
+      };
     }
     return $user->find_all();
   }
@@ -167,7 +164,7 @@ class user_Core {
         return $user;
       }
     } catch (Exception $e) {
-      if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
+      if (!str_contains($e->getMessage(), "MISSING_MODEL")) {
        throw $e;
       }
     }

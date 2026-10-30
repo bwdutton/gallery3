@@ -18,16 +18,16 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class comment_theme_Core {
-  static function head($theme) {
+  public static function head($theme) {
     return $theme->css("comment.css")
       . $theme->script("comment.js");
   }
 
-  static function admin_head($theme) {
+  public static function admin_head($theme) {
     return $theme->css("comment.css");
   }
 
-  static function photo_bottom($theme) {
+  public static function photo_bottom($theme) {
     $block = new Block;
     $block->css_id = "g-comments";
     $block->title = t("Comments");

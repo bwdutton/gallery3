@@ -23,7 +23,7 @@ class num extends num_Core {
    * ref: http://us2.php.net/manual/en/function.ini-get.php
    * ref: http://us2.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
    */
-  static function convert_to_bytes($val) {
+  public static function convert_to_bytes($val) {
     $val = strtolower(trim($val));
     $len = strlen($val);
     $last = substr($val, $len-1);
@@ -46,8 +46,8 @@ class num extends num_Core {
    * ref: http://us2.php.net/manual/en/function.ini-get.php
    * ref: http://us2.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
    */
-  static function convert_to_human_readable($num) {
-    foreach (array("G" => 1e9, "M" => 1e6, "K" => 1e3) as $k => $v) {
+  public static function convert_to_human_readable($num) {
+    foreach (["G" => 1e9, "M" => 1e6, "K" => 1e3] as $k => $v) {
       if ($num > $v) {
         $num = round($num / $v) . $k;
         break;

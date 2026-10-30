@@ -41,7 +41,7 @@ class L10n_Client_Controller extends Controller {
     $is_empty = true;
     if ($is_plural) {
       $plural_forms = l10n_client::plural_forms($locale);
-      $translation = array();
+      $translation = [];
       foreach($plural_forms as $plural_form) {
         $value = $input->post("l10n-edit-plural-translation-$plural_form");
         if (null === $value || !is_string($value)) {
@@ -113,7 +113,7 @@ class L10n_Client_Controller extends Controller {
   }
 
   private static function _l10n_client_search_form() {
-    $form = new Forge("#", "", "post", array("id" => "g-l10n-search-form"));
+    $form = new Forge("#", "", "post", ["id" => "g-l10n-search-form"]);
     $group = $form->group("l10n_search");
     $group->input("l10n-search")->id("g-l10n-search");
 
@@ -122,13 +122,13 @@ class L10n_Client_Controller extends Controller {
 
   public static function l10n_form() {
     if (Input::instance()->get("show_all_l10n_messages")) {
-      $calls = array();
+      $calls = [];
       foreach (db::build()
                ->select("key", "message")
                ->from("incoming_translations")
                ->where("locale", "=", "root")
                ->execute() as $row) {
-        $calls[$row->key] = array(unserialize($row->message), array());
+        $calls[$row->key] = [unserialize($row->message), []];
       }
     } else {
       $calls = Gallery_I18n::instance()->call_log();
@@ -136,7 +136,7 @@ class L10n_Client_Controller extends Controller {
     $locale = Gallery_I18n::instance()->locale();
 
     if ($calls) {
-      $translations = array();
+      $translations = [];
       foreach (db::build()
                ->select("key", "translation")
                ->from("incoming_translations")
@@ -153,18 +153,18 @@ class L10n_Client_Controller extends Controller {
         $translations[$row->key] = unserialize($row->translation);
       }
 
-      $string_list = array();
-      $cache = array();
+      $string_list = [];
+      $cache = [];
       foreach ($calls as $key => $call) {
-        list ($message, $options) = $call;
+        [$message, $options] = $call;
         // Ensure that the message is in the DB
         l10n_scanner::process_message($message, $cache);
         // Note: Not interpolating placeholders for the actual translation input field.
         // TODO: Might show a preview w/ interpolations (using $options)
-        $translation = isset($translations[$key]) ? $translations[$key] : '';
-        $string_list[] = array('source' => $message,
+        $translation = $translations[$key] ?? '';
+        $string_list[] = ['source' => $message,
                                'key' => $key,
-                               'translation' => $translation);
+                               'translation' => $translation];
       }
 
       $v = new View('l10n_client.html');

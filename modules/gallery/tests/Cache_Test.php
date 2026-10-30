@@ -54,59 +54,59 @@ class Cache_Test extends Gallery_Unit_Test_Case {
       ->values($id, "<tag1>, <tag2>", 84600 + time(), serialize("some test data"))
       ->execute();
 
-    $data = $this->_driver->get(array($id));
+    $data = $this->_driver->get([$id]);
     $this->assert_equal("some test data", $data, "cached data should match");
 
-    $data = $this->_driver->get(array(""));
+    $data = $this->_driver->get([""]);
     $this->assert_equal(null, $data, "cached data should not be found");
   }
 
   public function cache_set_test() {
     $id = random::hash();
-    $original_data = array("field1" => "value1", "field2" => "value2");
-    $this->_driver->set(array($id => $original_data), array("tag1", "tag2"), 84600);
+    $original_data = ["field1" => "value1", "field2" => "value2"];
+    $this->_driver->set([$id => $original_data], ["tag1", "tag2"], 84600);
 
-    $data = $this->_driver->get(array($id));
+    $data = $this->_driver->get([$id]);
     $this->assert_equal($original_data, $data, "cached data should match");
   }
 
   public function cache_get_tag_test() {
     $id1 = random::hash();
-    $value1 = array("field1" => "value1", "field2" => "value2");
-    $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
+    $value1 = ["field1" => "value1", "field2" => "value2"];
+    $this->_driver->set([$id1 => $value1], ["tag1", "tag2"], 84600);
 
     $id2 = random::hash();
-    $value2 = array("field3" => "value3", "field4" => "value4");
-    $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 84600);
+    $value2 = ["field3" => "value3", "field4" => "value4"];
+    $this->_driver->set([$id2 => $value2], ["tag2", "tag3"], 84600);
 
     $id3 = random::hash();
-    $value3 = array("field5" => "value5", "field6" => "value6");
-    $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
+    $value3 = ["field5" => "value5", "field6" => "value6"];
+    $this->_driver->set([$id3 => $value3], ["tag3", "tag4"], 84600);
 
-    $data = $this->_driver->get_tag(array("tag2"));
+    $data = $this->_driver->get_tag(["tag2"]);
 
-    $expected = array($id1 => $value1, $id2 => $value2);
+    $expected = [$id1 => $value1, $id2 => $value2];
     ksort($expected);
     $this->assert_equal($expected, $data, "Expected id1 & id2");
 
-    $data = $this->_driver->get_tag(array("tag4"));
-    $this->assert_equal(array($id3 => $value3), $data, "Expected id3");
+    $data = $this->_driver->get_tag(["tag4"]);
+    $this->assert_equal([$id3 => $value3], $data, "Expected id3");
   }
 
   public function cache_delete_id_test() {
     $id1 = random::hash();
-    $value1 = array("field1" => "value1", "field2" => "value2");
-    $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
+    $value1 = ["field1" => "value1", "field2" => "value2"];
+    $this->_driver->set([$id1 => $value1], ["tag1", "tag2"], 84600);
 
     $id2 = random::hash();
-    $value2 = array("field3" => "value3", "field4" => "value4");
-    $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 846000);
+    $value2 = ["field3" => "value3", "field4" => "value4"];
+    $this->_driver->set([$id2 => $value2], ["tag2", "tag3"], 846000);
 
     $id3 = random::hash();
-    $value3 = array("field5" => "value5", "field6" => "value6");
-    $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
+    $value3 = ["field5" => "value5", "field6" => "value6"];
+    $this->_driver->set([$id3 => $value3], ["tag3", "tag4"], 84600);
 
-    $this->_driver->delete(array($id1));
+    $this->_driver->delete([$id1]);
 
     $this->assert_false($this->_exists($id1), "$id1 should have been deleted");
     $this->assert_true($this->_exists($id2), "$id2 should not have been deleted");
@@ -115,18 +115,18 @@ class Cache_Test extends Gallery_Unit_Test_Case {
 
   public function cache_delete_tag_test() {
     $id1 = random::hash();
-    $value1 = array("field1" => "value1", "field2" => "value2");
-    $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
+    $value1 = ["field1" => "value1", "field2" => "value2"];
+    $this->_driver->set([$id1 => $value1], ["tag1", "tag2"], 84600);
 
     $id2 = random::hash();
-    $value2 = array("field3" => "value3", "field4" => "value4");
-    $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 846000);
+    $value2 = ["field3" => "value3", "field4" => "value4"];
+    $this->_driver->set([$id2 => $value2], ["tag2", "tag3"], 846000);
 
     $id3 = random::hash();
-    $value3 = array("field5" => "value5", "field6" => "value6");
-    $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
+    $value3 = ["field5" => "value5", "field6" => "value6"];
+    $this->_driver->set([$id3 => $value3], ["tag3", "tag4"], 84600);
 
-    $data = $this->_driver->delete_tag(array("tag3"));
+    $data = $this->_driver->delete_tag(["tag3"]);
 
     $this->assert_true($this->_exists($id1), "$id1 should not have been deleted");
     $this->assert_false($this->_exists($id2), "$id2 should have been deleted");
@@ -135,16 +135,16 @@ class Cache_Test extends Gallery_Unit_Test_Case {
 
   public function cache_delete_all_test() {
     $id1 = random::hash();
-    $value1 = array("field1" => "value1", "field2" => "value2");
-    $this->_driver->set(array($id1 => $value1), array("tag1", "tag2"), 84600);
+    $value1 = ["field1" => "value1", "field2" => "value2"];
+    $this->_driver->set([$id1 => $value1], ["tag1", "tag2"], 84600);
 
     $id2 = random::hash();
-    $value2 = array("field3" => "value3", "field4" => "value4");
-    $this->_driver->set(array($id2 => $value2), array("tag2", "tag3"), 846000);
+    $value2 = ["field3" => "value3", "field4" => "value4"];
+    $this->_driver->set([$id2 => $value2], ["tag2", "tag3"], 846000);
 
     $id3 = random::hash();
-    $value3 = array("field5" => "value5", "field6" => "value6");
-    $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
+    $value3 = ["field5" => "value5", "field6" => "value6"];
+    $this->_driver->set([$id3 => $value3], ["tag3", "tag4"], 84600);
 
     $data = $this->_driver->delete(true);
 

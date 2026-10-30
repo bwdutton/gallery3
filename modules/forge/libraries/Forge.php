@@ -9,23 +9,23 @@
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Forge_Core {
+class Forge_Core implements \Stringable {
 
 	// Template variables
-	protected $template = array
-	(
+	protected $template = 
+	[
 		'title' => '',
 		'class' => '',
 		'open'  => '',
 		'close' => '',
-	);
+	];
 
 	// Form attributes
-	protected $attr = array();
+	protected $attr = [];
 
 	// Form inputs and hidden inputs
-	public $inputs = array();
-	public $hidden = array();
+	public $inputs = [];
+	public $hidden = [];
 
 	// Error message format, only used with custom templates
 	public $error_format = '<p class="error">{message}</p>';
@@ -38,7 +38,7 @@ class Forge_Core {
 	 *
 	 * @return  void
 	 */
-	public function __construct($action = NULL, $title = '', $method = NULL, $attr = array())
+	public function __construct($action = NULL, $title = '', $method = NULL, $attr = [])
 	{
 		// Set form attributes
 		$this->attr['action'] = $action;
@@ -48,10 +48,10 @@ class Forge_Core {
 		$this->template['title'] = $title;
 
 		// Empty attributes sets the class to "form"
-		empty($attr) and $attr = array('class' => 'form');
+		empty($attr) and $attr = ['class' => 'form'];
 
 		// String attributes is the class name
-		is_string($attr) and $attr = array('class' => $attr);
+		is_string($attr) and $attr = ['class' => $attr];
 
 		// Extend the template with the attributes
 		$this->attr += $attr;
@@ -89,20 +89,14 @@ class Forge_Core {
 		$input = 'Form_'.ucfirst($method);
 
 		// Create the input
-		switch (count($args))
-		{
-			case 1:
-				$input = new $input($args[0]);
-			break;
-			case 2:
-				$input = new $input($args[0], $args[1]);
-			break;
-			default:
-				throw new Kohana_Exception('forge.invalid_input', $input);
-		}
+		$input = match (count($args)) {
+            1 => new $input($args[0]),
+            2 => new $input($args[0], $args[1]),
+            default => throw new Kohana_Exception('forge.invalid_input', $input),
+        };
 
 		if ( ! ($input instanceof Form_Input) AND ! ($input instanceof Forge))
-			throw new Kohana_Exception('forge.unknown_input', get_class($input));
+			throw new Kohana_Exception('forge.unknown_input', $input::class);
 
 		$input->method = $this->attr['method'];
 
@@ -179,7 +173,7 @@ class Forge_Core {
 	 */
 	public function as_array()
 	{
-		$data = array();
+		$data = [];
 		foreach (array_merge($this->hidden, $this->inputs) as $input)
 		{
 			if (is_object($input->name)) // It's a Forge_Group object (hopefully)
@@ -221,7 +215,7 @@ class Forge_Core {
 	 */
 	public function error_format($string = '')
 	{
-		if (strpos((string) $string, '{message}') === FALSE)
+		if (!str_contains((string) $string, '{message}'))
 			throw new Kohana_Exception('validation.error_format');
 
 		$this->error_format = $string;
@@ -243,7 +237,7 @@ class Forge_Core {
 		{
 			// Using a custom view
 
-			$data = array();
+			$data = [];
 			foreach (array_merge($this->hidden, $this->inputs) as $input)
 			{
 				$data[$input->name] = $input;
@@ -274,7 +268,7 @@ class Forge_Core {
 			// Using a template view
 
 			$form->set($this->template);
-			$hidden = array();
+			$hidden = [];
 			if ( ! empty($this->hidden))
 			{
 				foreach ($this->hidden as $input)
@@ -286,7 +280,7 @@ class Forge_Core {
 
 			$form_type = 'open';
 			// See if we need a multipart form
-			$check_inputs = array($this->inputs);
+			$check_inputs = [$this->inputs];
 			while ($check_inputs) {
 				foreach (array_shift($check_inputs) as $input) {
 					if ($input instanceof Form_Upload)
@@ -295,7 +289,7 @@ class Forge_Core {
 					}
 					if ($input instanceof Form_Group)
 					{
-						$check_inputs += array($input->inputs);
+						$check_inputs += [$input->inputs];
 					}
 				}
 			}
@@ -317,7 +311,7 @@ class Forge_Core {
 	/**
 	 * Returns the form HTML
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		return (string) $this->render();
 	}

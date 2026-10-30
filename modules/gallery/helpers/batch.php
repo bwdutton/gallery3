@@ -18,12 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class batch_Core {
-  static function start() {
+  public static function start() {
     $session = Session::instance();
     $session->set("batch_level", $session->get("batch_level", 0) + 1);
   }
 
-  static function stop() {
+  public static function stop() {
     $session = Session::instance();
     $batch_level = $session->get("batch_level", 0) - 1;
     if ($batch_level > 0) {
@@ -34,7 +34,7 @@ class batch_Core {
     }
   }
 
-  static function in_progress() {
+  public static function in_progress() {
     return Session::instance()->get("batch_level", 0) > 0;
   }
 }

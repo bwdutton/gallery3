@@ -32,7 +32,7 @@ class theme_Core {
    * Load the active theme.  This is called at bootstrap time.  We will only ever have one theme
    * active for any given request.
    */
-  static function load_themes() {
+  public static function load_themes() {
     $input = Input::instance();
     $path = $input->server("PATH_INFO");
     if (empty($path)) {
@@ -49,7 +49,7 @@ class theme_Core {
     }
 
     // when using invisible index.php
-    if (substr($path,0,1) != '/') $path = '/'.$path;
+    if (!str_starts_with($path, '/')) $path = '/'.$path;
 
     self::$is_admin = $path == "/admin" || !strncmp($path, "/admin/", 7);
     self::$site_theme_name = module::get_var("gallery", "active_site_theme");
@@ -57,7 +57,7 @@ class theme_Core {
     // If the site theme doesn't exist, fall back to wind.
     if (!file_exists(THEMEPATH . self::$site_theme_name . "/theme.info")) {
       site_status::error(t("Theme '%name' is missing.  Falling back to the Wind theme.",
-                           array("name" => self::$site_theme_name)), "missing_site_theme");
+                           ["name" => self::$site_theme_name]), "missing_site_theme");
       module::set_var("gallery", "active_site_theme", self::$site_theme_name = "wind");
     }
 
@@ -68,7 +68,7 @@ class theme_Core {
       // If the admin theme doesn't exist, fall back to admin_wind.
       if (!file_exists(THEMEPATH . self::$admin_theme_name . "/theme.info")) {
         site_status::error(t("Admin theme '%name' is missing!  Falling back to the Wind theme.",
-                             array("name" => self::$admin_theme_name)), "missing_admin_theme");
+                             ["name" => self::$admin_theme_name]), "missing_admin_theme");
         module::set_var("gallery", "active_admin_theme", self::$admin_theme_name = "admin_wind");
       }
 
@@ -103,7 +103,7 @@ class theme_Core {
     $config->set("core.modules", $modules);
   }
 
-  static function get_info($theme_name) {
+  public static function get_info($theme_name) {
     $theme_name = preg_replace("/[^a-zA-Z0-9\._-]/", "", $theme_name);
     $file = THEMEPATH . "$theme_name/theme.info";
     $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);

@@ -27,7 +27,7 @@ class message_Core {
    * Report a successful event.
    * @param string  $msg           a detailed message
    */
-  static function success($msg) {
+  public static function success($msg) {
     self::_add($msg, message::SUCCESS);
   }
 
@@ -35,7 +35,7 @@ class message_Core {
    * Report an informational event.
    * @param string  $msg           a detailed message
    */
-  static function info($msg) {
+  public static function info($msg) {
     self::_add($msg, message::INFO);
   }
 
@@ -43,7 +43,7 @@ class message_Core {
    * Report that something went wrong, not fatal, but worth investigation.
    * @param string  $msg           a detailed message
    */
-  static function warning($msg) {
+  public static function warning($msg) {
     self::_add($msg, message::WARNING);
   }
 
@@ -51,7 +51,7 @@ class message_Core {
    * Report that something went wrong that should be fixed.
    * @param string  $msg           a detailed message
    */
-  static function error($msg) {
+  public static function error($msg) {
     self::_add($msg, message::ERROR);
   }
 
@@ -64,7 +64,7 @@ class message_Core {
     $session = Session::instance();
     $status = $session->get("messages");
     if (!is_array($status)) $status = [];
-    $status[] = array($msg, $severity);
+    $status[] = [$msg, $severity];
     $session->set("messages", $status);
   }
 
@@ -74,10 +74,10 @@ class message_Core {
    * issues that need to be resolved.  Transient ones are only displayed once.
    * @return html text
    */
-  static function get() {
-    $buf = array();
+  public static function get() {
+    $buf = [];
 
-    $messages = Session::instance()->get_once("messages", array());
+    $messages = Session::instance()->get_once("messages", []);
 
     foreach ($messages as $msg) {
       if (!$msg) continue;
@@ -96,7 +96,7 @@ class message_Core {
    * @param  integer $severity
    * @return string
    */
-  static function severity_class($severity) {
+  public static function severity_class($severity) {
     switch($severity) {
     case message::SUCCESS:
       return "g-success";

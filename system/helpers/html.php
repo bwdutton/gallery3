@@ -43,12 +43,12 @@ class html_Core {
 		{
 			$site_url = url::base(FALSE);
 		}
-		elseif (strpos($uri, '#') === 0)
+		elseif (str_starts_with($uri, '#'))
 		{
 			// This is an id target link, not a URL
 			$site_url = $uri;
 		}
-		elseif (strpos($uri, '://') === FALSE)
+		elseif (!str_contains($uri, '://'))
 		{
 			$site_url = url::site($uri, $protocol);
 		}
@@ -68,7 +68,7 @@ class html_Core {
 		// Attributes empty? Use an empty string
 		.(is_array($attributes) ? html::attributes($attributes) : '').'>'
 		// Title empty? Use the parsed URL
-		.($escape_title ? htmlspecialchars((($title === NULL) ? $site_url : $title), ENT_QUOTES, Kohana::CHARSET, FALSE) : (($title === NULL) ? $site_url : $title)).'</a>';
+		.($escape_title ? htmlspecialchars(($title ?? $site_url), ENT_QUOTES, Kohana::CHARSET, FALSE) : ($title ?? $site_url)).'</a>';
 	}
 
 	/**
@@ -88,7 +88,7 @@ class html_Core {
 		// Attributes empty? Use an empty string
 		.(is_array($attributes) ? html::attributes($attributes) : '').'>'
 		// Title empty? Use the filename part of the URI
-		.(($title === NULL) ? end(explode('/', $file)) : $title) .'</a>';
+		.($title ?? end(explode('/', $file))) .'</a>';
 	}
 
 	/**
@@ -102,7 +102,7 @@ class html_Core {
 		$safe = '';
 		foreach (str_split($email) as $letter)
 		{
-			switch (($letter === '@') ? rand(1, 2) : rand(1, 3))
+			switch (($letter === '@') ? random_int(1, 2) : random_int(1, 3))
 			{
 				// HTML entity code
 				case 1: $safe .= '&#'.ord($letter).';'; break;
@@ -130,10 +130,10 @@ class html_Core {
 			return $title;
 
 		// Remove the subject or other parameters that do not need to be encoded
-		if (strpos($email, '?') !== FALSE)
+		if (str_contains($email, '?'))
 		{
 			// Extract the parameters from the email address
-			list ($email, $params) = explode('?', $email, 2);
+			[$email, $params] = explode('?', $email, 2);
 
 			// Make the params into a query string, replacing spaces
 			$params = '?'.str_replace(' ', '%20', $params);
@@ -167,7 +167,7 @@ class html_Core {
 	{
 		empty($segments) and $segments = Router::$segments;
 
-		$array = array();
+		$array = [];
 		while ($segment = array_pop($segments))
 		{
 			$array[] = html::anchor
@@ -194,7 +194,7 @@ class html_Core {
 	{
 		if (is_array($tag))
 		{
-			$tags = array();
+			$tags = [];
 			foreach ($tag as $t => $v)
 			{
 				// Build each tag and add it to the array
@@ -251,18 +251,18 @@ class html_Core {
 		}
 		else
 		{
-			if (strpos($href, '://') === FALSE)
+			if (!str_contains($href, '://'))
 			{
 				// Make the URL absolute
 				$href = url::base($index).$href;
 			}
 
-			$attr = array
-			(
+			$attr = 
+			[
 				'rel' => $rel,
 				'type' => $type,
 				'href' => $href,
-			);
+			];
 
 			if ( ! empty($media))
 			{
@@ -296,7 +296,7 @@ class html_Core {
 		}
 		else
 		{
-			if (strpos($script, '://') === FALSE)
+			if (!str_contains($script, '://'))
 			{
 				// Add the suffix only when it's not already present
 				$script = url::base((bool) $index).$script;
@@ -319,7 +319,7 @@ class html_Core {
 	public static function image($src = NULL, $alt = NULL, $index = FALSE)
 	{
 		// Create attribute list
-		$attributes = is_array($src) ? $src : array('src' => $src);
+		$attributes = is_array($src) ? $src : ['src' => $src];
 
 		if (is_array($alt))
 		{
@@ -331,7 +331,7 @@ class html_Core {
 			$attributes['alt'] = $alt;
 		}
 
-		if (strpos($attributes['src'], '://') === FALSE)
+		if (!str_contains($attributes['src'], '://'))
 		{
 			// Make the src attribute into an absolute URL
 			$attributes['src'] = url::base($index).$attributes['src'];
@@ -357,7 +357,7 @@ class html_Core {
 		$compiled = '';
 		foreach ($attrs as $key => $val)
 		{
-			if (is_null($val)) $val = '';
+			$val ??= '';
 			$compiled .= ' '.$key.'="'.htmlspecialchars($val, ENT_QUOTES, Kohana::CHARSET).'"';
 		}
 

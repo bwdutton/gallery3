@@ -92,7 +92,7 @@ class date_Core {
 		// Always integer
 		$step = (int) $step;
 
-		$seconds = array();
+		$seconds = [];
 
 		for ($i = $start; $i < $end; $i += $step)
 		{
@@ -130,15 +130,12 @@ class date_Core {
 		// Default values
 		$step = (int) $step;
 		$long = (bool) $long;
-		$hours = array();
+		$hours = [];
 
 		// Set the default start if none was specified.
-		if ($start === NULL)
-		{
-			$start = ($long === FALSE) ? 1 : 0;
-		}
+		$start ??= ($long === FALSE) ? 1 : 0;
 
-		$hours = array();
+		$hours = [];
 
 		// 24-hour time has 24 hours, instead of 12
 		$size = ($long === TRUE) ? 23 : 12;
@@ -213,7 +210,7 @@ class date_Core {
 		// We use caching for months, because time functions are used
 		if (empty($months[$year][$month]))
 		{
-			$months[$year][$month] = array();
+			$months[$year][$month] = [];
 
 			// Use date to find the number of days in the given month
 			$total = date('t', mktime(1, 0, 0, $month, 1, $year)) + 1;
@@ -251,7 +248,7 @@ class date_Core {
 		$start = ($start === FALSE) ? date('Y') - 5 : (int) $start;
 		$end   = ($end   === FALSE) ? date('Y') + 5 : (int) $end;
 
-		$years = array();
+		$years = [];
 
 		// Add one, so that "less than" works
 		$end += 1;
@@ -319,16 +316,16 @@ class date_Core {
 		unset($timespan, $time1, $time2);
 
 		// Deny access to these variables
-		$deny = array_flip(array('deny', 'key', 'difference', 'output'));
+		$deny = array_flip(['deny', 'key', 'difference', 'output']);
 
 		// Return the difference
-		$difference = array();
+		$difference = [];
 		foreach ($output as $key)
 		{
-			if (isset($$key) AND ! isset($deny[$key]))
+			if (isset(${$key}) AND ! isset($deny[$key]))
 			{
 				// Add requested key to the output
-				$difference[$key] = $$key;
+				$difference[$key] = ${$key};
 			}
 		}
 
@@ -361,7 +358,7 @@ class date_Core {
 			$last = end($difference);
 			$last = key($difference);
 
-			$span = array();
+			$span = [];
 			foreach ($difference as $name => $amount)
 			{
 				if ($amount === 0)

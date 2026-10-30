@@ -18,27 +18,27 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class search_task_Core {
-  static function available_tasks() {
+  public static function available_tasks() {
     // Delete extra search_records
     db::build()
       ->delete("search_records")
       ->where("item_id", "NOT IN", db::build()->select("id")->from("items"))
       ->execute();
 
-    list ($remaining, $total, $percent) = search::stats();
-    return array(Task_Definition::factory()
+    [$remaining, $total, $percent] = search::stats();
+    return [Task_Definition::factory()
                  ->callback("search_task::update_index")
                  ->name(t("Update Search Index"))
                  ->description(
                    $remaining
                    ? t2("1 photo or album needs to be scanned",
                         "%count (%percent%) of your photos and albums need to be scanned",
-                        $remaining, array("percent" => (100 - $percent)))
+                        $remaining, ["percent" => (100 - $percent)])
                    : t("Search data is up-to-date"))
-                 ->severity($remaining ? log::WARNING : log::SUCCESS));
+                 ->severity($remaining ? log::WARNING : log::SUCCESS)];
   }
 
-  static function update_index($task) {
+  public static function update_index($task) {
     try {
       $completed = $task->get("completed", 0);
 
@@ -50,9 +50,7 @@ class search_task_Core {
                ->find_all(100) as $item) {
         // The query above can take a long time, so start the timer after its done
         // to give ourselves a little time to actually process rows.
-        if (!isset($start)) {
-          $start = microtime(true);
-        }
+        $start ??= microtime(true);
 
         search::update($item);
         $completed++;
@@ -62,7 +60,7 @@ class search_task_Core {
         }
       }
 
-      list ($remaining, $total, $percent) = search::stats();
+      [$remaining, $total, $percent] = search::stats();
       $task->set("completed", $completed);
       if ($remaining == 0 || !($remaining + $completed)) {
         $task->done = true;
@@ -74,7 +72,7 @@ class search_task_Core {
       }
       $task->status = t2("one record updated, index is %percent% up-to-date",
                          "%count records updated, index is %percent% up-to-date",
-                         $completed, array("percent" => $percent));
+                         $completed, ["percent" => $percent]);
     } catch (Exception $e) {
       $task->done = true;
       $task->state = "error";

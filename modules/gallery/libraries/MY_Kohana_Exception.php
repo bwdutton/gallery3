@@ -27,7 +27,7 @@ class Kohana_Exception extends Kohana_Exception_Core {
     } else {
       return sprintf(
         "%s [ %s ]: %s\n%s [ %s ]\n%s",
-        get_class($e), $e->getCode(), strip_tags($e->getMessage()),
+        $e::class, $e->getCode(), strip_tags($e->getMessage()),
         $e->getFile(), $e->getLine(),
         $e->getTraceAsString());
     }
@@ -52,7 +52,7 @@ class Kohana_Exception extends Kohana_Exception_Core {
    * Elides sensitive data which shouldn't be echoed to the client,
    * such as passwords, and other secrets.
    */
-  /* Visible for testing*/ static function _sanitize_for_dump($value, $key, $max_level) {
+  /* Visible for testing*/ public static function _sanitize_for_dump($value, $key, $max_level) {
     // Better elide too much than letting something through.
     // Note: unanchored match is intended.
     if (!$max_level) {
@@ -68,13 +68,13 @@ class Kohana_Exception extends Kohana_Exception_Core {
     } else if (is_object($value)) {
       if ($value instanceof Database) {
         // Elide database password, host, name, user, etc.
-        return get_class($value) . ' object - details omitted for display';
+        return $value::class . ' object - details omitted for display';
       } else if ($value instanceof User_Model) {
-        return get_class($value) . ' object for "' . $value->name . '" - details omitted for display';
+        return $value::class . ' object for "' . $value->name . '" - details omitted for display';
       }
       return self::_sanitize_for_dump((array) $value, $key, $max_level - 1);
     } else if (is_array($value)) {
-      $result = array();
+      $result = [];
       foreach ($value as $k => $v) {
         $actual_key = $k;
         $key_for_display = $k;
@@ -85,7 +85,7 @@ class Kohana_Exception extends Kohana_Exception_Core {
           $key_for_display = "$access: $actual_key";
         }
         if (is_object($v)) {
-          $key_for_display .= ' (type: ' . get_class($v) . ')';
+          $key_for_display .= ' (type: ' . $v::class . ')';
         }
         $result[$key_for_display] = self::_sanitize_for_dump($v, $actual_key, $max_level - 1);
       }

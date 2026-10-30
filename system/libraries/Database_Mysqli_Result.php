@@ -26,9 +26,9 @@ class Database_Mysqli_Result_Core extends Database_Result {
 			if ($result == FALSE)
 			{
 				throw new Database_Exception('#:errno: :error [ :query ]',
-					array(':error' => $link->error,
+					[':error' => $link->error,
 					':query' => $sql,
-					':errno' => $link->errno));
+					':errno' => $link->errno]);
 			}
 			else
 			{
@@ -67,7 +67,7 @@ class Database_Mysqli_Result_Core extends Database_Result {
 		if (RUNS_MYSQLND)
 			return $this->result->fetch_all(MYSQLI_ASSOC);
 
-		$array = array();
+		$array = [];
 
 		if ($this->total_rows > 0)
 		{
@@ -88,7 +88,7 @@ class Database_Mysqli_Result_Core extends Database_Result {
 	public function as_object($class = NULL, $return = FALSE)
 	{
 		// Return objects of type $class (or stdClass if none given)
-		$this->return_objects = ($class !== NULL) ? $class : TRUE;
+		$this->return_objects = $class ?? TRUE;
 
 		if ( ! $return )
 		{
@@ -97,7 +97,7 @@ class Database_Mysqli_Result_Core extends Database_Result {
 		}
 
 		// Return a nested array of all results
-		$array = array();
+		$array = [];
 
 		if ($this->total_rows > 0)
 		{

@@ -11,21 +11,21 @@
  */
 class Form_Phonenumber_Core extends Form_Input {
 
-	protected $data = array
-	(
+	protected $data = 
+	[
 		'name'  => '',
 		'class' => 'phone_number',
-	);
+	];
 
-	protected $protect = array('type');
+	protected $protect = ['type'];
 
 	// Precision for the parts, you can use @ to insert a literal @ symbol
-	protected $parts = array
-	(
+	protected $parts = 
+	[
 		'area_code'   => '',
 		'exchange'     => '',
 		'last_four'    => '',
-	);
+	];
 
 	public function __construct($name)
 	{
@@ -67,20 +67,20 @@ class Form_Phonenumber_Core extends Form_Input {
 					else
 						$temp['value'] = '';
 					$temp['class'] = 'area_code';
-					$input .= form::input(array_merge(array('value' => $val), $temp)).'-';
+					$input .= form::input(array_merge(['value' => $val], $temp)).'-';
 					break;
 				case 'exchange':
 					$temp['value'] = substr($data['value'], (3-$offset), 3);
 					$temp['class'] = 'exchange';
-					$input .= form::input(array_merge(array('value' => $val), $temp)).'-';
+					$input .= form::input(array_merge(['value' => $val], $temp)).'-';
 					break;
 				case 'last_four':
 					$temp['value'] = substr($data['value'], (6-$offset), 4);
 					$temp['class'] = 'last_four';
-					$input .= form::input(array_merge(array('value' => $val), $temp));
+					$input .= form::input(array_merge(['value' => $val], $temp));
 					break;
 			}
-			
+
 		}
 
 		return $input;

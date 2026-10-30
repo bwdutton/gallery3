@@ -19,7 +19,7 @@
  */
 class info_installer {
 
-  static function install() {
+  public static function install() {
     module::set_var("info", "show_title", 1);
     module::set_var("info", "show_description", 1);
     module::set_var("info", "show_owner", 1);
@@ -28,7 +28,7 @@ class info_installer {
     module::set_var("info", "show_dimensions", 1);
   }
 
-  static function upgrade($version) {
+  public static function upgrade($version) {
     if ($version == 1) {
       module::set_var("info", "show_title", 1);
       module::set_var("info", "show_description", 1);

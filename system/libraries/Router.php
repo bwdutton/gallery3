@@ -26,7 +26,7 @@ class Router_Core {
 	public static $controller_path;
 
 	public static $method    = 'index';
-	public static $arguments = array();
+	public static $arguments = [];
 
 	/**
 	 * Router setup routine. Automatically called during Kohana setup process.
@@ -41,11 +41,8 @@ class Router_Core {
 			Router::$query_string = '?'.urldecode(trim($_SERVER['QUERY_STRING'], '&'));
 		}
 
-		if (Router::$routes === NULL)
-		{
-			// Load routes
-			Router::$routes = Kohana::config('routes');
-		}
+		// Load routes
+        Router::$routes ??= Kohana::config('routes');
 
 		// Default route status
 		$default_route = FALSE;
@@ -73,7 +70,7 @@ class Router_Core {
 		{
 			Router::$complete_uri = Router::$query_string;
 			Router::$current_uri = '';
-			Router::$segments = array();
+			Router::$segments = [];
 		}
 		else
 		{
@@ -117,7 +114,7 @@ class Router_Core {
 
 					// The controller must be a file that exists with the search path
 					if ($c = str_replace('\\', '/', realpath($dir.$controller_path.EXT))
-					    AND is_file($c) AND strpos($c, $dir) === 0)
+					    AND is_file($c) AND str_starts_with($c, $dir))
 					{
 						// Set controller name
 						Router::$controller = $segment;
@@ -181,9 +178,9 @@ class Router_Core {
 				Router::$current_uri = $_SERVER['argv'][1];
 
 				// Remove GET string from segments
-				if (strpos(Router::$current_uri, '?') !== FALSE)
+				if (str_contains(Router::$current_uri, '?'))
 				{
-					list(Router::$current_uri, $query) = explode('?', Router::$current_uri, 2);
+					[Router::$current_uri, $query] = explode('?', Router::$current_uri, 2);
 
 					// Parse the query string into $_GET
 					parse_str($query, $_GET);
@@ -224,7 +221,7 @@ class Router_Core {
 			{
 				// Clean up PATH_INFO fallbacks
 				// PATH_INFO may be formatted for ISAPI instead of CGI on IIS
-				if (strncmp(Router::$current_uri, $_SERVER['SCRIPT_NAME'], strlen($_SERVER['SCRIPT_NAME'])) === 0)
+				if (str_starts_with(Router::$current_uri, $_SERVER['SCRIPT_NAME']))
 				{
 					// Remove the front controller from the current uri
 					Router::$current_uri = (string) substr(Router::$current_uri, strlen($_SERVER['SCRIPT_NAME']));
@@ -237,7 +234,7 @@ class Router_Core {
 
 		if (Router::$current_uri !== '')
 		{
-			if ($suffix = Kohana::config('core.url_suffix') AND strpos(Router::$current_uri, $suffix) !== FALSE)
+			if ($suffix = Kohana::config('core.url_suffix') AND str_contains(Router::$current_uri, $suffix))
 			{
 				// Remove the URL suffix
 				Router::$current_uri = preg_replace('#'.preg_quote($suffix).'$#u', '', Router::$current_uri);
@@ -259,11 +256,8 @@ class Router_Core {
 	 */
 	public static function routed_uri($uri)
 	{
-		if (Router::$routes === NULL)
-		{
-			// Load routes
-			Router::$routes = Kohana::config('routes');
-		}
+		// Load routes
+        Router::$routes ??= Kohana::config('routes');
 
 		// Prepare variables
 		$routed_uri = $uri = trim($uri, '/');
@@ -286,7 +280,7 @@ class Router_Core {
 
 				if (preg_match('#^'.$key.'$#u', $uri))
 				{
-					if (strpos($val, '$') !== FALSE)
+					if (str_contains($val, '$'))
 					{
 						// Use regex routing
 						$routed_uri = preg_replace('#^'.$key.'$#u', $val, $uri);

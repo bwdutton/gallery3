@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class DrawForm_Test extends Gallery_Unit_Test_Case {
-  function no_group_test() {
-    $form = new Forge("test/controller", "", "post", array("id" => "g-test-group-form"));
+  public function no_group_test() {
+    $form = new Forge("test/controller", "", "post", ["id" => "g-test-group-form"]);
     $form->input("title")->label(t("Title"));
     $form->textarea("description")->label(t("Text Area"));
     $form->submit("")->value(t("Submit"));
@@ -47,8 +47,8 @@ class DrawForm_Test extends Gallery_Unit_Test_Case {
     $this->assert_same($expected, (string) $form);
   }
 
-  function group_test() {
-    $form = new Forge("test/controller", "", "post", array("id" => "g-test-group-form"));
+  public function group_test() {
+    $form = new Forge("test/controller", "", "post", ["id" => "g-test-group-form"]);
     $group = $form->group("test_group")->label(t("Test Group"));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Text Area"));
@@ -80,8 +80,8 @@ class DrawForm_Test extends Gallery_Unit_Test_Case {
     $this->assert_same($expected, (string) $form);
   }
 
-  function form_script_test() {
-    $form = new Forge("test/controller", "", "post", array("id" => "g-test-group-form"));
+  public function form_script_test() {
+    $form = new Forge("test/controller", "", "post", ["id" => "g-test-group-form"]);
     $group = $form->group("test_group")->label(t("Test Group"));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Text Area"));
@@ -120,7 +120,7 @@ class DrawForm_Test extends Gallery_Unit_Test_Case {
     $this->assert_same($expected, (string) $form);
   }
 
-  function two_hiddens_test() {
+  public function two_hiddens_test() {
     $form = new Forge("test/controller", "", "post");
     $form->hidden("HIDDEN_NAME")->value("HIDDEN_VALUE");
 

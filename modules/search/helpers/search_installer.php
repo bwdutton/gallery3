@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class search_installer {
-  static function install() {
+  public static function install() {
     $db = Database::instance();
     $db->query("CREATE TABLE {search_records} (
                  `id` int(9) NOT NULL auto_increment,
@@ -32,7 +32,7 @@ class search_installer {
                DEFAULT CHARSET=utf8;");
   }
 
-  static function activate() {
+  public static function activate() {
     // Update the root item.  This is a quick hack because the search module is activated as part
     // of the official install, so this way we don't start off with a "your index is out of date"
     // banner.
@@ -40,11 +40,11 @@ class search_installer {
     search::check_index();
   }
 
-  static function deactivate() {
+  public static function deactivate() {
     site_status::clear("search_index_out_of_date");
   }
 
-  static function uninstall() {
+  public static function uninstall() {
     Database::instance()->query("DROP TABLE {search_records}");
   }
 }

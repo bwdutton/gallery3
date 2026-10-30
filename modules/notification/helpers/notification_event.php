@@ -21,7 +21,7 @@ class notification_event_Core {
   // The assumption is that the exception was logged at a lower level, but we
   // don't want to screw up the processing that was generating the notification
   // so we don't pass the exception up the call stack
-  static function item_created($item) {
+  public static function item_created($item) {
     try {
       notification::send_item_add($item);
     } catch (Exception $e) {
@@ -30,7 +30,7 @@ class notification_event_Core {
     }
   }
 
-  static function item_deleted($item) {
+  public static function item_deleted($item) {
     try {
       notification::send_item_deleted($item);
 
@@ -43,20 +43,20 @@ class notification_event_Core {
     }
   }
 
-  static function user_deleted($user) {
+  public static function user_deleted($user) {
     db::build()
       ->delete("subscriptions")
       ->where("user_id", "=", $user->id)
       ->execute();
   }
 
-  static function identity_provider_changed($old_provider, $new_provider) {
+  public static function identity_provider_changed($old_provider, $new_provider) {
     db::build()
       ->delete("subscriptions")
       ->execute();
   }
 
-  static function comment_created($comment) {
+  public static function comment_created($comment) {
     try {
       if ($comment->state == "published") {
         notification::send_comment_published($comment);
@@ -67,7 +67,7 @@ class notification_event_Core {
     }
   }
 
-  static function comment_updated($original, $new) {
+  public static function comment_updated($original, $new) {
     try {
       if ($new->state == "published" && $original->state != "published") {
         notification::send_comment_published($new);
@@ -78,7 +78,7 @@ class notification_event_Core {
     }
   }
 
-  static function user_before_delete($user) {
+  public static function user_before_delete($user) {
     try {
       db::build()
         ->delete("subscriptions")
@@ -90,7 +90,7 @@ class notification_event_Core {
     }
   }
 
-  static function batch_complete() {
+  public static function batch_complete() {
     try {
       notification::send_pending_notifications();
     } catch (Exception $e) {
@@ -99,7 +99,7 @@ class notification_event_Core {
     }
   }
 
-  static function site_menu($menu, $theme) {
+  public static function site_menu($menu, $theme) {
     if (!identity::active_user()->guest) {
       $item = $theme->item();
 
@@ -118,7 +118,7 @@ class notification_event_Core {
     }
   }
 
-  static function show_user_profile($data) {
+  public static function show_user_profile($data) {
     // Guests don't see comment listings
     if (identity::active_user()->guest) {
       return;
@@ -130,7 +130,7 @@ class notification_event_Core {
     }
 
     $view = new View("user_profile_notification.html");
-    $view->subscriptions = array();
+    $view->subscriptions = [];
     foreach(ORM::factory("subscription")
             ->where("user_id", "=", $data->user->id)
             ->find_all() as $subscription) {
@@ -138,12 +138,12 @@ class notification_event_Core {
           ->where("id", "=", $subscription->item_id)
           ->find();
       if ($item->loaded()) {
-        $view->subscriptions[] = (object)array("id" => $subscription->id, "title" => $item->title,
-                                               "url" => $item->url());
+        $view->subscriptions[] = (object)["id" => $subscription->id, "title" => $item->title,
+                                               "url" => $item->url()];
       }
     }
     if (count($view->subscriptions) > 0) {
-      $data->content[] = (object)array("title" => t("Watching"), "view" => $view);
+      $data->content[] = (object)["title" => t("Watching"), "view" => $view];
     }
   }
 }

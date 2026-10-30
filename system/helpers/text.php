@@ -20,7 +20,7 @@ class text_Core {
 	public static function limit_words($str, $limit = 100, $end_char = NULL)
 	{
 		$limit = (int) $limit;
-		$end_char = ($end_char === NULL) ? '…' : $end_char;
+		$end_char ??= '…';
 
 		if (trim($str) === '')
 			return $str;
@@ -46,7 +46,7 @@ class text_Core {
 	 */
 	public static function limit_chars($str, $limit = 100, $end_char = NULL, $preserve_words = FALSE)
 	{
-		$end_char = ($end_char === NULL) ? '…' : $end_char;
+		$end_char ??= '…';
 
 		$limit = (int) $limit;
 
@@ -248,7 +248,7 @@ class text_Core {
 		$string2_length = strlen($string2);
 
 		// Here we start building the table of values
-		$matrix = array();
+		$matrix = [];
 
 		// String1 length + 1 = rows.
 		for ($i = 0; $i <= $string1_length; ++$i)
@@ -311,7 +311,7 @@ class text_Core {
 
 		while (preg_match($regex, $text, $match, PREG_OFFSET_CAPTURE, $position))
 		{
-			list($url, $url_pos) = $match[0];
+			[$url, $url_pos] = $match[0];
 
 			// Add the text before the url
 			$result  .= substr($text, $position, $url_pos - $position);
@@ -366,14 +366,14 @@ class text_Core {
 			return '';
 
 		// Standardize newlines
-		$str = str_replace(array("\r\n", "\r"), "\n", $str);
+		$str = str_replace(["\r\n", "\r"], "\n", $str);
 
 		// Trim whitespace on each line
 		$str = preg_replace('~^[ \t]+~m', '', $str);
 		$str = preg_replace('~[ \t]+$~m', '', $str);
 
 		// The following regexes only need to be executed if the string contains html
-		if ($html_found = (strpos($str, '<') !== FALSE))
+		if ($html_found = (str_contains($str, '<')))
 		{
 			// Elements that should not be surrounded by p tags
 			$no_p = '(?:p|div|h[1-6r]|ul|ol|li|blockquote|d[dlt]|pre|t[dhr]|t(?:able|body|foot|head)|c(?:aption|olgroup)|form|s(?:elect|tyle)|a(?:ddress|rea)|ma(?:p|th))';
@@ -422,15 +422,15 @@ class text_Core {
 		$format = ($format === NULL) ? '%01.2f %s' : (string) $format;
 
 		// IEC prefixes (binary)
-		if ($si == FALSE OR strpos($force_unit, 'i') !== FALSE)
+		if ($si == FALSE OR str_contains($force_unit, 'i'))
 		{
-			$units = array(__('B'), __('KiB'), __('MiB'), __('GiB'), __('TiB'), __('PiB'));
+			$units = [__('B'), __('KiB'), __('MiB'), __('GiB'), __('TiB'), __('PiB')];
 			$mod   = 1024;
 		}
 		// SI prefixes (decimal)
 		else
 		{
-			$units = array(__('B'), __('kB'), __('MB'), __('GB'), __('TB'), __('PB'));
+			$units = [__('B'), __('kB'), __('MB'), __('GB'), __('TB'), __('PB')];
 			$mod   = 1000;
 		}
 
@@ -440,7 +440,7 @@ class text_Core {
 			$power = ($bytes > 0) ? floor(log($bytes, $mod)) : 0;
 		}
 
-		return sprintf($format, $bytes / pow($mod, $power), $units[$power]);
+		return sprintf($format, $bytes / $mod ** $power, $units[$power]);
 	}
 
 	/**
@@ -532,9 +532,7 @@ class text_Core {
 
 		if ($case <= 0)
 		{
-			if ($UTF8_LOWER_ACCENTS === NULL)
-			{
-				$UTF8_LOWER_ACCENTS = array(
+			$UTF8_LOWER_ACCENTS ??= [
 					'à' => 'a',  'ô' => 'o',  'ď' => 'd',  'ḟ' => 'f',  'ë' => 'e',  'š' => 's',  'ơ' => 'o',
 					'ß' => 'ss', 'ă' => 'a',  'ř' => 'r',  'ț' => 't',  'ň' => 'n',  'ā' => 'a',  'ķ' => 'k',
 					'ŝ' => 's',  'ỳ' => 'y',  'ņ' => 'n',  'ĺ' => 'l',  'ħ' => 'h',  'ṗ' => 'p',  'ó' => 'o',
@@ -550,8 +548,7 @@ class text_Core {
 					'â' => 'a',  'ľ' => 'l',  'ẅ' => 'w',  'ż' => 'z',  'ī' => 'i',  'ã' => 'a',  'ġ' => 'g',
 					'ṁ' => 'm',  'ō' => 'o',  'ĩ' => 'i',  'ù' => 'u',  'į' => 'i',  'ź' => 'z',  'á' => 'a',
 					'û' => 'u',  'þ' => 'th', 'ð' => 'dh', 'æ' => 'ae', 'µ' => 'u',  'ĕ' => 'e',  'ı' => 'i',
-				);
-			}
+				];
 
 			$str = str_replace(
 				array_keys($UTF8_LOWER_ACCENTS),
@@ -562,9 +559,7 @@ class text_Core {
 
 		if ($case >= 0)
 		{
-			if ($UTF8_UPPER_ACCENTS === NULL)
-			{
-				$UTF8_UPPER_ACCENTS = array(
+			$UTF8_UPPER_ACCENTS ??= [
 					'À' => 'A',  'Ô' => 'O',  'Ď' => 'D',  'Ḟ' => 'F',  'Ë' => 'E',  'Š' => 'S',  'Ơ' => 'O',
 					'Ă' => 'A',  'Ř' => 'R',  'Ț' => 'T',  'Ň' => 'N',  'Ā' => 'A',  'Ķ' => 'K',  'Ĕ' => 'E',
 					'Ŝ' => 'S',  'Ỳ' => 'Y',  'Ņ' => 'N',  'Ĺ' => 'L',  'Ħ' => 'H',  'Ṗ' => 'P',  'Ó' => 'O',
@@ -580,8 +575,7 @@ class text_Core {
 					'Â' => 'A',  'Ľ' => 'L',  'Ẅ' => 'W',  'Ż' => 'Z',  'Ī' => 'I',  'Ã' => 'A',  'Ġ' => 'G',
 					'Ṁ' => 'M',  'Ō' => 'O',  'Ĩ' => 'I',  'Ù' => 'U',  'Į' => 'I',  'Ź' => 'Z',  'Á' => 'A',
 					'Û' => 'U',  'Þ' => 'Th', 'Ð' => 'Dh', 'Æ' => 'Ae', 'İ' => 'I',
-				);
-			}
+				];
 
 			$str = str_replace(
 				array_keys($UTF8_UPPER_ACCENTS),

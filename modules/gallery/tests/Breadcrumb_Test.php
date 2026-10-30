@@ -25,7 +25,7 @@ class Breadcrumb_Test extends Gallery_Unit_Test_Case {
     $album = test::random_album();
     $item = test::random_photo($album);
 
-    $expected = array();
+    $expected = [];
     $expected[] = Breadcrumb::instance(
       item::root()->title, item::root()->url("show={$album->id}"))->set_first();
     $expected[] =

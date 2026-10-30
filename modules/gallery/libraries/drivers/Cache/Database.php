@@ -74,7 +74,7 @@ class Cache_Database_Driver extends Cache_Driver {
     $db_result = $db->execute();
 
     // An array will always be returned
-    $result = array();
+    $result = [];
 
     // Disable notices for unserializing
     $ER = error_reporting(~E_NOTICE);
@@ -109,7 +109,7 @@ class Cache_Database_Driver extends Cache_Driver {
       // Make sure the expiration is valid and that the hash matches
       if ($cache->expiration != 0 && $cache->expiration <= time()) {
         // Cache is not valid, delete it now
-        $this->delete(array($cache->id));
+        $this->delete([$cache->id]);
       } else {
         // Disable notices for unserializing
         $ER = error_reporting(~E_NOTICE);

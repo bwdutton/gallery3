@@ -18,18 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Breadcrumb_Core {
-  public $title;
-  public $url;
   public $first;
   public $last;
 
-  static function instance($title, $url) {
+  public static function instance($title, $url) {
     return new Breadcrumb($title, $url);
   }
 
-  public function __construct($title, $url) {
-    $this->title = $title;
-    $this->url = $url;
+  public function __construct(public $title, public $url) {
     $this->first = false;
     $this->last = false;
   }
@@ -42,12 +38,12 @@ class Breadcrumb_Core {
    *
    * @return array Breadcrumb instances
    */
-  static function array_from_item_parents($item) {
+  public static function array_from_item_parents($item) {
     if ($item->id == item::root()->id) {
-      return array();
+      return [];
     }
 
-    $bc = array_merge($item->parents()->as_array(), array($item));
+    $bc = array_merge($item->parents()->as_array(), [$item]);
     for ($i = 0; $i < count($bc) - 1; $i++) {
       $bc[$i] = new Breadcrumb($bc[$i]->title, $bc[$i]->url("show={$bc[$i+1]->id}"));
     }

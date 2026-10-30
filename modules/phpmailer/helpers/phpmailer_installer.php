@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class phpmailer_installer {
-  static function install() {
+  public static function install() {
     // Set the default value for this module's behavior.
     module::set_var("phpmailer", "phpmailer_from_address", "example@gallery.com");
     module::set_var("phpmailer", "phpmailer_from_name", "Gallery Administrator");
@@ -32,7 +32,7 @@ class phpmailer_installer {
     module::set_version("phpmailer", 2);
   }
 
-  static function upgrade($version) {
+  public static function upgrade($version) {
     if (module::get_var("phpmailer", "use_ssl")) {
       module::set_var("phpmailer", "smtps", "ssl");
     }

@@ -37,7 +37,7 @@ class arr_Core {
 			$params = NULL;
 		}
 
-		return array($command, $params);
+		return [$command, $params];
 	}
 
 	/**
@@ -51,7 +51,7 @@ class arr_Core {
 	 */
 	public static function rotate($source_array, $keep_keys = TRUE)
 	{
-		$new_array = array();
+		$new_array = [];
 		foreach ($source_array as $key => $value)
 		{
 			$value = ($keep_keys === TRUE) ? $value : array_values($value);
@@ -97,10 +97,10 @@ class arr_Core {
 		// Get the keys, removing the $search array
 		$keys = array_slice(func_get_args(), 1);
 
-		$found = array();
+		$found = [];
 		foreach ($keys as $key)
 		{
-			$found[$key] = isset($search[$key]) ? $search[$key] : NULL;
+			$found[$key] = $search[$key] ?? NULL;
 		}
 
 		return $found;
@@ -116,7 +116,7 @@ class arr_Core {
 	 */
 	public static function get(array $array, $key, $default = NULL)
 	{
-		return isset($array[$key]) ? $array[$key] : $default;
+		return $array[$key] ?? $default;
 	}
 
 	/**
@@ -166,7 +166,7 @@ class arr_Core {
 	{
 		$total = func_num_args();
 
-		$result = array();
+		$result = [];
 		for ($i = 0; $i < $total; $i++)
 		{
 			foreach (func_get_arg($i) as $key => $val)
@@ -263,10 +263,10 @@ class arr_Core {
 	 */
 	public static function pluck($key, $array)
 	{
-		$result = array();
+		$result = [];
 		foreach ($array as $i => $object)
 		{
-			$result[$i] = isset($object[$key]) ? $object[$key] : NULL;
+			$result[$i] = $object[$key] ?? NULL;
 		}
 		return $result;
 	}

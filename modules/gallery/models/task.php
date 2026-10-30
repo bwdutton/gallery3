@@ -64,7 +64,7 @@ class Task_Model_Core extends ORM {
     // Save for 30 days.
     $log .= !empty($log) ? "\n" : "";
     Cache::instance()->set($key, "$log{$msg}",
-                           array("task", "log", "import"), 2592000);
+                           ["task", "log", "import"], 2592000);
   }
 
   /**
@@ -73,7 +73,7 @@ class Task_Model_Core extends ORM {
    */
   public function get_log() {
     $log_data = Cache::instance()->get($this->_cache_key());
-    return  $log_data !== null ? $log_data : false;
+    return  $log_data ?? false;
   }
 
   /**

@@ -22,7 +22,7 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       Database::instance()->query("TRUNCATE {tags}");
       Database::instance()->query("TRUNCATE {items_tags}");
-    } catch (Exception $e) {
+    } catch (Exception) {
     }
   }
 
@@ -36,11 +36,11 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
     $request = new stdClass();
     $this->assert_equal_array(
-      array(
+      [
         "url" => rest::url("tags"),
-        "members" => array(
+        "members" => [
           rest::url("tag", $t1),
-          rest::url("tag", $t2))),
+          rest::url("tag", $t2)]],
       tags_rest::get($request));
   }
 
@@ -52,7 +52,7 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->entity = new stdClass();
     $request->params->entity->name = "test tag";
     $this->assert_equal(
-      array("url" => url::site("rest/tag/1")),
+      ["url" => url::site("rest/tag/1")],
       tags_rest::post($request));
   }
 

@@ -26,8 +26,8 @@
 class movie_Core {
   private static $allow_uploads;
 
-  static function get_edit_form($movie) {
-    $form = new Forge("movies/update/$movie->id", "", "post", array("id" => "g-edit-movie-form"));
+  public static function get_edit_form($movie) {
+    $form = new Forge("movies/update/$movie->id", "", "post", ["id" => "g-edit-movie-form"]);
     $form->hidden("from_id")->value($movie->id);
     $group = $form->group("edit_item")->label(t("Edit Movie"));
     $group->input("title")->label(t("Title"))->value($movie->title)
@@ -69,13 +69,13 @@ class movie_Core {
    * @param string     $output_file
    * @param array      $movie_options (optional)
    */
-  static function extract_frame($input_file, $output_file, $movie_options=null) {
+  public static function extract_frame($input_file, $output_file, $movie_options=null) {
     $ffmpeg = movie::find_ffmpeg();
     if (empty($ffmpeg)) {
       throw new Exception("@todo MISSING_FFMPEG");
     }
 
-    list($width, $height, $mime_type, $extension, $duration) = movie::get_file_metadata($input_file);
+    [$width, $height, $mime_type, $extension, $duration] = movie::get_file_metadata($input_file);
 
     if (isset($movie_options["start_time"]) && is_numeric($movie_options["start_time"])) {
       $start_time = max(0, $movie_options["start_time"]); // ensure it's non-negative
@@ -86,8 +86,8 @@ class movie_Core {
     $start_time_arg = ($duration >= $start_time + 0.1) ?
       "-ss " . movie::seconds_to_hhmmssdd($start_time) : "";
 
-    $input_args = isset($movie_options["input_args"]) ? $movie_options["input_args"] : "";
-    $output_args = isset($movie_options["output_args"]) ? $movie_options["output_args"] : "";
+    $input_args = $movie_options["input_args"] ?? "";
+    $output_args = $movie_options["output_args"] ?? "";
 
     $cmd = escapeshellcmd($ffmpeg) . " $input_args -i " . escapeshellarg($input_file) .
       " -an $start_time_arg -an -r 1 -vframes 1" .
@@ -116,21 +116,15 @@ class movie_Core {
    * Return true if movie uploads are allowed, false if not.  This is based on the
    * "movie_allow_uploads" Gallery variable as well as whether or not ffmpeg is found.
    */
-  static function allow_uploads() {
+  public static function allow_uploads() {
     if (empty(self::$allow_uploads)) {
       // Refresh ffmpeg settings
       $ffmpeg = movie::find_ffmpeg();
-      switch (module::get_var("gallery", "movie_allow_uploads", "autodetect")) {
-        case "always":
-          self::$allow_uploads = true;
-          break;
-        case "never":
-          self::$allow_uploads = false;
-          break;
-        default:
-          self::$allow_uploads = !empty($ffmpeg);
-          break;
-      }
+      self::$allow_uploads = match (module::get_var("gallery", "movie_allow_uploads", "autodetect")) {
+          "always" => true,
+          "never" => false,
+          default => !empty($ffmpeg),
+      };
     }
     return self::$allow_uploads;
   }
@@ -138,7 +132,7 @@ class movie_Core {
   /**
    * Return the path to the ffmpeg binary if one exists and is executable, or null.
    */
-  static function find_ffmpeg() {
+  public static function find_ffmpeg() {
     if (!($ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) ||
         !@is_executable($ffmpeg_path)) {
       $ffmpeg_path = system::find_binary(
@@ -153,10 +147,10 @@ class movie_Core {
    * static builds that aren't official releases, the version numbers are strange, hence why the
    * date can be useful.
    */
-  static function get_ffmpeg_version() {
+  public static function get_ffmpeg_version() {
     $ffmpeg = movie::find_ffmpeg();
     if (empty($ffmpeg)) {
-      return array("", "");
+      return ["", ""];
     }
 
     // Find version using -h argument since -version wasn't available in early versions.
@@ -166,14 +160,14 @@ class movie_Core {
     if (preg_match("/ffmpeg version (\S+)/i", $result, $matches_version)) {
       // Version number found - see if we can get the build date or copyright year as well.
       if (preg_match("/built on (\S+\s\S+\s\S+)/i", $result, $matches_build_date)) {
-        return array(trim($matches_version[1], ","), trim($matches_build_date[1], ","));
+        return [trim($matches_version[1], ","), trim($matches_build_date[1], ",")];
       } else if (preg_match("/copyright \S*\s?2000-(\d{4})/i", $result, $matches_copyright_date)) {
-        return array(trim($matches_version[1], ","), $matches_copyright_date[1]);
+        return [trim($matches_version[1], ","), $matches_copyright_date[1]];
       } else {
-        return array(trim($matches_version[1], ","), "");
+        return [trim($matches_version[1], ","), ""];
       }
     }
-    return array("", "");
+    return ["", ""];
   }
 
   /**
@@ -197,7 +191,7 @@ class movie_Core {
    *     -> throw exception
    * Note: movie_get_file_metadata events can change any of the above cases (except the last one).
    */
-  static function get_file_metadata($file_path) {
+  public static function get_file_metadata($file_path) {
     if (!is_readable($file_path)) {
       throw new Exception("@todo UNREADABLE_FILE");
     }
@@ -215,9 +209,9 @@ class movie_Core {
           // (should always be int, but adding round to be sure)
           $matches_res[1] = round($matches_res[2] * $matches_dar[1] / $matches_dar[2]);
         }
-        list ($metadata->width, $metadata->height) = array($matches_res[1], $matches_res[2]);
+        [$metadata->width, $metadata->height] = [$matches_res[1], $matches_res[2]];
       } else {
-        list ($metadata->width, $metadata->height) = array(0, 0);
+        [$metadata->width, $metadata->height] = [0, 0];
       }
 
       if (preg_match("/Duration: (\d+:\d+:\d+\.\d+)/", $result, $matches)) {
@@ -255,8 +249,8 @@ class movie_Core {
       throw new Exception("@todo ILLEGAL_OR_UNINDENTIFIABLE_FILE");
     }
 
-    return array($metadata->width, $metadata->height, $metadata->mime_type,
-                 $metadata->extension, $metadata->duration);
+    return [$metadata->width, $metadata->height, $metadata->mime_type,
+                 $metadata->extension, $metadata->duration];
   }
 
   /**
@@ -267,7 +261,7 @@ class movie_Core {
    * approach avoids potential issues with time zone and DST mismatch and/or using deprecated
    * features (the last argument of mkdate above, which disables DST, is deprecated as of PHP 5.3).
    */
-  static function seconds_to_hhmmssdd($seconds) {
+  public static function seconds_to_hhmmssdd($seconds) {
     return sprintf("%02d:%02d:%05.2F", floor($seconds / 3600), floor((floor($seconds) % 3600) / 60),
                    floor(floor(100 * $seconds) % 6000) / 100);
   }
@@ -276,7 +270,7 @@ class movie_Core {
    * Return the number of seconds from a time/duration formatted in hh:mm:ss.dd.
    * Useful for outputs from ffmpeg.
    */
-  static function hhmmssdd_to_seconds($hhmmssdd) {
+  public static function hhmmssdd_to_seconds($hhmmssdd) {
     preg_match("/(\d+):(\d+):(\d+\.\d+)/", $hhmmssdd, $matches);
     return 3600 * $matches[1] + 60 * $matches[2] + $matches[3];
   }

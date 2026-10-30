@@ -59,13 +59,13 @@ class Reauthenticate_Controller extends Controller {
       url::redirect(Session::instance()->get_once("continue_url"));
     } else {
       $name = $user->name;
-      log::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
+      log::warning("user", t("Failed re-authentication for %name", ["name" => $name]));
       module::event("user_auth_failed", $name);
       if (request::is_ajax()) {
         $v = new View("reauthenticate.html");
         $v->form = $form;
         $v->user_name = identity::active_user()->name;
-        json::reply(array("html" => (string)$v));
+        json::reply(["html" => (string)$v]);
       } else {
         self::_show_form($form);
       }
@@ -83,7 +83,7 @@ class Reauthenticate_Controller extends Controller {
   }
 
   private static function _form() {
-    $form = new Forge("reauthenticate/auth", "", "post", array("id" => "g-reauthenticate-form"));
+    $form = new Forge("reauthenticate/auth", "", "post", ["id" => "g-reauthenticate-form"]);
     $form->set_attr("class", "g-narrow");
     $group = $form->group("reauthenticate")->label(t("Re-authenticate"));
     $group->password("password")->label(t("Password"))->id("g-password")->class(null)
@@ -97,7 +97,7 @@ class Reauthenticate_Controller extends Controller {
     return $form;
   }
 
-  static function valid_password($password_input) {
+  public static function valid_password($password_input) {
     if (!identity::is_correct_password(identity::active_user(), $password_input->value)) {
       $password_input->add_error("invalid_password", 1);
     }

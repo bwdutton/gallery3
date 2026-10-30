@@ -56,11 +56,11 @@
             t2("Viewing %from_number of %count",
                "Viewing %from_number - %to_number of %count",
                $total,
-               array("from_number" => $first_visible_position,
+               ["from_number" => $first_visible_position,
                      "to_number" => $last_visible_position,
-                     "count" => $total)) ?>
+                     "count" => $total]) ?>
       <?php else: ?>
-        <?= t("%position of %total", array("position" => $position, "total" => $total)) ?>
+        <?= t("%position of %total", ["position" => $position, "total" => $total]) ?>
       <?php endif ?>
     <?php endif ?>
   </li>

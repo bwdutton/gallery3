@@ -18,19 +18,19 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class InPlaceEdit_Core {
-  private $rules = array();
-  private $messages = array();
-  private $callback = array();
+  private $rules = [];
+  private $messages = [];
+  private $callback = [];
   private $initial_value;
   private $action = "";
   private $errors;
   private $form;
 
-  static function factory($initial_value) {
+  public static function factory($initial_value) {
     $instance = new InPlaceEdit();
     $instance->initial_value = $initial_value;
-    $instance->form = array("input" => $initial_value);
-    $instance->errors = array("input" => "");
+    $instance->form = ["input" => $initial_value];
+    $instance->errors = ["input" => ""];
 
     return $instance;
   }

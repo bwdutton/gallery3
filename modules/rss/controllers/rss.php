@@ -23,7 +23,7 @@ class Rss_Controller extends Controller {
   public function feed($module_id, $feed_id, $id=null) {
     $page = (int) Input::instance()->get("page", 1);
     if ($page < 1) {
-      url::redirect(url::merge(array("page" => 1)));
+      url::redirect(url::merge(["page" => 1]));
     }
 
     // Configurable page size between 1 and 100, default 20
@@ -34,7 +34,7 @@ class Rss_Controller extends Controller {
       $class_name = "{$module_id}_rss";
       if (class_exists($class_name) && method_exists($class_name, "feed")) {
         $feed = call_user_func(
-          array($class_name, "feed"), $feed_id,
+          [$class_name, "feed"], $feed_id,
           ($page - 1) * $page_size, $page_size, $id);
       }
     }
@@ -43,7 +43,7 @@ class Rss_Controller extends Controller {
     }
 
     if ($feed->max_pages && $page > $feed->max_pages) {
-      url::redirect(url::merge(array("page" => $feed->max_pages)));
+      url::redirect(url::merge(["page" => $feed->max_pages]));
     }
 
     $view = new View(empty($feed->view) ? "feed.mrss" : $feed->view);
@@ -54,10 +54,10 @@ class Rss_Controller extends Controller {
 
     $feed->uri = url::abs_site(url::merge($_GET));
     if ($page > 1) {
-      $feed->previous_page_uri = url::abs_site(url::merge(array("page" => $page - 1)));
+      $feed->previous_page_uri = url::abs_site(url::merge(["page" => $page - 1]));
     }
     if ($page < $feed->max_pages) {
-      $feed->next_page_uri = url::abs_site(url::merge(array("page" => $page + 1)));
+      $feed->next_page_uri = url::abs_site(url::merge(["page" => $page + 1]));
     }
 
     header("Content-Type: application/rss+xml");

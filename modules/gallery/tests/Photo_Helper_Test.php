@@ -20,7 +20,7 @@
 class Photo_Helper_Test extends Gallery_Unit_Test_Case {
   public function get_file_metadata_test() {
     $photo = test::random_photo();
-    $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"),
+    $this->assert_equal([1024, 768, "image/jpeg", "jpg"],
                         photo::get_file_metadata($photo->file_path()));
   }
 
@@ -28,14 +28,14 @@ class Photo_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       $metadata = photo::get_file_metadata(MODPATH . "gallery/tests/this_does_not_exist");
       $this->assert_true(false, "Shouldn't get here");
-    } catch (Exception $e) {
+    } catch (Exception) {
       // pass
     }
   }
 
   public function get_file_metadata_with_no_extension_test() {
     copy(MODPATH . "gallery/tests/test.jpg", TMPPATH . "test_jpg_with_no_extension");
-    $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"),
+    $this->assert_equal([1024, 768, "image/jpeg", "jpg"],
                         photo::get_file_metadata(TMPPATH . "test_jpg_with_no_extension"));
     unlink(TMPPATH . "test_jpg_with_no_extension");
   }
@@ -44,7 +44,7 @@ class Photo_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       $metadata = photo::get_file_metadata(MODPATH . "gallery/tests/Photo_Helper_Test.php");
       $this->assert_true(false, "Shouldn't get here");
-    } catch (Exception $e) {
+    } catch (Exception) {
       // pass
     }
   }
@@ -55,7 +55,7 @@ class Photo_Helper_Test extends Gallery_Unit_Test_Case {
     // ticket #1855, where an image that looked valid (header said jpg) with a php extension was
     // previously accepted without changing its extension, do not arise and cause security issues.
     copy(MODPATH . "gallery/tests/test.jpg", TMPPATH . "test_jpg_with_php_extension.php");
-    $this->assert_equal(array(1024, 768, "image/jpeg", "jpg"),
+    $this->assert_equal([1024, 768, "image/jpeg", "jpg"],
                         photo::get_file_metadata(TMPPATH . "test_jpg_with_php_extension.php"));
     unlink(TMPPATH . "test_jpg_with_php_extension.php");
   }
@@ -65,7 +65,7 @@ class Photo_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       $metadata = photo::get_file_metadata(TMPPATH . "test_php_with_jpg_extension.jpg");
       $this->assert_true(false, "Shouldn't get here");
-    } catch (Exception $e) {
+    } catch (Exception) {
       // pass
     }
     unlink(TMPPATH . "test_php_with_jpg_extension.jpg");

@@ -15,7 +15,7 @@ class Log_Database_Driver extends Log_Driver {
 	{
 		$insert = db::build($this->config['group'])
 						->insert($this->config['table'])
-						->columns(array('date', 'level', 'message'));
+						->columns(['date', 'level', 'message']);
 
 		$run_insert = FALSE;
 

@@ -37,7 +37,7 @@ class item_rest_Core {
    *     Limit the type to types in this list, eg: "type=photo,movie".
    *     Also limits the types returned in the member collections (same behaviour as item_rest).
    */
-  static function get($request) {
+  public static function get($request) {
     $item = rest::resolve($request->url);
     access::required("view", $item);
 
@@ -52,7 +52,7 @@ class item_rest_Core {
       $p->scope = "direct";
     }
 
-    if (!in_array($p->scope, array("direct", "all"))) {
+    if (!in_array($p->scope, ["direct", "all"])) {
       throw new Rest_Exception("Bad Request", 400);
     }
 
@@ -73,18 +73,18 @@ class item_rest_Core {
 
     // Apply the item's sort order, using id as the tie breaker.
     // See Item_Model::children()
-    $order_by = array($item->sort_column => $item->sort_order);
+    $order_by = [$item->sort_column => $item->sort_order];
     if ($item->sort_column != "id") {
       $order_by["id"] = "ASC";
     }
     $orm->order_by($order_by);
 
-    $result = array(
+    $result = [
       "url" => $request->url,
       "entity" => $item->as_restful_array(),
-      "relationships" => rest::relationships("item", $item));
+      "relationships" => rest::relationships("item", $item)];
     if ($item->is_album()) {
-      $result["members"] = array();
+      $result["members"] = [];
       foreach ($orm->find_all() as $child) {
         $result["members"][] = rest::url("item", $child);
       }
@@ -93,17 +93,17 @@ class item_rest_Core {
     return $result;
   }
 
-  static function put($request) {
+  public static function put($request) {
     $item = rest::resolve($request->url);
     access::required("edit", $item);
 
     if ($entity = $request->params->entity) {
       // Only change fields from a whitelist.
-      foreach (array("album_cover", "captured", "description",
+      foreach (["album_cover", "captured", "description",
                      "height", "mime_type", "name", "parent", "rand_key", "resize_dirty",
                      "resize_height", "resize_width", "slug", "sort_column", "sort_order",
                      "thumb_dirty", "thumb_height", "thumb_width", "title", "view_count",
-                     "width") as $key) {
+                     "width"] as $key) {
         switch ($key) {
         case "album_cover":
           if (property_exists($entity, "album_cover")) {
@@ -148,7 +148,7 @@ class item_rest_Core {
     }
   }
 
-  static function post($request) {
+  public static function post($request) {
     $parent = rest::resolve($request->url);
     access::required("add", $parent);
 
@@ -159,9 +159,9 @@ class item_rest_Core {
       $item->type = "album";
       $item->parent_id = $parent->id;
       $item->name = $entity->name;
-      $item->title = isset($entity->title) ? $entity->title : $entity->name;
-      $item->description = isset($entity->description) ? $entity->description : null;
-      $item->slug = isset($entity->slug) ? $entity->slug : null;
+      $item->title = $entity->title ?? $entity->name;
+      $item->description = $entity->description ?? null;
+      $item->slug = $entity->slug ?? null;
       $item->save();
       break;
 
@@ -169,34 +169,34 @@ class item_rest_Core {
     case "movie":
       if (empty($request->file)) {
         throw new Rest_Exception(
-          "Bad Request", 400, array("errors" => array("file" => t("Upload failed"))));
+          "Bad Request", 400, ["errors" => ["file" => t("Upload failed")]]);
       }
     $item->type = $entity->type;
     $item->parent_id = $parent->id;
     $item->set_data_file($request->file);
     $item->name = $entity->name;
-    $item->title = isset($entity->title) ? $entity->title : $entity->name;
-    $item->description = isset($entity->description) ? $entity->description : null;
-    $item->slug = isset($entity->slug) ? $entity->slug : null;
+    $item->title = $entity->title ?? $entity->name;
+    $item->description = $entity->description ?? null;
+    $item->slug = $entity->slug ?? null;
     $item->save();
     break;
 
     default:
       throw new Rest_Exception(
-        "Bad Request", 400, array("errors" => array("type" => "invalid")));
+        "Bad Request", 400, ["errors" => ["type" => "invalid"]]);
     }
 
-    return array("url" => rest::url("item", $item));
+    return ["url" => rest::url("item", $item)];
   }
 
-  static function delete($request) {
+  public static function delete($request) {
     $item = rest::resolve($request->url);
     access::required("edit", $item);
 
     $item->delete();
   }
 
-  static function resolve($id) {
+  public static function resolve($id) {
     $item = ORM::factory("item", $id);
     if (!access::can("view", $item)) {
       throw new Kohana_404_Exception();
@@ -204,7 +204,7 @@ class item_rest_Core {
     return $item;
   }
 
-  static function url($item) {
+  public static function url($item) {
     return url::abs_site("rest/item/{$item->id}");
   }
 }

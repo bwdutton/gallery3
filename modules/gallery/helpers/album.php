@@ -25,10 +25,10 @@
  */
 class album_Core {
 
-  static function get_add_form($parent) {
-    $form = new Forge("albums/create/{$parent->id}", "", "post", array("id" => "g-add-album-form"));
+  public static function get_add_form($parent) {
+    $form = new Forge("albums/create/{$parent->id}", "", "post", ["id" => "g-add-album-form"]);
     $group = $form->group("add_album")
-      ->label(t("Add an album to %album_title", array("album_title" => $parent->title)));
+      ->label(t("Add an album to %album_title", ["album_title" => $parent->title]));
     $group->input("title")->label(t("Title"))
       ->error_messages("required", t("You must provide a title"))
       ->error_messages("length", t("Your title is too long"));
@@ -61,9 +61,9 @@ class album_Core {
     return $form;
   }
 
-  static function get_edit_form($parent) {
+  public static function get_edit_form($parent) {
     $form = new Forge(
-      "albums/update/{$parent->id}", "", "post", array("id" => "g-edit-album-form"));
+      "albums/update/{$parent->id}", "", "post", ["id" => "g-edit-album-form"]);
     $form->hidden("from_id")->value($parent->id);
     $group = $form->group("edit_item")->label(t("Edit Album"));
 
@@ -94,17 +94,17 @@ class album_Core {
       $group->hidden("slug")->value($parent->slug);
     }
 
-    $sort_order = $group->group("sort_order", array("id" => "g-album-sort-order"))
+    $sort_order = $group->group("sort_order", ["id" => "g-album-sort-order"])
       ->label(t("Sort Order"));
 
-    $sort_order->dropdown("column", array("id" => "g-album-sort-column"))
+    $sort_order->dropdown("column", ["id" => "g-album-sort-column"])
       ->label(t("Sort by"))
       ->options(album::get_sort_order_options())
       ->selected($parent->sort_column);
-    $sort_order->dropdown("direction", array("id" => "g-album-sort-direction"))
+    $sort_order->dropdown("direction", ["id" => "g-album-sort-direction"])
       ->label(t("Order"))
-      ->options(array("ASC" => t("Ascending"),
-                      "DESC" => t("Descending")))
+      ->options(["ASC" => t("Ascending"),
+                      "DESC" => t("Descending")])
       ->selected($parent->sort_order);
 
     module::event("item_edit_form", $parent, $form);
@@ -118,14 +118,14 @@ class album_Core {
   /**
    * Return a structured set of all the possible sort orders.
    */
-  static function get_sort_order_options() {
-    return array("weight" => t("Manual"),
+  public static function get_sort_order_options() {
+    return ["weight" => t("Manual"),
                  "captured" => t("Date captured"),
                  "created" => t("Date uploaded"),
                  "title" => t("Title"),
                  "name" => t("File name"),
                  "updated" => t("Date modified"),
                  "view_count" => t("Number of views"),
-                 "rand_key" => t("Random"));
+                 "rand_key" => t("Random")];
   }
 }

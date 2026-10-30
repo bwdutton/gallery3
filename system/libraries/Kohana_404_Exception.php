@@ -23,13 +23,10 @@ class Kohana_404_Exception_Core extends Kohana_Exception {
 	 */
 	public function __construct($page = NULL)
 	{
-		if ($page === NULL)
-		{
-			// Use the complete URI
-			$page = Router::$complete_uri;
-		}
+		// Use the complete URI
+        $page ??= Router::$complete_uri;
 
-		parent::__construct('The page you requested, %page%, could not be found.', array('%page%' => $page));
+		parent::__construct('The page you requested, %page%, could not be found.', ['%page%' => $page]);
 	}
 
 	/**
@@ -38,7 +35,7 @@ class Kohana_404_Exception_Core extends Kohana_Exception {
 	 * @throws  Kohana_404_Exception
 	 * @return  void
 	 */
-	public static function trigger($page = NULL)
+	public static function trigger($page = NULL): never
 	{
 		throw new Kohana_404_Exception($page);
 	}

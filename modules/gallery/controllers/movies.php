@@ -28,9 +28,9 @@ class Movies_Controller extends Items_Controller {
     access::required("view", $movie);
 
     $template = new Theme_View("page.html", "item", "movie");
-    $template->set_global(array("item" => $movie,
-                                "children" => array(),
-                                "children_count" => 0));
+    $template->set_global(["item" => $movie,
+                                "children" => [],
+                                "children_count" => 0]);
     $template->set_global(item::get_display_context($movie));
     $template->content = new View("movie.html");
 
@@ -67,17 +67,17 @@ class Movies_Controller extends Items_Controller {
 
       log::success("content", "Updated movie", "<a href=\"{$movie->url()}\">view</a>");
       message::success(
-        t("Saved movie %movie_title", array("movie_title" => html::purify($movie->title))));
+        t("Saved movie %movie_title", ["movie_title" => html::purify($movie->title)]));
 
       if ($form->from_id->value == $movie->id) {
         // Use the new url; it might have changed.
-        json::reply(array("result" => "success", "location" => $movie->url()));
+        json::reply(["result" => "success", "location" => $movie->url()]);
       } else {
         // Stay on the same page
-        json::reply(array("result" => "success"));
+        json::reply(["result" => "success"]);
       }
     } else {
-      json::reply(array("result" => "error", "html" => (string) $form));
+      json::reply(["result" => "error", "html" => (string) $form]);
     }
   }
 

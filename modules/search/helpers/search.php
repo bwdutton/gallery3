@@ -22,23 +22,23 @@ class search_Core {
    * Add more terms to the query by wildcarding the stem value of the first
    * few terms in the query.
    */
-  static function add_query_terms($q) {
+  public static function add_query_terms($q) {
     $MAX_TERMS = 5;
     $terms = explode(" ", $q, $MAX_TERMS);
     for ($i = 0; $i < min(count($terms), $MAX_TERMS - 1); $i++) {
       // Don't wildcard quoted or already wildcarded terms
-      if ((substr($terms[$i], 0, 1) != '"') && (substr($terms[$i], -1, 1) != "*")) {
+      if ((!str_starts_with($terms[$i], '"')) && (!str_ends_with($terms[$i], "*"))) {
         $terms[] = rtrim($terms[$i], "s") . "*";
       }
     }
     return implode(" ", $terms);
   }
 
-  static function search($q, $limit, $offset) {
+  public static function search($q, $limit, $offset) {
     return search::search_within_album($q, item::root(), $limit, $offset);
   }
 
-  static function search_within_album($q, $album, $limit, $offset) {
+  public static function search_within_album($q, $album, $limit, $offset) {
     $db = Database::instance();
 
     $query = self::_build_query_base($q, $album) .
@@ -48,10 +48,10 @@ class search_Core {
     $data = $db->query($query);
     $count = $db->query("SELECT FOUND_ROWS() as c")->current()->c;
 
-    return array($count, new ORM_Iterator(ORM::factory("item"), $data));
+    return [$count, new ORM_Iterator(ORM::factory("item"), $data)];
   }
 
-  private static function _build_query_base($q, $album, $where=array()) {
+  private static function _build_query_base($q, $album, $where=[]) {
     $db = Database::instance();
     $q = $db->escape($q);
 
@@ -59,7 +59,7 @@ class search_Core {
       foreach (identity::group_ids_for_active_user() as $id) {
         $fields[] = "`view_$id` = TRUE"; // access::ALLOW
       }
-      $access_sql = " AND (" . join(" OR ", $fields) . ")";
+      $access_sql = " AND (" . implode(" OR ", $fields) . ")";
     } else {
       $access_sql = "";
     }
@@ -78,24 +78,24 @@ class search_Core {
       "FROM {items} JOIN {search_records} ON ({items}.`id` = {search_records}.`item_id`) " .
       "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE)" .
       $album_sql .
-      (empty($where) ? "" : " AND " . join(" AND ", $where)) .
+      (empty($where) ? "" : " AND " . implode(" AND ", $where)) .
       $access_sql;
   }
 
   /**
    * @return string An error message suitable for inclusion in the task log
    */
-  static function check_index() {
-    list ($remaining) = search::stats();
+  public static function check_index() {
+    [$remaining] = search::stats();
     if ($remaining) {
       site_status::warning(
         t('Your search index needs to be updated.  <a href="%url" class="g-dialog-link">Fix this now</a>',
-          array("url" => html::mark_clean(url::site("admin/maintenance/start/search_task::update_index?csrf=__CSRF__")))),
+          ["url" => html::mark_clean(url::site("admin/maintenance/start/search_task::update_index?csrf=__CSRF__"))]),
         "search_index_out_of_date");
     }
   }
 
-  static function update($item) {
+  public static function update($item) {
     $data = new ArrayObject();
     $record = ORM::factory("search_record")->where("item_id", "=", $item->id)->find();
     if (!$record->loaded()) {
@@ -104,12 +104,12 @@ class search_Core {
 
     $item = $record->item();
     module::event("item_index_data", $item, $data);
-    $record->data = join(" ", (array)$data);
+    $record->data = implode(" ", (array)$data);
     $record->dirty = 0;
     $record->save();
   }
 
-  static function stats() {
+  public static function stats() {
     $remaining = db::build()
       ->from("items")
       ->join("search_records", "items.id", "search_records.item_id", "left")
@@ -122,16 +122,16 @@ class search_Core {
     $total = ORM::factory("item")->count_all();
     $percent = round(100 * ($total - $remaining) / $total);
 
-    return array($remaining, $total, $percent);
+    return [$remaining, $total, $percent];
   }
 
-  static function get_position($item, $q) {
+  public static function get_position($item, $q) {
     return search::get_position_within_album($item, $q, item::root());
   }
 
-  static function get_position_within_album($item, $q, $album) {
+  public static function get_position_within_album($item, $q, $album) {
     $page_size = module::get_var("gallery", "page_size", 9);
-    $query = self::_build_query_base($q, $album, array("{items}.id = " . $item->id)) .
+    $query = self::_build_query_base($q, $album, ["{items}.id = " . $item->id]) .
       " ORDER BY `score` DESC";
     $db = Database::instance();
 

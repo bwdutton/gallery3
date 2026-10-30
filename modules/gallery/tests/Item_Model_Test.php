@@ -328,7 +328,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $album->parent_id = $photo->id;
       $album->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_equal(array("parent_id" => "invalid"), $e->validation->errors());
+      $this->assert_equal(["parent_id" => "invalid"], $e->validation->errors());
       return;
     }
     $this->assert_true(false, "Shouldn't get here");
@@ -363,7 +363,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $album1->parent_id = $album3->id;
       $album1->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_equal(array("parent_id" => "invalid"), $e->validation->errors());
+      $this->assert_equal(["parent_id" => "invalid"], $e->validation->errors());
       return;
     }
     $this->assert_true(false, "Shouldn't get here");
@@ -384,14 +384,14 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     try {
       $item->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("description" => "length",
+      $this->assert_same(["description" => "length",
                                "name" => "required",
                                "title" => "required",
                                "album_cover_item_id" => "invalid_item",
                                "parent_id" => "invalid",
                                "sort_column" => "invalid",
                                "sort_order" => "invalid",
-                               "type" => "invalid"),
+                               "type" => "invalid"],
                          $e->validation->errors());
       return;
     }
@@ -406,7 +406,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $album->save();
       $this->assert_true(false, "Shouldn't be able to save");
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("slug" => "not_url_safe"), $e->validation->errors());
+      $this->assert_same(["slug" => "not_url_safe"], $e->validation->errors());
     }
 
     // This should work
@@ -428,7 +428,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $photo->save();
     } catch (ORM_Validation_Exception $e) {
       $this->assert_same(
-        array("name" => "illegal_data_file_extension", "type" => "read_only"),
+        ["name" => "illegal_data_file_extension", "type" => "read_only"],
         $e->validation->errors());
       return;  // pass
     }
@@ -453,7 +453,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     try {
       item::root()->delete();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("id" => "cant_delete_root_album"), $e->validation->errors());
+      $this->assert_same(["id" => "cant_delete_root_album"], $e->validation->errors());
       return;  // pass
     }
     $this->assert_true(false, "Shouldn't get here");
@@ -542,7 +542,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $photo->set_data_file(MODPATH . "gallery/tests/Item_Model_Test.php");
       $photo->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("name" => "invalid_data_file"), $e->validation->errors());
+      $this->assert_same(["name" => "invalid_data_file"], $e->validation->errors());
       return;  // pass
     }
     $this->assert_true(false, "Shouldn't get here");
@@ -556,7 +556,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
       $photo->set_data_file($temp_file);
       $photo->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_same(array("name" => "invalid_data_file"), $e->validation->errors());
+      $this->assert_same(["name" => "invalid_data_file"], $e->validation->errors());
       return;  // pass
     }
     $this->assert_true(false, "Shouldn't get here");
@@ -592,7 +592,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function legal_extension_that_does_match_gets_used_test() {
-    foreach (array("jpg", "JPG", "Jpg", "jpeg") as $extension) {
+    foreach (["jpg", "JPG", "Jpg", "jpeg"] as $extension) {
       $photo = test::random_photo_unsaved(item::root());
       $photo->name = test::random_name() . ".{$extension}";
       $photo->save();
@@ -602,8 +602,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function illegal_extension_test() {
-    foreach (array("test.php", "test.PHP", "test.php5", "test.php4",
-                   "test.pl", "test.php.png") as $name) {
+    foreach (["test.php", "test.PHP", "test.php5", "test.php4",
+                   "test.pl", "test.php.png"] as $name) {
       $photo = test::random_photo_unsaved(item::root());
       $photo->name = $name;
       $photo->save();
@@ -613,8 +613,8 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function cant_rename_to_illegal_extension_test() {
-    foreach (array("test.php.test", "test.php", "test.PHP",
-                   "test.php5", "test.php4", "test.pl") as $name) {
+    foreach (["test.php.test", "test.php", "test.PHP",
+                   "test.php5", "test.php4", "test.pl"] as $name) {
       $photo = test::random_photo(item::root());
       $photo->name = $name;
       $photo->save();
@@ -624,7 +624,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function legal_extension_that_doesnt_match_gets_fixed_test() {
-    foreach (array("test.png", "test.mp4", "test.GIF") as $name) {
+    foreach (["test.png", "test.mp4", "test.GIF"] as $name) {
       $photo = test::random_photo_unsaved(item::root());
       $photo->name = $name;
       $photo->save();
@@ -634,7 +634,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
   }
 
   public function rename_to_legal_extension_that_doesnt_match_gets_fixed_test() {
-    foreach (array("test.png", "test.mp4", "test.GIF") as $name) {
+    foreach (["test.png", "test.mp4", "test.GIF"] as $name) {
       $photo = test::random_photo(item::root());
       $photo->name = $name;
       $photo->save();

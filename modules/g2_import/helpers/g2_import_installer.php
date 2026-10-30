@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class g2_import_installer {
-  static function install() {
+  public static function install() {
     $db = Database::instance();
     $db->query("CREATE TABLE IF NOT EXISTS {g2_maps} (
                  `id` int(9) NOT NULL auto_increment,
@@ -34,7 +34,7 @@ class g2_import_installer {
     mkdir(VARPATH . "modules/g2_import");
   }
 
-  static function upgrade($version) {
+  public static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
       $db->query("ALTER TABLE {g2_maps} ADD COLUMN `g2_url` VARCHAR(255)");
@@ -44,7 +44,7 @@ class g2_import_installer {
     }
   }
 
-  static function uninstall() {
+  public static function uninstall() {
     @dir::unlink(VARPATH . "modules/g2_import");
   }
 }

@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class User_Model_Core extends ORM implements User_Definition {
-  protected $has_and_belongs_to_many = array("groups");
+  protected $has_and_belongs_to_many = ["groups"];
   protected $password_length = null;
   protected $groups_cache = null;
 
@@ -76,17 +76,17 @@ class User_Model_Core extends ORM implements User_Definition {
   public function validate(?Validation $array=null) {
     // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
-      $this->rules = array(
-        "admin"     => array("callbacks" => array(array($this, "valid_admin"))),
-        "email"     => array("rules"     => array("length[1,255]", "valid::email"),
-                             "callbacks" => array(array($this, "valid_email"))),
-        "full_name" => array("rules"     => array("length[0,255]")),
-        "locale"    => array("rules"     => array("length[2,10]")),
-        "name"      => array("rules"     => array("length[1,32]", "required"),
-                             "callbacks" => array(array($this, "valid_name"))),
-        "password"  => array("callbacks" => array(array($this, "valid_password"))),
-        "url"       => array("rules"     => array("valid::url")),
-      );
+      $this->rules = [
+        "admin"     => ["callbacks" => [$this->valid_admin(...)]],
+        "email"     => ["rules"     => ["length[1,255]", "valid::email"],
+                             "callbacks" => [$this->valid_email(...)]],
+        "full_name" => ["rules"     => ["length[0,255]"]],
+        "locale"    => ["rules"     => ["length[2,10]"]],
+        "name"      => ["rules"     => ["length[1,32]", "required"],
+                             "callbacks" => [$this->valid_name(...)]],
+        "password"  => ["callbacks" => [$this->valid_password(...)]],
+        "url"       => ["rules"     => ["valid::url"]],
+      ];
     }
 
     parent::validate($array);
@@ -99,9 +99,7 @@ class User_Model_Core extends ORM implements User_Definition {
    * @return ORM User_Model
    */
   public function save() {
-    if ($this->full_name === null) {
-      $this->full_name = "";
-    }
+    $this->full_name ??= "";
 
     if (!$this->loaded()) {
       // New user
@@ -138,7 +136,7 @@ class User_Model_Core extends ORM implements User_Definition {
   public function valid_name(Validation $v, $field) {
     if (db::build()->from("users")
         ->where("name", "=", $this->name)
-        ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
+        ->merge_where($this->id ? [["id", "<>", $this->id]] : null)
         ->count_records() == 1) {
       $v->add_error("name", "conflict");
     }

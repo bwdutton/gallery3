@@ -50,20 +50,20 @@ class Admin_g2_import_Controller extends Admin_Controller {
 
     if (g2_import::is_initialized()) {
       if ((bool)ini_get("eaccelerator.enable") || (bool)ini_get("xcache.cacher")) {
-        message::warning(t("The eAccelerator and XCache PHP performance extensions are known to cause issues.  If you're using either of those and are having problems, please disable them while you do your import.  Add the following lines: <pre>%lines</pre> to gallery3/.htaccess and remove them when the import is done.", array("lines" => "\n\n  php_value eaccelerator.enable 0\n  php_value xcache.cacher off\n  php_value xcache.optimizer off\n\n")));
+        message::warning(t("The eAccelerator and XCache PHP performance extensions are known to cause issues.  If you're using either of those and are having problems, please disable them while you do your import.  Add the following lines: <pre>%lines</pre> to gallery3/.htaccess and remove them when the import is done.", ["lines" => "\n\n  php_value eaccelerator.enable 0\n  php_value xcache.cacher off\n  php_value xcache.optimizer off\n\n"]));
       }
 
-      foreach (array("notification", "search", "exif") as $module_id) {
+      foreach (["notification", "search", "exif"] as $module_id) {
         if (module::is_active($module_id)) {
           message::warning(
             t("<a href=\"%url\">Deactivating</a> the <b>%module_id</b> module during your import will make it faster",
-              array("url" => url::site("admin/modules"), "module_id" => $module_id)));
+              ["url" => url::site("admin/modules"), "module_id" => $module_id]));
         }
       }
       if (module::is_active("akismet")) {
         message::warning(
           t("The Akismet module may mark some or all of your imported comments as spam.  <a href=\"%url\">Deactivate</a> it to avoid that outcome.",
-            array("url" => url::site("admin/modules"))));
+            ["url" => url::site("admin/modules")]));
       }
     } else if (g2_import::is_configured()) {
       $view->content->form->configure_g2_import->embed_path->add_error("invalid", 1);
@@ -100,7 +100,7 @@ class Admin_g2_import_Controller extends Admin_Controller {
   }
 
   public function autocomplete() {
-    $directories = array();
+    $directories = [];
     $path_prefix = Input::instance()->get("term");
     foreach (glob("{$path_prefix}*") as $file) {
       if (is_dir($file) && !is_link($file)) {
@@ -120,7 +120,7 @@ class Admin_g2_import_Controller extends Admin_Controller {
   private function _get_import_form() {
     $embed_path = module::get_var("g2_import", "embed_path", "");
     $form = new Forge(
-      "admin/g2_import/save", "", "post", array("id" => "g-admin-configure-g2-import-form"));
+      "admin/g2_import/save", "", "post", ["id" => "g-admin-configure-g2-import-form"]);
     $group = $form->group("configure_g2_import")->label(t("Configure Gallery 2 Import"));
     $group->input("embed_path")->label(t("Filesystem path to your Gallery 2 embed.php file"))
       ->value($embed_path);

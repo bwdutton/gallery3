@@ -12,7 +12,7 @@
         <?php if ($theme->item()): ?>
           <?= html::purify($theme->item()->title) ?>
         <?php elseif ($theme->tag()): ?>
-          <?= t("Photos tagged with %tag_title", array("tag_title" => $theme->tag()->name)) ?>
+          <?= t("Photos tagged with %tag_title", ["tag_title" => $theme->tag()->name]) ?>
         <?php else: /* Not an item, not a tag, no page_title specified.  Help! */ ?>
           <?= html::purify(item::root()->title) ?>
         <?php endif ?>
@@ -129,7 +129,7 @@
           </div>
         </div>
         <div id="g-sidebar" class="yui-b">
-          <?php if (!in_array($theme->page_subtype, array("login", "error"))): ?>
+          <?php if (!in_array($theme->page_subtype, ["login", "error"])): ?>
           <?= new View("sidebar.html") ?>
           <?php endif ?>
         </div>

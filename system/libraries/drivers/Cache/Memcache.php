@@ -29,23 +29,23 @@ class Cache_Memcache_Driver extends Cache_Driver {
 		foreach ($config['servers'] as $server)
 		{
 			// Make sure all required keys are set
-			$server += array('host' => '127.0.0.1',
+			$server += ['host' => '127.0.0.1',
 			                 'port' => 11211,
 			                 'persistent' => FALSE,
 			                 'weight' => 1,
 			                 'timeout' => 1,
 			                 'retry_interval' => 15
-			);
+			];
 
 			// Add the server to the pool
-			$this->backend->addServer($server['host'], $server['port'], (bool) $server['persistent'], (int) $server['weight'], (int) $server['timeout'], (int) $server['retry_interval'], TRUE, array($this,'_memcache_failure_callback'));
+			$this->backend->addServer($server['host'], $server['port'], (bool) $server['persistent'], (int) $server['weight'], (int) $server['timeout'], (int) $server['retry_interval'], TRUE, $this->_memcache_failure_callback(...));
 		}
 	}
 
 	public function _memcache_failure_callback($host, $port)
 	{
 		$this->backend->setServerParams($host, $port, 1, -1, FALSE);
-		Kohana_Log::add('error', __('Cache: Memcache server down: :host:::port:',array(':host:' => $host,':port:' => $port)));
+		Kohana_Log::add('error', __('Cache: Memcache server down: :host:::port:',[':host:' => $host,':port:' => $port]));
 	}
 
 	public function set($items, $tags = NULL, $lifetime = NULL)
@@ -86,14 +86,14 @@ class Cache_Memcache_Driver extends Cache_Driver {
 		}
 		else
 		{
-			return ($items === FALSE) ? array() : $items;
+			return ($items === FALSE) ? [] : $items;
 		}
 	}
 
 	/**
 	 * Get cache items by tag
 	 */
-	public function get_tag($tags)
+	public function get_tag($tags): never
 	{
 		throw new Cache_Exception('Memcache driver does not support tags');
 	}
@@ -117,7 +117,7 @@ class Cache_Memcache_Driver extends Cache_Driver {
 	/**
 	 * Delete cache items by tag
 	 */
-	public function delete_tag($tags)
+	public function delete_tag($tags): never
 	{
 		throw new Cache_Exception('Memcache driver does not support tags');
 	}

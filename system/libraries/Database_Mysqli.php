@@ -25,13 +25,13 @@ class Database_Mysqli_Core extends Database_Mysql {
 			$host = 'p:'.$host;
 		}
 
-		$host = isset($host) ? $host : $socket;
+		$host ??= $socket;
 
 		$mysqli = mysqli_init();
 
 		if ( ! $mysqli->real_connect($host, $user, $pass, $database, $port, $socket))
 			throw new Database_Exception('#:errno: :error',
-				array(':error' => $mysqli->connect_error, ':errno' => $mysqli->connect_errno));
+				[':error' => $mysqli->connect_error, ':errno' => $mysqli->connect_errno]);
 
 		$this->connection = $mysqli;
 
@@ -61,8 +61,8 @@ class Database_Mysqli_Core extends Database_Mysql {
 		{
 			// Unable to set charset
 			throw new Database_Exception('#:errno: :error',
-				array(':error' => $this->connection->connect_error,
-				':errno' => $this->connection->connect_errno));
+				[':error' => $this->connection->connect_error,
+				':errno' => $this->connection->connect_errno]);
 		}
 	}
 

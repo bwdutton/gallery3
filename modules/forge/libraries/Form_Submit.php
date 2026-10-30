@@ -11,13 +11,13 @@
  */
 class Form_Submit_Core extends Form_Input {
 
-	protected $data = array
-	(
+	protected $data = 
+	[
 		'type'  => 'submit',
 		'class' => 'submit'
-	);
+	];
 
-	protected $protect = array('type');
+	protected $protect = ['type'];
 
 	public function render()
 	{

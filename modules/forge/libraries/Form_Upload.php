@@ -11,13 +11,13 @@
  */
 class Form_Upload_Core extends Form_Input {
 
-	protected $data = array
-	(
+	protected $data = 
+	[
 		'class' => 'upload',
 		'value' => '',
-	);
+	];
 
-	protected $protect = array('type', 'label', 'value');
+	protected $protect = ['type', 'label', 'value'];
 
 	// Upload data
 	protected $upload;
@@ -179,7 +179,7 @@ class Form_Upload_Core extends Form_Input {
 
 		if (empty($this->upload['size']) OR $this->upload['size'] > $bytes)
 		{
-			$this->errors['max_size'] = array($size);
+			$this->errors['max_size'] = [$size];
 		}
 	}
 

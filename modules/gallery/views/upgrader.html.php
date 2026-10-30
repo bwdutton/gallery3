@@ -28,13 +28,13 @@
             <h1> <?= t("That's it!") ?> </h1>
             <p>
               <?= t("Your Gallery is up to date.<br/><a href=\"%url\">Return to your Gallery</a>",
-                    array("url" => html::mark_clean(url::base()))) ?>
+                    ["url" => html::mark_clean(url::base())]) ?>
             </p>
           </div>
           <div id="failed" style="display: none">
             <h1> <?= t("Some modules failed to upgrade!") ?> </h1>
             <p>
-              <?= t("Failed modules are <span class=\"failed\">highlighted</span>.  Try getting newer versions or <a href=\"%admin_modules\">deactivating those modules</a>.", array("admin_modules" => url::site("admin/modules"))) ?>
+              <?= t("Failed modules are <span class=\"failed\">highlighted</span>.  Try getting newer versions or <a href=\"%admin_modules\">deactivating those modules</a>.", ["admin_modules" => url::site("admin/modules")]) ?>
             </p>
           </div>
         </div>
@@ -143,8 +143,8 @@
         <h1> <?= t("Who are you?") ?> </h1>
         <p>
           <?= t("You're not logged in as an administrator, so we have to verify you to make sure it's ok for you to do an upgrade.  To prove you can run an upgrade, create a file called <b> %name </b> in your <b>%tmp_dir_path</b> directory.",
-                array("name" => "$upgrade_token",
-                      "tmp_dir_path" => "gallery3/var/tmp")) ?>
+                ["name" => "$upgrade_token",
+                      "tmp_dir_path" => "gallery3/var/tmp"]) ?>
         </p>
         <a href="<?= url::site("upgrader?") ?>"><?= t("Ok, I've done that") ?></a>
         <?php endif // can_upgrade ?>
@@ -153,8 +153,8 @@
         <p>
           <em>
             <?= t("Did something go wrong? Try the <a href=\"%faq_url\">FAQ</a> or ask in the <a href=\"%forums_url\">Gallery forums</a>.",
-                array("faq_url" => "http://codex.galleryproject.org/Gallery3:FAQ",
-                      "forums_url" => "http://galleryproject.org/forum")) ?>
+                ["faq_url" => "http://codex.galleryproject.org/Gallery3:FAQ",
+                      "forums_url" => "http://galleryproject.org/forum"]) ?>
           </em>
         </p>
       </div>

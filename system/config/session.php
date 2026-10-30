@@ -28,7 +28,7 @@ $config['name'] = 'kohanasession';
 /**
  * Session parameters to validate: user_agent, ip_address, expiration.
  */
-$config['validate'] = array('user_agent');
+$config['validate'] = ['user_agent'];
 
 /**
  * Enable or disable session encryption.

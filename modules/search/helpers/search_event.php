@@ -18,22 +18,22 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class search_event_Core {
-  static function item_created($item) {
+  public static function item_created($item) {
     search::update($item);
   }
 
-  static function item_updated($original, $new) {
+  public static function item_updated($original, $new) {
     search::update($new);
   }
 
-  static function item_deleted($item) {
+  public static function item_deleted($item) {
     db::build()
       ->delete("search_records")
       ->where("item_id", "=", $item->id)
       ->execute();
   }
 
-  static function item_related_update($item) {
+  public static function item_related_update($item) {
     search::update($item);
   }
 }

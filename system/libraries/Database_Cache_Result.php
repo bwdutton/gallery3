@@ -10,16 +10,15 @@
 class Database_Cache_Result_Core extends Database_Result {
 
 	/**
-	 * Result data (array of rows)
-	 * @var array
-	 */
-	protected $data;
-
-	public function __construct($data, $sql, $return_objects)
+     * @param mixed[] $data
+     */
+    public function __construct(/**
+     * Result data (array of rows)
+     */
+    protected $data, $sql, $return_objects)
 	{
-		$this->data           = $data;
 		$this->sql            = $sql;
-		$this->total_rows     = count($data);
+		$this->total_rows     = count($this->data);
 		$this->return_objects = $return_objects;
 	}
 

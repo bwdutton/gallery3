@@ -35,7 +35,7 @@ class Server_Add_Controller extends Admin_Controller {
     $view->item = $item;
     $view->tree = new View("server_add_tree.html");
     $view->tree->files = $files;
-    $view->tree->parents = array();
+    $view->tree->parents = [];
     print $view;
   }
 
@@ -43,8 +43,8 @@ class Server_Add_Controller extends Admin_Controller {
     $path = Input::instance()->get("path");
 
     $tree = new View("server_add_tree.html");
-    $tree->files = array();
-    $tree->parents = array();
+    $tree->files = [];
+    $tree->parents = [];
 
     // Make a tree with the parents back up to the authorized path, and all the children under the
     // current path.
@@ -54,7 +54,7 @@ class Server_Add_Controller extends Admin_Controller {
         array_unshift($tree->parents, dirname($tree->parents[0]));
       }
 
-      $glob_path = str_replace(array("{", "}", "[", "]"), array("\{", "\}", "\[", "\]"), $path);
+      $glob_path = str_replace(["{", "}", "[", "]"], ["\{", "\}", "\[", "\]"], $path);
       foreach (glob("$glob_path/*") as $file) {
         if (!is_readable($file)) {
           continue;
@@ -89,7 +89,7 @@ class Server_Add_Controller extends Admin_Controller {
       ->callback("Server_Add_Controller::add")
       ->description(t("Add photos or movies from the local server"))
       ->name(t("Add from server"));
-    $task = task::create($task_def, array("item_id" => $item->id));
+    $task = task::create($task_def, ["item_id" => $item->id]);
 
     foreach (Input::instance()->post("paths") as $path) {
       if (server_add::is_valid_path($path)) {
@@ -103,15 +103,15 @@ class Server_Add_Controller extends Admin_Controller {
     }
 
     json::reply(
-      array("result" => "started",
+      ["result" => "started",
             "status" => (string)$task->status,
-            "url" => url::site("server_add/run/$task->id?csrf=" . access::csrf_token())));
+            "url" => url::site("server_add/run/$task->id?csrf=" . access::csrf_token())]);
   }
 
   /**
    * Run the task of adding photos
    */
-  function run($task_id) {
+  public function run($task_id) {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
@@ -122,9 +122,9 @@ class Server_Add_Controller extends Admin_Controller {
     $task = task::run($task_id);
     // Prevent the JavaScript code from breaking by forcing a period as
     // decimal separator for all locales with sprintf("%F", $value).
-    json::reply(array("done" => (bool)$task->done,
+    json::reply(["done" => (bool)$task->done,
                       "status" => (string)$task->status,
-                      "percent_complete" => sprintf("%F", $task->percent_complete)));
+                      "percent_complete" => sprintf("%F", $task->percent_complete)]);
   }
 
   /**
@@ -132,7 +132,7 @@ class Server_Add_Controller extends Admin_Controller {
    * and creates a set of Server_Add_Entry_Models, then runs through the list of models and adds
    * them one at a time.
    */
-  static function add($task) {
+  public static function add($task) {
     $mode = $task->get("mode", "init");
     $start = microtime(true);
 
@@ -282,7 +282,7 @@ class Server_Add_Controller extends Admin_Controller {
               $entry->item_id = 0;
               $task->log("Skipping unknown file type: {$entry->path}");
             }
-          } catch (Exception $e) {
+          } catch (Exception) {
             // This can happen if a photo file is invalid, like a BMP masquerading as a .jpg
             $entry->item_id = 0;
             $task->log("Skipping invalid file: {$entry->path}");
@@ -294,8 +294,8 @@ class Server_Add_Controller extends Admin_Controller {
       }
       $task->set("completed_files", $completed_files);
       $task->status = t("Adding photos / albums (%completed of %total)",
-                        array("completed" => $completed_files,
-                              "total" => $total_files));
+                        ["completed" => $completed_files,
+                              "total" => $total_files]);
       $task->percent_complete = $total_files ? 10 + 100 * ($completed_files / $total_files) : 100;
       break;
 

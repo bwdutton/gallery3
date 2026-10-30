@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class registry_rest_Core {
-  static function get($request) {
-    $results = array();
+  public static function get($request) {
+    $results = [];
     foreach (module::active() as $module) {
       foreach (glob(MODPATH . "{$module->name}/helpers/*_rest.php") as $filename) {
         $results[] = str_replace("_rest.php", "", basename($filename));

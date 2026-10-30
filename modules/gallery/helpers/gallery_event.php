@@ -22,9 +22,9 @@ class gallery_event_Core {
   /**
    * Initialization.
    */
-  static function gallery_ready() {
+  public static function gallery_ready() {
     if (!get_cfg_var("date.timezone")) {
-      if (!(rand() % 4)) {
+      if (!(random_int(0, mt_getrandmax()) % 4)) {
         Kohana_Log::add("error", "date.timezone setting not detected in " .
                         get_cfg_var("cfg_file_path") . " falling back to UTC.  " .
                         "Consult http://php.net/manual/function.get-cfg-var.php for help.");
@@ -36,17 +36,17 @@ class gallery_event_Core {
     locales::set_request_locale();
   }
 
-  static function gallery_shutdown() {
+  public static function gallery_shutdown() {
     // Every 500th request, do a pass over var/logs and var/tmp and delete old files.
     // Limit ourselves to deleting a single file so that we don't spend too much CPU
     // time on it.  As long as servers call this at least twice a day they'll eventually
     // wind up with a clean var/logs directory because we only create 1 file a day there.
     // var/tmp might be stickier because theoretically we could wind up spamming that
     // dir with a lot of files.  But let's start with this and refine as we go.
-    if (!(rand() % 500)) {
+    if (!(random_int(0, mt_getrandmax()) % 500)) {
       // Note that this code is roughly duplicated in gallery_task::file_cleanup
       $threshold = time() - 1209600; // older than 2 weeks
-      foreach(array("logs", "tmp") as $dir) {
+      foreach(["logs", "tmp"] as $dir) {
         $dir = VARPATH . $dir;
         if ($dh = opendir($dir)) {
           while (($file = readdir($dh)) !== false) {
@@ -71,7 +71,7 @@ class gallery_event_Core {
     system::delete_marked_files();
   }
 
-  static function user_deleted($user) {
+  public static function user_deleted($user) {
     $admin = identity::admin_user();
     if (!empty($admin)) {          // could be empty if there is not identity provider
       db::build()
@@ -92,7 +92,7 @@ class gallery_event_Core {
     }
   }
 
-  static function identity_provider_changed($old_provider, $new_provider) {
+  public static function identity_provider_changed($old_provider, $new_provider) {
     $admin = identity::admin_user();
     db::build()
       ->update("tasks")
@@ -110,15 +110,15 @@ class gallery_event_Core {
     module::set_var("gallery", "email_reply_to", $admin->email);
   }
 
-  static function group_created($group) {
+  public static function group_created($group) {
     access::add_group($group);
   }
 
-  static function group_deleted($group) {
+  public static function group_deleted($group) {
     access::delete_group($group);
   }
 
-  static function item_created($item) {
+  public static function item_created($item) {
     access::add_item($item);
 
     // Build our thumbnail/resizes.
@@ -126,7 +126,7 @@ class gallery_event_Core {
       graphics::generate($item);
     } catch (Exception $e) {
       log::error("graphics", t("Couldn't create a thumbnail or resize for %item_title",
-                               array("item_title" => $item->title)),
+                               ["item_title" => $item->title]),
                  html::anchor($item->abs_url(), t("details")));
       Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
@@ -140,7 +140,7 @@ class gallery_event_Core {
     }
   }
 
-  static function item_deleted($item) {
+  public static function item_deleted($item) {
     access::delete_item($item);
 
     // Find any other albums that had the deleted item as the album cover and null it out.
@@ -157,7 +157,7 @@ class gallery_event_Core {
       // Assume that we deleted the album cover
       if (batch::in_progress()) {
         // Remember that this parent is missing an album cover, for later.
-        $batch_missing_album_cover = Session::instance()->get("batch_missing_album_cover", array());
+        $batch_missing_album_cover = Session::instance()->get("batch_missing_album_cover", []);
         $batch_missing_album_cover[$parent->id] = 1;
         Session::instance()->set("batch_missing_album_cover", $batch_missing_album_cover);
       } else {
@@ -169,7 +169,7 @@ class gallery_event_Core {
     }
   }
 
-  static function item_updated_data_file($item) {
+  public static function item_updated_data_file($item) {
     graphics::generate($item);
 
     // Update any places where this is the album cover
@@ -182,12 +182,12 @@ class gallery_event_Core {
     }
   }
 
-  static function batch_complete() {
+  public static function batch_complete() {
     // Set the album covers for any items that where we probably deleted the album cover during
     // this batch.  The item may have been deleted, so don't count on it being around.  Choose the
     // first child as the new album cover.
     // NOTE: if the first child doesn't have an album cover, then this won't work.
-    foreach (array_keys(Session::instance()->get("batch_missing_album_cover", array())) as $id) {
+    foreach (array_keys(Session::instance()->get("batch_missing_album_cover", [])) as $id) {
       $item = ORM::factory("item", $id);
       if ($item->loaded() && !$item->album_cover_item_id) {
         if ($child = $item->children(1)->current()) {
@@ -198,7 +198,7 @@ class gallery_event_Core {
     Session::instance()->delete("batch_missing_album_cover");
   }
 
-  static function item_moved($item, $old_parent) {
+  public static function item_moved($item, $old_parent) {
     if ($item->is_album()) {
       access::recalculate_album_permissions($item->parent());
     } else {
@@ -211,7 +211,7 @@ class gallery_event_Core {
     }
   }
 
-  static function user_login($user) {
+  public static function user_login($user) {
     // If this user is an admin, check to see if there are any post-install tasks that we need
     // to run and take care of those now.
     if ($user->admin && module::get_var("gallery", "choose_default_tookit", null)) {
@@ -222,22 +222,22 @@ class gallery_event_Core {
     auth::clear_failed_attempts($user);
   }
 
-  static function user_auth_failed($name) {
+  public static function user_auth_failed($name) {
     auth::record_failed_attempt($name);
   }
 
-  static function user_auth($user) {
+  public static function user_auth($user) {
     auth::clear_failed_attempts($user);
     Session::instance()->set("active_auth_timestamp", time());
   }
 
-  static function item_index_data($item, $data) {
+  public static function item_index_data($item, $data) {
     $data[] = $item->description;
     $data[] = $item->name;
     $data[] = $item->title;
   }
 
-  static function user_menu($menu, $theme) {
+  public static function user_menu($menu, $theme) {
     if ($theme->page_subtype != "login") {
       $user = identity::active_user();
       if ($user->guest) {
@@ -276,7 +276,7 @@ class gallery_event_Core {
     }
   }
 
-  static function site_menu($menu, $theme, $item_css_selector) {
+  public static function site_menu($menu, $theme, $item_css_selector) {
     if ($theme->page_subtype != "login") {
       $menu->append(Menu::factory("link")
                     ->id("home")
@@ -309,7 +309,7 @@ class gallery_event_Core {
             }
           } else {
             message::warning(t("The album '%album_name' is not writable.",
-                               array("album_name" => $item->title)));
+                               ["album_name" => $item->title]));
           }
         }
 
@@ -415,12 +415,12 @@ class gallery_event_Core {
         module::event("admin_menu", $admin_menu, $theme);
 
         $settings_menu = $admin_menu->get("settings_menu");
-        uasort($settings_menu->elements, array("Menu", "title_comparator"));
+        uasort($settings_menu->elements, ["Menu", "title_comparator"]);
       }
     }
   }
 
-  static function admin_menu($menu, $theme) {
+  public static function admin_menu($menu, $theme) {
     $menu
       ->append(Menu::factory("link")
                ->id("dashboard")
@@ -477,7 +477,7 @@ class gallery_event_Core {
     return $menu;
   }
 
-  static function context_menu($menu, $theme, $item, $thumb_css_selector) {
+  public static function context_menu($menu, $theme, $item, $thumb_css_selector) {
     $menu->append($options_menu = Menu::factory("submenu")
                   ->id("options_menu")
                   ->label(t("Options"))
@@ -582,15 +582,15 @@ class gallery_event_Core {
     }
   }
 
-  static function show_user_profile($data) {
+  public static function show_user_profile($data) {
     $v = new View("user_profile_info.html");
 
-    $fields = array("name" => t("Name"), "locale" => t("Language Preference"),
-                    "email" => t("Email"), "full_name" => t("Full name"), "url" => t("Web site"));
+    $fields = ["name" => t("Name"), "locale" => t("Language Preference"),
+                    "email" => t("Email"), "full_name" => t("Full name"), "url" => t("Web site")];
     if (!$data->user->guest) {
-      $fields = array("name" => t("Name"), "full_name" => t("Full name"), "url" => t("Web site"));
+      $fields = ["name" => t("Name"), "full_name" => t("Full name"), "url" => t("Web site")];
     }
-    $v->user_profile_data = array();
+    $v->user_profile_data = [];
     foreach ($fields as $field => $label) {
       if (!empty($data->user->$field)) {
         $value = $data->user->$field;
@@ -602,11 +602,11 @@ class gallery_event_Core {
         $v->user_profile_data[(string) $label] = $value;
       }
     }
-    $data->content[] = (object) array("title" => t("User information"), "view" => $v);
+    $data->content[] = (object) ["title" => t("User information"), "view" => $v];
 
   }
 
-  static function user_updated($original_user, $updated_user) {
+  public static function user_updated($original_user, $updated_user) {
     // If the default from/reply-to email address is set to the install time placeholder value
     // of unknown@unknown.com then adopt the value from the first admin to set their own email
     // address so that we at least have a valid address for the Gallery.

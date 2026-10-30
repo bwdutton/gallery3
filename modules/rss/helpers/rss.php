@@ -22,14 +22,14 @@ class rss_Core {
   /**
    * Convert a rss feed id into a rss feed url.
    */
-  static function url($uri) {
+  public static function url($uri) {
     return url::site("rss/feed/$uri");
   }
 
   /**
    * Return a <link> element for a given rss feed id.
    */
-  static function feed_link($uri) {
+  public static function feed_link($uri) {
     $url = url::site("rss/feed/$uri");
     return "<link rel=\"alternate\" type=\"application/rss+xml\" href=\"$url\" />";
   }

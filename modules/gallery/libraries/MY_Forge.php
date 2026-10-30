@@ -22,7 +22,7 @@ class Forge extends Forge_Core {
   /**
    * Force a CSRF element into every form.
    */
-  public function __construct($action=null, $title='', $method=null, $attr=array()) {
+  public function __construct($action=null, $title='', $method=null, $attr=[]) {
     parent::__construct($action, $title, $method, $attr);
     $this->hidden("csrf")->value(access::csrf_token());
   }

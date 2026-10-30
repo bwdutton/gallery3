@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class url extends url_Core {
-  static function parse_url() {
+  public static function parse_url() {
     if (Router::$controller) {
       return;
     }
@@ -36,14 +36,14 @@ class url extends url_Core {
       Router::$controller = "{$item->type}s";
       Router::$controller_path = MODPATH . "gallery/controllers/{$item->type}s.php";
       Router::$method = "show";
-      Router::$arguments = array($item);
+      Router::$arguments = [$item];
     }
   }
 
   /**
    * Just like url::file() except that it returns an absolute URI
    */
-  static function abs_file($path) {
+  public static function abs_file($path) {
     return url::base(false, request::protocol()) . $path;
   }
 
@@ -51,28 +51,28 @@ class url extends url_Core {
    * Just like url::site() except that it returns an absolute URI and
    * doesn't take a protocol parameter.
    */
-  static function abs_site($path) {
+  public static function abs_site($path) {
     return url::site($path, request::protocol());
   }
 
   /**
    * Just like url::current except that it returns an absolute URI
    */
-  static function abs_current($qs=false) {
+  public static function abs_current($qs=false) {
     return self::abs_site(url::current($qs));
   }
 
   /**
    * Just like url::merge except that it escapes any XSS in the path.
    */
-  static function merge(array $arguments) {
+  public static function merge(array $arguments) {
     return htmlspecialchars(parent::merge($arguments));
   }
 
   /**
    * Just like url::current except that it escapes any XSS in the path.
    */
-  static function current($qs=false, $suffix=false) {
+  public static function current($qs=false, $suffix=false) {
     return htmlspecialchars(parent::current($qs, $suffix));
   }
 
@@ -81,9 +81,9 @@ class url extends url_Core {
    * @param string the original url
    * @param array the query string data in key=value form
    */
-  static function merge_querystring($url, $query_params) {
+  public static function merge_querystring($url, $query_params) {
     $qs = implode("&", $query_params);
-    if (strpos($url, "?") === false) {
+    if (!str_contains($url, "?")) {
       return $url . "?$qs";
     } else {
       return $url . "&$qs";

@@ -19,7 +19,7 @@ class ORM_Validation_Exception_Core extends Database_Exception {
 	 */
 	public static function handle_validation($table, Validation $array)
 	{
-		$exception = new ORM_Validation_Exception('ORM Validation has failed for :table model',array(':table'=>$table));
+		$exception = new ORM_Validation_Exception('ORM Validation has failed for :table model',[':table'=>$table]);
 		$exception->validation = $array;
 		throw $exception;
 	}

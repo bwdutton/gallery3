@@ -50,10 +50,10 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       log::success("watermark", t("Watermark changed"));
       message::success(t("Watermark changed"));
       json::reply(
-        array("result" => "success",
-              "location" => url::site("admin/watermarks")));
+        ["result" => "success",
+              "location" => url::site("admin/watermarks")]);
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      json::reply(["result" => "error", "html" => (string)$form]);
     }
     // Override the application/json mime type for iframe compatibility.  See ticket #2022.
     header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
@@ -81,9 +81,9 @@ class Admin_Watermarks_Controller extends Admin_Controller {
         log::success("watermark", t("Watermark deleted"));
         message::success(t("Watermark deleted"));
       }
-      json::reply(array("result" => "success", "location" => url::site("admin/watermarks")));
+      json::reply(["result" => "success", "location" => url::site("admin/watermarks")]);
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      json::reply(["result" => "error", "html" => (string)$form]);
     }
     // Override the application/json mime type for iframe compatibility.  See ticket #2022.
     header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
@@ -105,12 +105,12 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', basename($file));
 
       try {
-        list ($width, $height, $mime_type, $extension) = photo::get_file_metadata($file);
+        [$width, $height, $mime_type, $extension] = photo::get_file_metadata($file);
         // Sanitize filename, which ensures a valid extension.  This renaming prevents the issues
         // addressed in ticket #1855, where an image that looked valid (header said jpg) with a
         // php extension was previously accepted without changing its extension.
         $name = legal_file::sanitize_filename($name, $extension, "photo");
-      } catch (Exception $e) {
+      } catch (Exception) {
         message::error(t("Invalid or unidentifiable image file"));
         system::delete_later($file);
         return;
@@ -128,9 +128,9 @@ class Admin_Watermarks_Controller extends Admin_Controller {
 
       message::success(t("Watermark saved"));
       log::success("watermark", t("Watermark saved"));
-      json::reply(array("result" => "success", "location" => url::site("admin/watermarks")));
+      json::reply(["result" => "success", "location" => url::site("admin/watermarks")]);
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      json::reply(["result" => "error", "html" => (string)$form]);
     }
     // Override the application/json mime type for iframe compatibility.  See ticket #2022.
     header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
@@ -139,14 +139,14 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   private function _update_graphics_rules() {
     graphics::remove_rules("watermark");
     if ($name = module::get_var("watermark", "name")) {
-      foreach (array("thumb", "resize") as $target) {
+      foreach (["thumb", "resize"] as $target) {
         graphics::add_rule(
           "watermark", $target, "gallery_graphics::composite",
-          array("file" => VARPATH . "modules/watermark/$name",
+          ["file" => VARPATH . "modules/watermark/$name",
                 "width" => module::get_var("watermark", "width"),
                 "height" => module::get_var("watermark", "height"),
                 "position" => module::get_var("watermark", "position"),
-                "transparency" => 101 - module::get_var("watermark", "transparency")),
+                "transparency" => 101 - module::get_var("watermark", "transparency")],
           1000);
       }
     }

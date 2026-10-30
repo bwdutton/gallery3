@@ -20,7 +20,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	public function __construct(ORM $model, Database_Result $result)
 	{
 		// Class attributes
-		$this->class_name  = get_class($model);
+		$this->class_name  = $model::class;
 		$this->primary_key = $model->primary_key;
 		$this->primary_val = $model->primary_val;
 
@@ -37,7 +37,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	 */
 	public function as_array($objects = TRUE, $key = NULL)
 	{
-		$array = array();
+		$array = [];
 
 		// Import class name
 		$class = $this->class_name;
@@ -66,7 +66,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 			foreach ($this->result as $data)
 			{
 				// Have to do a bit of magic here to handle any relationships and generate a nested array for them
-				$temp = array();
+				$temp = [];
 
 				foreach ($data as $key => $val)
 				{
@@ -98,7 +98,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	 */
 	public function primary_key_array()
 	{
-		$ids = array();
+		$ids = [];
 		foreach ($this->result as $row)
 		{
 			$ids[] = $row->{$this->primary_key};
@@ -115,19 +115,13 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	 */
 	public function select_list($key = NULL, $val = NULL)
 	{
-		if ($key === NULL)
-		{
-			// Use the default key
-			$key = $this->primary_key;
-		}
+		// Use the default key
+        $key ??= $this->primary_key;
 
-		if ($val === NULL)
-		{
-			// Use the default value
-			$val = $this->primary_val;
-		}
+		// Use the default value
+        $val ??= $this->primary_val;
 
-		$array = array();
+		$array = [];
 		foreach ($this->result as $row)
 		{
 			$array[$row->$key] = $row->$val;
@@ -145,7 +139,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 	public function range($start, $end)
 	{
 		// Array of objects
-		$array = array();
+		$array = [];
 
 		if ($this->result->offsetExists($start))
 		{

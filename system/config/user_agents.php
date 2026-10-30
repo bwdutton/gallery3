@@ -11,8 +11,8 @@
  * @license    http://kohanaphp.com/license
  */
 
-$config['platform'] = array
-(
+$config['platform'] = 
+[
 	'windows nt 6.0' => 'Windows Vista',
 	'windows nt 5.2' => 'Windows 2003',
 	'windows nt 5.0' => 'Windows 2000',
@@ -51,14 +51,14 @@ $config['platform'] = array
 	'hp-ux'          => 'HP-UX',
 	'hurd'           => 'GNU/Hurd',
 	'unix'           => 'Unknown Unix OS',
-);
+];
 
 /**
  * The order of this array should NOT be changed. Many browsers return
  * multiple browser types so we want to identify the sub-type first.
  */
-$config['browser'] = array
-(
+$config['browser'] = 
+[
 	'Opera'             => 'Opera',
 	'MSIE'              => 'Internet Explorer',
 	'Internet Explorer' => 'Internet Explorer',
@@ -82,10 +82,10 @@ $config['browser'] = array
 	'hotjava'           => 'HotJava',
 	'amaya'             => 'Amaya',
 	'IBrowse'           => 'IBrowse',
-);
+];
 
-$config['mobile'] = array
-(
+$config['mobile'] = 
+[
 	'mobileexplorer' => 'Mobile Explorer',
 	'openwave'       => 'Open Wave',
 	'opera mini'     => 'Opera Mini',
@@ -102,13 +102,13 @@ $config['mobile'] = array
 	'motorola'       => 'Motorola',
 	'iphone'         => 'iPhone',
 	'android'        => 'Android',
-);
+];
 
 /**
  * There are hundreds of bots but these are the most common.
  */
-$config['robot'] = array
-(
+$config['robot'] = 
+[
 	'googlebot'   => 'Googlebot',
 	'msnbot'      => 'MSNBot',
 	'slurp'       => 'Inktomi Slurp',
@@ -117,4 +117,4 @@ $config['robot'] = array
 	'fastcrawler' => 'FastCrawler',
 	'infoseek'    => 'InfoSeek Robot 1.0',
 	'lycos'       => 'Lycos',
-);
+];

@@ -36,22 +36,22 @@ class Theme_View_Core extends Gallery_View {
       $theme_name = Input::instance()->get("theme");
       if ($theme_name &&
           file_exists(THEMEPATH . $theme_name) &&
-          strpos(realpath(THEMEPATH . $theme_name), THEMEPATH) == 0) {
+          str_starts_with(realpath(THEMEPATH . $theme_name), THEMEPATH)) {
         $this->theme_name = $theme_name;
       }
     }
     $this->item = null;
     $this->tag = null;
-    $this->set_global(array("theme" => $this,
+    $this->set_global(["theme" => $this,
                             "theme_info" => theme::get_info($this->theme_name),
                             "user" => identity::active_user(),
                             "page_type" => $page_type,
                             "page_subtype" => $page_subtype,
-                            "page_title" => null));
+                            "page_title" => null]);
 
     if (module::get_var("gallery", "maintenance_mode", 0)) {
       if (identity::active_user()->admin) {
-        message::warning(t("This site is currently in maintenance mode.  Visit the <a href=\"%maintenance_url\">maintenance page</a>", array("maintenance_url" => url::site("admin/maintenance"))));
+        message::warning(t("This site is currently in maintenance mode.  Visit the <a href=\"%maintenance_url\">maintenance page</a>", ["maintenance_url" => url::site("admin/maintenance")]));
     } else
         message::warning(t("This site is currently in maintenance mode."));
     }
@@ -70,7 +70,7 @@ class Theme_View_Core extends Gallery_View {
    * @return int
    */
   public function thumb_proportion($item=null, $minimum_size=0, $dimension=null) {
-    if (!in_array($dimension, array("height", "width"))) {
+    if (!in_array($dimension, ["height", "width"])) {
       $dimension = null;
     }
 
@@ -78,10 +78,10 @@ class Theme_View_Core extends Gallery_View {
     // interested in the size of the thumbnails in this album, not the thumbnail of the
     // album itself.
     if ($item && $item->is_album() && $item->children_count()) {
-      $orderBy = (is_null($dimension)) ? array()
-                                       : array("thumb_".$dimension => "desc");
+      $orderBy = (is_null($dimension)) ? []
+                                       : ["thumb_".$dimension => "desc"];
 
-      $item = $item->children(1, null, array(), $orderBy)->current();
+      $item = $item->children(1, null, [], $orderBy)->current();
     }
 
     // By default we have a globally fixed thumbnail size In core code, we just return a fixed
@@ -103,7 +103,7 @@ class Theme_View_Core extends Gallery_View {
   public function siblings($limit=null, $offset=null) {
     return call_user_func_array(
       $this->siblings_callback[0],
-      array_merge($this->siblings_callback[1], array($limit, $offset)));
+      array_merge($this->siblings_callback[1], [$limit, $offset]));
   }
 
   public function tag() {
@@ -229,23 +229,16 @@ class Theme_View_Core extends Gallery_View {
     case "thumb_bottom":
     case "thumb_info":
     case "thumb_top":
-      $blocks = array();
+      $blocks = [];
       if (method_exists("gallery_theme", $function)) {
-        switch (count($args)) {
-        case 0:
-          $blocks[] = gallery_theme::$function($this);
-          break;
-        case 1:
-          $blocks[] = gallery_theme::$function($this, $args[0]);
-          break;
-        case 2:
-          $blocks[] = gallery_theme::$function($this, $args[0], $args[1]);
-          break;
-        default:
-          $blocks[] = call_user_func_array(
-            array("gallery_theme", $function),
-            array_merge(array($this), $args));
-        }
+        $blocks[] = match (count($args)) {
+            0 => gallery_theme::$function($this),
+            1 => gallery_theme::$function($this, $args[0]),
+            2 => gallery_theme::$function($this, $args[0], $args[1]),
+            default => call_user_func_array(
+              ["gallery_theme", $function],
+              array_merge([$this], $args)),
+        };
       }
 
       foreach (module::active() as $module) {
@@ -255,16 +248,16 @@ class Theme_View_Core extends Gallery_View {
         $helper_class = "{$module->name}_theme";
         if (class_exists($helper_class) && method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
-            array($helper_class, $function),
-            array_merge(array($this), $args));
+            [$helper_class, $function],
+            array_merge([$this], $args));
         }
       }
 
       $helper_class = theme::$site_theme_name . "_theme";
       if (class_exists($helper_class) && method_exists($helper_class, $function)) {
         $blocks[] = call_user_func_array(
-          array($helper_class, $function),
-          array_merge(array($this), $args));
+          [$helper_class, $function],
+          array_merge([$this], $args));
       }
 
       if (Session::instance()->get("debug")) {

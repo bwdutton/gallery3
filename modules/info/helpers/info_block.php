@@ -18,11 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class info_block_Core {
-  static function get_site_list() {
-    return array("metadata" => t("Metadata"));
+  public static function get_site_list() {
+    return ["metadata" => t("Metadata")];
   }
 
-  static function get($block_id, $theme) {
+  public static function get($block_id, $theme) {
     $block = "";
     switch ($block_id) {
     case "metadata":
@@ -33,50 +33,50 @@ class info_block_Core {
           ($theme->item()->is_movie() ? t("Movie info") : t("Photo info"));
         $block->content = new View("info_block.html");
         if ($theme->item->title && module::get_var("info", "show_title")) {
-          $info["title"] = array(
+          $info["title"] = [
             "label" => t("Title:"),
             "value" => html::purify($theme->item->title)
-          );
+          ];
         }
         if ($theme->item->description && module::get_var("info", "show_description")) {
-          $info["description"] = array(
+          $info["description"] = [
             "label" => t("Description:"),
             "value" => nl2br(html::purify($theme->item->description))
-          );
+          ];
         }
         if (!$theme->item->is_album() && module::get_var("info", "show_name")) {
-          $info["file_name"] = array(
+          $info["file_name"] = [
             "label" => t("File name:"),
             "value" => html::clean($theme->item->name)
-          );
+          ];
         }
         if ($theme->item->captured && module::get_var("info", "show_captured")) {
-          $info["captured"] = array(
+          $info["captured"] = [
             "label" => t("Captured:"),
             "value" => gallery::date_time($theme->item->captured)
-          );
+          ];
         }
         if ($theme->item->owner && module::get_var("info", "show_owner")) {
           $display_name = $theme->item->owner->display_name();
           if ($theme->item->owner->url) {
-            $info["owner"] = array(
+            $info["owner"] = [
               "label" => t("Owner:"),
               "value" => html::anchor(
                 html::clean($theme->item->owner->url),
                 html::clean($display_name))
-            );
+            ];
           } else {
-            $info["owner"] = array(
+            $info["owner"] = [
               "label" => t("Owner:"),
               "value" => html::clean($display_name)
-            );
+            ];
           }
         }
         if (($theme->item->width && $theme->item->height) && module::get_var("info", "show_dimensions")) {
-            $info["size"] = array(
+            $info["size"] = [
                 "label" => t("Dimensions:"),
-                "value" => t("%width x %height px", array("width" => $theme->item->width, "height" => $theme->item->height))
-            );
+                "value" => t("%width x %height px", ["width" => $theme->item->width, "height" => $theme->item->height])
+            ];
         }
 
         $block->content->metadata = $info;

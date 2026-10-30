@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Passwordreset_Controller extends Controller {
-  function index($username='') {
+  public function index($username='') {
     if (PHP_SAPI != 'cli') {
       access::forbidden();
     }

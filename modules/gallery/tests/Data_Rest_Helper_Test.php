@@ -39,7 +39,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       data_rest::resolve($photo->id);
       $this->assert_true(false);
-    } catch (Kohana_404_Exception $e) {
+    } catch (Kohana_404_Exception) {
       // pass
     }
   }
@@ -77,7 +77,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       data_rest::get($request);
       $this->assert_true(false);
-    } catch (Kohana_404_Exception $e) {
+    } catch (Kohana_404_Exception) {
       // pass
     }
   }
@@ -95,7 +95,7 @@ class Data_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       data_rest::get($request);
       $this->assert_true(false);
-    } catch (Kohana_404_Exception $e) {
+    } catch (Kohana_404_Exception) {
       // pass
     }
   }

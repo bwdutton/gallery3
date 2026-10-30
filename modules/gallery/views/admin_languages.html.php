@@ -94,7 +94,7 @@
         <ol>
           <li><?= t("Make sure the target language is installed and up to date (check above).") ?></li>
           <li><?= t("Make sure you have selected the right target language (currently %default_locale).",
-               array("default_locale" => locales::display_name())) ?></li>
+               ["default_locale" => locales::display_name()]) ?></li>
           <li><?= t("Start the translation mode and the translation interface will appear at the bottom of each Gallery page.") ?></li>
         </ol>
         <a href="<?= url::site("l10n_client/toggle_l10n_mode?csrf=".access::csrf_token()) ?>"

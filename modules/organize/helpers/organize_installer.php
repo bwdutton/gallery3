@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class organize_installer {
-  static function upgrade($version) {
+  public static function upgrade($version) {
     if ($version < 4) {
       // No longer necessary, make sure that it's cleared.
       site_status::clear("organize_needs_rest");

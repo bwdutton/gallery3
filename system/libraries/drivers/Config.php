@@ -49,7 +49,7 @@ abstract class Config_Driver {
 	 *
 	 * @var     array
 	 */
-	protected $config = array();
+	protected $config = [];
 
 	/**
 	 * The changed status of configuration values,
@@ -84,7 +84,7 @@ abstract class Config_Driver {
 				$this->loaded = TRUE;
 
 			// Add the save cache method to system.shutshut event
-			Event::add('system.shutdown', array($this, 'save_cache'));
+			Event::add('system.shutdown', $this->save_cache(...));
 		}
 
 	}
@@ -107,8 +107,7 @@ abstract class Config_Driver {
 		$group = $group[0];
 
 		// Check for existing value and load it dynamically if required
-		if ( ! isset($this->config[$group]))
-			$this->config[$group] = $this->load($group, $required);
+		$this->config[$group] ??= $this->load($group, $required);
 
 		// Get the value of the key string
 		$value = Kohana::key_string($this->config, $key);
@@ -139,7 +138,7 @@ abstract class Config_Driver {
 		// Do this to make sure that the config array is already loaded
 		$this->get($key);
 
-		if (substr($key, 0, 7) === 'routes.')
+		if (str_starts_with($key, 'routes.'))
 		{
 			// Routes cannot contain sub keys due to possible dots in regex
 			$keys = explode('.', $key, 2);
@@ -166,7 +165,7 @@ abstract class Config_Driver {
 			}
 		}
 
-		if (substr($key,0,12) === 'core.modules')
+		if (str_starts_with($key, 'core.modules'))
 		{
 			// Reprocess the include paths
 			Kohana::include_paths(TRUE);
@@ -228,8 +227,7 @@ abstract class Config_Driver {
 		$cached_config = Kohana::cache($this->cache_name, $this->cache_lifetime);
 
 		// If the configuration wasn't loaded from the cache
-		if ($cached_config === NULL)
-			$cached_config = array();
+		$cached_config ??= [];
 
 		// Return the cached config
 		return $cached_config;

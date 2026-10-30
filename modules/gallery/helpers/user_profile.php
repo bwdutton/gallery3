@@ -23,15 +23,15 @@ class user_profile_Core {
    * Generate the url to display the profile
    * @return url for the profile display
    */
-  static function url($user_id) {
+  public static function url($user_id) {
     return url::site("user_profile/show/{$user_id}");
   }
 
-  static function get_contact_form($user) {
+  public static function get_contact_form($user) {
     $form = new Forge("user_profile/send/{$user->id}", "", "post",
-                      array("id" => "g-user-profile-contact-form"));
+                      ["id" => "g-user-profile-contact-form"]);
     $group = $form->group("message")
-      ->label(t("Compose message to %name", array("name" => $user->display_name())));
+      ->label(t("Compose message to %name", ["name" => $user->display_name()]));
     $group->input("reply_to")
       ->label(t("From:"))
       ->rules("required|length[1, 256]|valid_email")

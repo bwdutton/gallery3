@@ -44,7 +44,7 @@ class Upgrader_Controller extends Controller {
     $view->can_upgrade = identity::active_user()->admin || $session->get("can_upgrade");
     $view->upgrade_token = $upgrade_token;
     $view->available = module::available();
-    $view->failed = $failed ? explode(",", $failed) : array();
+    $view->failed = $failed ? explode(",", $failed) : [];
     $view->done = $available_upgrades == 0;
     $view->obsolete_modules_message = module::get_obsolete_modules_message();
     print $view;
@@ -62,7 +62,7 @@ class Upgrader_Controller extends Controller {
 
       try {
         access::verify_csrf();
-      } catch (Exception $e) {
+      } catch (Exception) {
         url::redirect("upgrader");
       }
     }
@@ -76,7 +76,7 @@ class Upgrader_Controller extends Controller {
     }
 
     // Then upgrade the rest
-    $failed = array();
+    $failed = [];
     foreach (module::available() as $id => $module) {
       if ($id == "gallery") {
         continue;
@@ -85,7 +85,7 @@ class Upgrader_Controller extends Controller {
       if ($module->active && $module->code_version != $module->version) {
         try {
           module::upgrade($id);
-        } catch (Exception $e) {
+        } catch (Exception) {
           // @todo assume it's MODULE_FAILED_TO_UPGRADE for now
           $failed[] = $id;
         }
@@ -109,7 +109,7 @@ class Upgrader_Controller extends Controller {
       }
     } else {
       if ($failed) {
-        url::redirect("upgrader?failed=" . join(",", $failed));
+        url::redirect("upgrader?failed=" . implode(",", $failed));
       } else {
         url::redirect("upgrader");
       }

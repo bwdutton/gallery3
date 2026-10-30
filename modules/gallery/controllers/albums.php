@@ -62,7 +62,7 @@ class Albums_Controller extends Items_Controller {
 
     $template = new Theme_View("page.html", "collection", "album");
     $template->set_global(
-      array("page" => $page,
+      ["page" => $page,
             "page_title" => null,
             "max_pages" => $max_pages,
             "page_size" => $page_size,
@@ -70,7 +70,7 @@ class Albums_Controller extends Items_Controller {
             "children" => $album->viewable()->children($page_size, $offset),
             "parents" => $album->parents()->as_array(), // view calls empty() on this
             "breadcrumbs" => Breadcrumb::array_from_item_parents($album),
-            "children_count" => $children_count));
+            "children_count" => $children_count]);
     $template->content = new View("album.html");
     $album->increment_view_count();
 
@@ -78,28 +78,28 @@ class Albums_Controller extends Items_Controller {
     item::set_display_context_callback("Albums_Controller::get_display_context");
   }
 
-  static function get_display_context($item) {
-    $where = array(array("type", "!=", "album"));
+  public static function get_display_context($item) {
+    $where = [["type", "!=", "album"]];
     $position = item::get_position($item, $where);
     if ($position > 1) {
         $res = iterator_to_array($item->parent()->viewable()->children(3, $position - 2, $where));
-        list ($previous_item, $ignore) = $res;
+        [$previous_item, $ignore] = $res;
         $next_item = count($res) == 3 ? $res[2] : null;
     } else {
       $previous_item = null;
-      list ($next_item) = iterator_to_array($item->parent()->viewable()->children(1, $position, $where));
+      [$next_item] = iterator_to_array($item->parent()->viewable()->children(1, $position, $where));
     }
 
-    return array("position" => $position,
+    return ["position" => $position,
                  "previous_item" => $previous_item,
                  "next_item" => $next_item,
                  "sibling_count" => $item->parent()->viewable()->children_count($where),
-                 "siblings_callback" => array("Albums_Controller::get_siblings", array($item)),
+                 "siblings_callback" => ["Albums_Controller::get_siblings", [$item]],
                  "parents" => $item->parents()->as_array(),
-                 "breadcrumbs" => Breadcrumb::array_from_item_parents($item));
+                 "breadcrumbs" => Breadcrumb::array_from_item_parents($item)];
   }
 
-  static function get_siblings($item, $limit=null, $offset=null) {
+  public static function get_siblings($item, $limit=null, $offset=null) {
     // @todo consider creating Item_Model::siblings() if we use this more broadly.
     return $item->parent()->viewable()->children($limit, $offset);
   }
@@ -117,8 +117,7 @@ class Albums_Controller extends Items_Controller {
       $album->type = "album";
       $album->parent_id = $parent_id;
       $album->name = $form->add_album->inputs["name"]->value;
-      $album->title = $form->add_album->title->value ?
-        $form->add_album->title->value : $form->add_album->inputs["name"]->value;
+      $album->title = $form->add_album->title->value ?: $form->add_album->inputs["name"]->value;
       $album->description = $form->add_album->description->value;
       $album->slug = $form->add_album->slug->value;
       $album->validate();
@@ -136,11 +135,11 @@ class Albums_Controller extends Items_Controller {
       log::success("content", "Created an album",
                    html::anchor("albums/$album->id", "view album"));
       message::success(t("Created album %album_title",
-                         array("album_title" => html::purify($album->title))));
+                         ["album_title" => html::purify($album->title)]));
 
-      json::reply(array("result" => "success", "location" => $album->url()));
+      json::reply(["result" => "success", "location" => $album->url()]);
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      json::reply(["result" => "error", "html" => (string)$form]);
     }
   }
 
@@ -176,17 +175,17 @@ class Albums_Controller extends Items_Controller {
 
       log::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
       message::success(t("Saved album %album_title",
-                         array("album_title" => html::purify($album->title))));
+                         ["album_title" => html::purify($album->title)]));
 
       if ($form->from_id->value == $album->id) {
         // Use the new url; it might have changed.
-        json::reply(array("result" => "success", "location" => $album->url()));
+        json::reply(["result" => "success", "location" => $album->url()]);
       } else {
         // Stay on the same page
-        json::reply(array("result" => "success"));
+        json::reply(["result" => "success"]);
       }
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      json::reply(["result" => "error", "html" => (string)$form]);
     }
   }
 

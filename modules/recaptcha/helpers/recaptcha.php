@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class recaptcha_Core {
-  static function get_configure_form() {
-    $form = new Forge("admin/recaptcha", "", "post", array("id" => "g-configure-recaptcha-form"));
+  public static function get_configure_form() {
+    $form = new Forge("admin/recaptcha", "", "post", ["id" => "g-configure-recaptcha-form"]);
     $group = $form->group("configure_recaptcha")
       ->label(t("Configure reCAPTCHA"));
     $group->input("public_key")
@@ -41,13 +41,13 @@ class recaptcha_Core {
     return $form;
   }
 
-  static function check_config() {
+  public static function check_config() {
     $public_key = module::get_var("recaptcha", "public_key");
     $private_key = module::get_var("recaptcha", "private_key");
     if (empty($public_key) || empty($private_key)) {
       site_status::warning(
         t("reCAPTCHA is not quite ready!  Please configure the <a href=\"%url\">reCAPTCHA Keys</a>",
-          array("url" => html::mark_clean(url::site("admin/recaptcha")))),
+          ["url" => html::mark_clean(url::site("admin/recaptcha"))]),
         "recaptcha_config");
     } else {
       site_status::clear("recaptcha_config");
@@ -59,7 +59,7 @@ class recaptcha_Core {
    * @param string $private_key
    * @return boolean
    */
-  static function verify_key($private_key_input) {
+  public static function verify_key($private_key_input) {
     if (!$private_key_input->value) {
       $private_key_input->add_error("required", 1);
       return;
@@ -67,10 +67,10 @@ class recaptcha_Core {
 
     $remote_ip = Input::instance()->server("REMOTE_ADDR");
     $response = self::_http_post("api-verify.recaptcha.net", "/verify",
-                                 array("privatekey" => $private_key_input->value,
+                                 ["privatekey" => $private_key_input->value,
                                        "remoteip" => $remote_ip,
                                        "challenge" => "right",
-                                       "response" => "wrong"));
+                                       "response" => "wrong"]);
 
     if ($response[1] == "false\ninvalid-site-private-key") {
       // This is the only thing I can figure out how to verify.
@@ -84,7 +84,7 @@ class recaptcha_Core {
    * @param string $form
    * @return string error message or null
    */
-  static function is_recaptcha_valid($challenge, $response, $private_key) {
+  public static function is_recaptcha_valid($challenge, $response, $private_key) {
     $input = Input::instance();
     $remote_ip = $input->server("REMOTE_ADDR");
 
@@ -94,10 +94,10 @@ class recaptcha_Core {
     }
 
     $response = self::_http_post("api-verify.recaptcha.net", "/verify",
-                              array("privatekey" => $private_key,
+                              ["privatekey" => $private_key,
                                     "remoteip" => $remote_ip,
                                     "challenge" => $challenge,
-                                    "response" => $response));
+                                    "response" => $response]);
 
     $answers = explode ("\n", $response [1]);
     if (trim ($answers [0]) == "true") {
@@ -113,7 +113,7 @@ class recaptcha_Core {
    * @return string - encoded request
    */
   private static function _encode(array $data){
-    $req = array();
+    $req = [];
     foreach ($data as $key => $value){
       $req[] = "$key=" . urlencode(stripslashes($value));
     }

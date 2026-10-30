@@ -4,11 +4,11 @@
   <h3> <?= t("GraphicsMagick") ?> </h3>
   <p>
     <?= t("GraphicsMagick is a standalone graphics program available on most Linux systems.  Please refer to the <a href=\"%url\">GraphicsMagick website</a> for more information.",
-        array("url" => "http://www.graphicsmagick.org")) ?>
+        ["url" => "http://www.graphicsmagick.org"]) ?>
   </p>
   <?php if ($tk->installed): ?>
   <div class="g-module-status g-info">
-    <?= t("GraphicsMagick version %version is available in %dir", array("version" => $tk->version, "dir" => $tk->dir)) ?>
+    <?= t("GraphicsMagick version %version is available in %dir", ["version" => $tk->version, "dir" => $tk->dir]) ?>
   </div>
   <p>
     <a class="g-button ui-state-default ui-corner-all"><?= t("Activate Graphics Magic") ?></a>

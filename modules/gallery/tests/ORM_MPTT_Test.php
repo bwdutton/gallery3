@@ -76,11 +76,11 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal(3, $album1_2->right_ptr - $album1_2->left_ptr);
 
     $this->assert_equal(
-      array($album1_1_2->id => $album1_1_2->name),
+      [$album1_1_2->id => $album1_1_2->name],
       $album1_1->children()->select_list());
 
     $this->assert_equal(
-      array($album1_1_1->id => $album1_1_1->name),
+      [$album1_1_1->id => $album1_1_1->name],
       $album1_2->children()->select_list());
   }
 
@@ -93,7 +93,7 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
       $album1->parent_id = $album3->id;
       $album1->save();
       $this->assert_true(false, "We should be unable to move an item inside its own hierarchy");
-    } catch (Exception $e) {
+    } catch (Exception) {
       // pass
     }
   }
@@ -109,11 +109,11 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
     $outer = test::random_album();
     $inner = test::random_album($outer);
 
-    $parent_ids = array();
+    $parent_ids = [];
     foreach ($inner->parents() as $parent) {
       $parent_ids[] = $parent->id;
     }
-    $this->assert_equal(array(1, $outer->id), $parent_ids);
+    $this->assert_equal([1, $outer->id], $parent_ids);
   }
 
   public function children_test() {
@@ -121,11 +121,11 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
     $inner1 = test::random_album($outer);
     $inner2 = test::random_album($outer);
 
-    $child_ids = array();
+    $child_ids = [];
     foreach ($outer->children() as $child) {
       $child_ids[] = $child->id;
     }
-    $this->assert_equal(array($inner1->id, $inner2->id), $child_ids);
+    $this->assert_equal([$inner1->id, $inner2->id], $child_ids);
   }
 
   public function children_limit_test() {
@@ -133,7 +133,7 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
     $inner1 = test::random_album($outer);
     $inner2 = test::random_album($outer);
 
-    $this->assert_equal(array($inner2->id => $inner2->name),
+    $this->assert_equal([$inner2->id => $inner2->name],
                         $outer->children(1, 1)->select_list('id'));
   }
 
@@ -154,8 +154,8 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
     $parent->reload();
 
     $this->assert_equal(3, $parent->descendants()->count());
-    $this->assert_equal(2, $parent->descendants(null, null, array(array("type", "=", "photo")))->count());
-    $this->assert_equal(1, $parent->descendants(null, null, array(array("type", "=", "album")))->count());
+    $this->assert_equal(2, $parent->descendants(null, null, [["type", "=", "photo"]])->count());
+    $this->assert_equal(1, $parent->descendants(null, null, [["type", "=", "album"]])->count());
   }
 
   public function descendant_limit_test() {
@@ -176,7 +176,7 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
     $parent->reload();
 
     $this->assert_equal(3, $parent->descendants_count());
-    $this->assert_equal(2, $parent->descendants_count(array(array("type", "=", "photo"))));
-    $this->assert_equal(1, $parent->descendants_count(array(array("type", "=", "album"))));
+    $this->assert_equal(2, $parent->descendants_count([["type", "=", "photo"]]));
+    $this->assert_equal(1, $parent->descendants_count([["type", "=", "album"]]));
   }
 }

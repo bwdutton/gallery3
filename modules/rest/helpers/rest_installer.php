@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class rest_installer {
-  static function install() {
+  public static function install() {
     Database::instance()
       ->query("CREATE TABLE {user_access_keys} (
                 `id` int(9) NOT NULL auto_increment,
@@ -31,7 +31,7 @@ class rest_installer {
     module::set_var("rest", "allow_guest_access", false);
   }
 
-  static function upgrade($version) {
+  public static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
       if (in_array("user_access_tokens", Database::instance()->list_tables())) {
@@ -46,7 +46,7 @@ class rest_installer {
     }
   }
 
-  static function uninstall() {
+  public static function uninstall() {
     Database::instance()->query("DROP TABLE IF EXISTS {user_access_keys}");
   }
 }

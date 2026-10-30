@@ -53,12 +53,12 @@ class Admin_Tags_Controller extends Admin_Controller {
     if ($form->validate()) {
       $name = $tag->name;
       $tag->delete();
-      message::success(t("Deleted tag %tag_name", array("tag_name" => $name)));
-      log::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
+      message::success(t("Deleted tag %tag_name", ["tag_name" => $name]));
+      log::success("tags", t("Deleted tag %tag_name", ["tag_name" => $name]));
 
-      json::reply(array("result" => "success", "location" => url::site("admin/tags")));
+      json::reply(["result" => "success", "location" => url::site("admin/tags")]);
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      json::reply(["result" => "error", "html" => (string)$form]);
     }
   }
 
@@ -81,7 +81,7 @@ class Admin_Tags_Controller extends Admin_Controller {
 
     $in_place_edit = InPlaceEdit::factory($tag->name)
       ->action("admin/tags/rename/$tag->id")
-      ->rules(array("required", "length[1,64]"));
+      ->rules(["required", "length[1,64]"]);
 
     if ($in_place_edit->validate()) {
       $old_name = $tag->name;
@@ -94,18 +94,18 @@ class Admin_Tags_Controller extends Admin_Controller {
       if (!empty($tag_list)) {
         $this->_copy_items_for_tags($tag, $tag_list);
         $message = t("Split tag <i>%old_name</i> into <i>%tag_list</i>",
-                     array("old_name" => $old_name, "tag_list" => $new_name_or_list));
+                     ["old_name" => $old_name, "tag_list" => $new_name_or_list]);
       } else {
         $message = t("Renamed tag <i>%old_name</i> to <i>%new_name</i>",
-                     array("old_name" => $old_name, "new_name" => $tag->name));
+                     ["old_name" => $old_name, "new_name" => $tag->name]);
       }
 
       message::success($message);
       log::success("tags", $message);
 
-      json::reply(array("result" => "success", "location" => url::site("admin/tags")));
+      json::reply(["result" => "success", "location" => url::site("admin/tags")]);
     } else {
-      json::reply(array("result" => "error", "form" => (string)$in_place_edit->render()));
+      json::reply(["result" => "error", "form" => (string)$in_place_edit->render()]);
     }
   }
 

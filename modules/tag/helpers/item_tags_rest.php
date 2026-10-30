@@ -18,32 +18,32 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class item_tags_rest_Core {
-  static function get($request) {
+  public static function get($request) {
     $item = rest::resolve($request->url);
-    $tags = array();
+    $tags = [];
     foreach (tag::item_tags($item) as $tag) {
       $tags[] = rest::url("tag_item", $tag, $item);
     }
 
-    return array(
+    return [
       "url" => $request->url,
-      "members" => $tags);
+      "members" => $tags];
   }
 
-  static function post($request) {
+  public static function post($request) {
     $tag = rest::resolve($request->params->entity->tag);
     $item = rest::resolve($request->params->entity->item);
     access::required("view", $item);
 
     tag::add($item, $tag->name);
-    return array(
+    return [
       "url" => rest::url("tag_item", $tag, $item),
-      "members" => array(
+      "members" => [
         rest::url("tag", $tag),
-        rest::url("item", $item)));
+        rest::url("item", $item)]];
   }
 
-  static function delete($request) {
+  public static function delete($request) {
     $item = rest::resolve($request->url);
     access::required("edit", $item);
 
@@ -51,7 +51,7 @@ class item_tags_rest_Core {
     tag::clear_all($item);
   }
 
-  static function resolve($id) {
+  public static function resolve($id) {
     $item = ORM::factory("item", $id);
     if (!access::can("view", $item)) {
       throw new Kohana_404_Exception();
@@ -60,7 +60,7 @@ class item_tags_rest_Core {
     return $item;
   }
 
-  static function url($item) {
+  public static function url($item) {
     return url::abs_site("rest/item_tags/{$item->id}");
   }
 }

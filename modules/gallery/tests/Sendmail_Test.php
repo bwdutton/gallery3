@@ -100,7 +100,7 @@ class Sendmail_Test extends Gallery_Unit_Test_Case {
 class Sendmail_For_Test extends Sendmail {
   public $send_text;
 
-  static function factory() {
+  public static function factory() {
     return new Sendmail_For_Test();
   }
 

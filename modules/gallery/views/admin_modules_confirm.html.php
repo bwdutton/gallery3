@@ -6,7 +6,7 @@
 
   <div id="g-admin-modules-messages" class="g-block-content">
    <ul>
-     <?php foreach (array("error" => "g-error", "warn" => "g-warning") as $type => $css_class): ?>
+     <?php foreach (["error" => "g-error", "warn" => "g-warning"] as $type => $css_class): ?>
      <?php foreach ($messages[$type] as $message): ?>
      <li class="<?= $css_class ?>" style="padding-bottom: 0"><?= $message ?></li>
      <?php endforeach ?>

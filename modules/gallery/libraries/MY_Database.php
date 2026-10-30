@@ -28,9 +28,7 @@ abstract class Database extends Database_Core {
    *        runtime.
    */
   protected function __construct(array $config) {
-    if (!isset($config["connection"]["params"])) {
-      $config["connection"]["params"] = null;
-    }
+    $config["connection"]["params"] ??= null;
     parent::__construct($config);
     if (gallery::show_profiler()) {
       $this->config['benchmark'] = true;
@@ -50,19 +48,19 @@ abstract class Database extends Database_Core {
 
   public function add_table_prefixes($sql) {
     $prefix = $this->config["table_prefix"];
-    if (strpos($sql, "SHOW TABLES") === 0) {
+    if (str_starts_with($sql, "SHOW TABLES")) {
       /*
        * Don't ignore "show tables", otherwise we could have a infinite
        * @todo this may have to be changed if we support more than mysql
        */
       return $sql;
-    } else if (strpos($sql, "CREATE TABLE") === 0) {
+    } else if (str_starts_with($sql, "CREATE TABLE")) {
       // Creating a new table; add it to the table cache.
       $open_brace = strpos($sql, "{") + 1;
       $close_brace = strpos($sql, "}", $open_brace);
       $name = substr($sql, $open_brace, $close_brace - $open_brace);
       $this->_table_names["{{$name}}"] = "`{$prefix}$name`";
-    } else if (strpos($sql, "RENAME TABLE") === 0) {
+    } else if (str_starts_with($sql, "RENAME TABLE")) {
       // Renaming a table; add it to the table cache.
       // You must use the form "TO {new_table_name}" exactly for this to work.
       $open_brace = strpos($sql, "TO {") + 4;
@@ -73,7 +71,7 @@ abstract class Database extends Database_Core {
 
     if (!isset($this->_table_names)) {
       // This should only run once on the first query
-      $this->_table_names = array();
+      $this->_table_names = [];
       foreach($this->list_tables() as $table_name) {
         $this->_table_names["{{$table_name}}"] = "`{$prefix}{$table_name}`";
       }
@@ -85,7 +83,7 @@ abstract class Database extends Database_Core {
   /**
    * This is used by the unit test code to switch the active database connection.
    */
-  static function set_default_instance($db) {
+  public static function set_default_instance($db) {
     self::$instances["default"] = $db;
   }
 
@@ -94,7 +92,7 @@ abstract class Database extends Database_Core {
    * treated as wildcards similar to ? and *, respectively.  Therefore, we need to escape _, %,
    * and \ (the escape character itself).
    */
-  static function escape_for_like($value) {
+  public static function escape_for_like($value) {
     if (is_null($value)) return '';
     // backslash must go first to avoid double-escaping
     return addcslashes($value, '\_%');

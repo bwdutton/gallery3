@@ -41,7 +41,7 @@ class Admin_Movies_Controller extends Admin_Controller {
   }
 
   private function _print_view($form) {
-    list ($ffmpeg_version, $ffmpeg_date) = movie::get_ffmpeg_version();
+    [$ffmpeg_version, $ffmpeg_date] = movie::get_ffmpeg_version();
     $ffmpeg_version = $ffmpeg_date ? "{$ffmpeg_version} ({$ffmpeg_date})" : $ffmpeg_version;
     $ffmpeg_path = movie::find_ffmpeg();
     $ffmpeg_dir = substr($ffmpeg_path, 0, strrpos($ffmpeg_path, "/"));
@@ -56,12 +56,12 @@ class Admin_Movies_Controller extends Admin_Controller {
   }
 
   private function _get_admin_form() {
-    $form = new Forge("admin/movies/save", "", "post", array("id" => "g-movies-admin-form"));
+    $form = new Forge("admin/movies/save", "", "post", ["id" => "g-movies-admin-form"]);
     $group = $form->group("settings")->label(t("Settings"));
     $group->dropdown("allow_uploads")
       ->label(t("Allow movie uploads into Gallery (does not affect existing movies)"))
-      ->options(array("autodetect"=>t("only if FFmpeg is detected (default)"),
-                      "always"=>t("always"), "never"=>t("never")))
+      ->options(["autodetect"=>t("only if FFmpeg is detected (default)"),
+                      "always"=>t("always"), "never"=>t("never")])
       ->selected(module::get_var("gallery", "movie_allow_uploads", "autodetect"));
     $group->checkbox("rebuild_thumbs")
       ->label(t("Rebuild all movie thumbnails (once FFmpeg is installed, use this to update existing movie thumbnails)"))

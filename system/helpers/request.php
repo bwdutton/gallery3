@@ -10,7 +10,7 @@
 class request_Core {
 
 	// Possible HTTP methods
-	protected static $http_methods = array('get', 'head', 'options', 'post', 'put', 'delete');
+	protected static $http_methods = ['get', 'head', 'options', 'post', 'put', 'delete'];
 
 	// Character sets from client's HTTP Accept-Charset request header
 	protected static $accept_charsets;
@@ -41,14 +41,14 @@ class request_Core {
 			// Set referrer
 			$ref = $_SERVER['HTTP_REFERER'];
 
-			if ($remove_base === TRUE AND (strpos($ref, url::base(FALSE)) === 0))
+			if ($remove_base === TRUE AND (str_starts_with($ref, url::base(FALSE))))
 			{
 				// Remove the base URL from the referrer
 				$ref = substr($ref, strlen(url::base(FALSE)));
 			}
 		}
 
-		return isset($ref) ? $ref : $default;
+		return $ref ?? $default;
 	}
 
 	/**
@@ -101,7 +101,7 @@ class request_Core {
 		$method = strtolower($_SERVER['REQUEST_METHOD']);
 
 		if ( ! in_array($method, request::$http_methods))
-			throw new Kohana_Exception('Invalid request method :method:', array(':method:' => $method));
+			throw new Kohana_Exception('Invalid request method :method:', [':method:' => $method]);
 
 		return $method;
 	}
@@ -129,7 +129,7 @@ class request_Core {
 
 		if ( ! is_array(request::$user_agent))
 		{
-			request::$user_agent = array();
+			request::$user_agent = [];
 			request::$user_agent['agent'] = isset($_SERVER['HTTP_USER_AGENT']) ? trim($_SERVER['HTTP_USER_AGENT']) : '';
 
 			// Parse the user agent and extract basic information
@@ -137,7 +137,7 @@ class request_Core {
 			{
 				foreach ($data as $fragment => $name)
 				{
-					if (stripos(request::$user_agent['agent'], $fragment) !== FALSE)
+					if (stripos(request::$user_agent['agent'], (string) $fragment) !== FALSE)
 					{
 						if ($type === 'browser' AND preg_match('|'.preg_quote($fragment).'[^0-9.]*+([0-9.][0-9.a-z]*)|i', request::$user_agent['agent'], $match))
 						{
@@ -153,7 +153,7 @@ class request_Core {
 			}
 		}
 
-		return isset(request::$user_agent[$key]) ? request::$user_agent[$key] : NULL;
+		return request::$user_agent[$key] ?? NULL;
 	}
 
 	/**
@@ -352,7 +352,7 @@ class request_Core {
 		$type = strtolower($type);
 
 		// General content type (e.g. "jpg")
-		if (strpos($type, '/') === FALSE)
+		if (!str_contains($type, '/'))
 		{
 			// Don't accept anything by default
 			$q = 0;
@@ -492,10 +492,10 @@ class request_Core {
 	 */
 	protected static function parse_accept_header($header)
 	{
-		$result = array();
+		$result = [];
 
 		// Remove linebreaks and parse the HTTP Accept header
-		foreach (explode(',', str_replace(array("\r", "\n"), '', strtolower($header))) as $entry)
+		foreach (explode(',', str_replace(["\r", "\n"], '', strtolower($header))) as $entry)
 		{
 			// Explode each entry in content type and possible quality factor
 			$entry = explode(';', trim($entry), 2);
@@ -550,7 +550,7 @@ class request_Core {
 		}
 		else
 		{
-			request::$accept_types = array();
+			request::$accept_types = [];
 
 			foreach (request::parse_accept_header($_SERVER['HTTP_ACCEPT']) as $type => $q)
 			{
@@ -609,14 +609,14 @@ class request_Core {
 		}
 		else
 		{
-			request::$accept_languages = array();
+			request::$accept_languages = [];
 
 			foreach (request::parse_accept_header($_SERVER['HTTP_ACCEPT_LANGUAGE']) as $tag => $q)
 			{
 				// Explode each language (e.g. "en-us")
 				$tag = explode('-', $tag, 2);
 
-				request::$accept_languages[$tag[0]][isset($tag[1]) ? $tag[1] : '*'] = $q;
+				request::$accept_languages[$tag[0]][$tag[1] ?? '*'] = $q;
 			}
 		}
 	}

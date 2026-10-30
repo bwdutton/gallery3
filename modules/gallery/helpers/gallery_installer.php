@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gallery_installer {
-  static function install() {
+  public static function install() {
     $db = Database::instance();
     $db->query("CREATE TABLE {access_caches} (
                  `id` int(9) NOT NULL auto_increment,
@@ -212,9 +212,9 @@ class gallery_installer {
                 UNIQUE KEY(`module_name`, `name`))
                DEFAULT CHARSET=utf8;");
 
-    foreach (array("albums", "logs", "modules", "resizes", "thumbs", "tmp", "uploads") as $dir) {
+    foreach (["albums", "logs", "modules", "resizes", "thumbs", "tmp", "uploads"] as $dir) {
       @mkdir(VARPATH . $dir);
-      if (in_array($dir, array("logs", "tmp", "uploads"))) {
+      if (in_array($dir, ["logs", "tmp", "uploads"])) {
         self::_protect_directory(VARPATH . $dir);
       }
     }
@@ -234,7 +234,7 @@ class gallery_installer {
     $now = time();
     db::build()->insert(
       "items",
-      array("created" => $now,
+      ["created" => $now,
             "description" => "",
             "left_ptr" => 1,
             "level" => 1,
@@ -247,7 +247,7 @@ class gallery_installer {
             "title" => "Gallery",
             "type" => "album",
             "updated" => $now,
-            "weight" => 1))
+            "weight" => 1])
       ->execute();
     $root = ORM::factory("item", 1);
     access::add_item($root);
@@ -265,15 +265,15 @@ class gallery_installer {
     // Add rules for generating our thumbnails and resizes
     graphics::add_rule(
       "gallery", "thumb", "gallery_graphics::resize",
-      array("width" => 200, "height" => 200, "master" => Image::AUTO),
+      ["width" => 200, "height" => 200, "master" => Image::AUTO],
       100);
     graphics::add_rule(
       "gallery", "resize", "gallery_graphics::resize",
-      array("width" => 640, "height" => 640, "master" => Image::AUTO),
+      ["width" => 640, "height" => 640, "master" => Image::AUTO],
       100);
 
     // Instantiate default themes (site and admin)
-    foreach (array("wind", "admin_wind") as $theme_name) {
+    foreach (["wind", "admin_wind"] as $theme_name) {
       $theme_info = new ArrayObject(parse_ini_file(THEMEPATH . $theme_name . "/theme.info"),
                                     ArrayObject::ARRAY_AS_PROPS);
       $theme = ORM::factory("theme");
@@ -298,7 +298,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // Mark string for translation
     $powered_by_string = t("Powered by <a href=\"%url\">%gallery_version</a>",
-                           array("locale" => "root"));
+                           ["locale" => "root"]);
     module::set_var("gallery", "credits", (string) $powered_by_string);
     module::set_var("gallery", "simultaneous_upload_limit", 5);
     module::set_var("gallery", "admin_area_timeout", 90 * 60);
@@ -318,7 +318,7 @@ class gallery_installer {
     module::set_var("gallery", "movie_allow_uploads", "autodetect");
   }
 
-  static function upgrade($version) {
+  public static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
       module::set_var("gallery", "date_format", "Y-M-d");
@@ -448,9 +448,9 @@ class gallery_installer {
 
     // Convert block keys to an md5 hash of the module and block name
     if ($version == 16) {
-      foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $location) {
+      foreach (["dashboard_sidebar", "dashboard_center", "site_sidebar"] as $location) {
         $blocks = block_manager::get_active($location);
-        $new_blocks = array();
+        $new_blocks = [];
         foreach ($blocks as $block) {
           $new_blocks[md5("{$block[0]}:{$block[1]}")] = $block;
         }
@@ -461,9 +461,9 @@ class gallery_installer {
 
     // We didn't like md5 hashes so convert block keys back to random keys to allow duplicates.
     if ($version == 17) {
-      foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $location) {
+      foreach (["dashboard_sidebar", "dashboard_center", "site_sidebar"] as $location) {
         $blocks = block_manager::get_active($location);
-        $new_blocks = array();
+        $new_blocks = [];
         foreach ($blocks as $block) {
           $new_blocks[random::int()] = $block;
         }
@@ -537,7 +537,7 @@ class gallery_installer {
     }
 
     if ($version == 24) {
-      foreach (array("logs", "tmp", "uploads") as $dir) {
+      foreach (["logs", "tmp", "uploads"] as $dir) {
         self::_protect_directory(VARPATH . $dir);
       }
       module::set_version("gallery", $version = 25);
@@ -674,8 +674,8 @@ class gallery_installer {
       // Splice the upgrade_checker block into the admin dashboard at the top
       // of the page, but under the welcome block if it's in the first position.
       $blocks = block_manager::get_active("dashboard_center");
-      $index = count($blocks) && current($blocks) == array("gallery", "welcome") ? 1 : 0;
-      array_splice($blocks, $index, 0, array(random::int() => array("gallery", "upgrade_checker")));
+      $index = count($blocks) && current($blocks) == ["gallery", "welcome"] ? 1 : 0;
+      array_splice($blocks, $index, 0, [random::int() => ["gallery", "upgrade_checker"]]);
       block_manager::set_active("dashboard_center", $blocks);
 
       module::set_var("gallery", "upgrade_checker_auto_enabled", true);
@@ -756,15 +756,15 @@ class gallery_installer {
       // Find and loop through each conflict (e.g. "foo.jpg", "foo.png", and "foo.flv" are one
       // conflict; "bar.jpg", "bar.png", and "bar.flv" are another)
       foreach (db::build()
-               ->select_distinct(array("parent_base_name" =>
-                 db::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")))
-               ->select(array("C" => "COUNT(\"*\")"))
+               ->select_distinct(["parent_base_name" =>
+                 db::expr("CONCAT(`parent_id`, ':', LOWER(SUBSTR(`name`, 1, LOCATE('.', `name`) - 1)))")])
+               ->select(["C" => "COUNT(\"*\")"])
                ->from("items")
                ->where("type", "<>", "album")
                ->having("C", ">", 1)
                ->group_by("parent_base_name")
                ->execute() as $conflict) {
-        list ($parent_id, $base_name) = explode(":", $conflict->parent_base_name, 2);
+        [$parent_id, $base_name] = explode(":", $conflict->parent_base_name, 2);
         $base_name_escaped = Database::escape_for_like($base_name);
         // Loop through the items for each conflict
         foreach (db::build()
@@ -839,7 +839,7 @@ class gallery_installer {
     }
   }
 
-  static function uninstall() {
+  public static function uninstall() {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS {access_caches}");
     $db->query("DROP TABLE IF EXISTS {access_intents}");
@@ -856,13 +856,13 @@ class gallery_installer {
     $db->query("DROP TABLE IF EXISTS {themes}");
     $db->query("DROP TABLE IF EXISTS {vars}");
     $db->query("DROP TABLE IF EXISTS {caches}");
-    foreach (array("albums", "resizes", "thumbs", "uploads",
-                   "modules", "logs", "database.php") as $entry) {
+    foreach (["albums", "resizes", "thumbs", "uploads",
+                   "modules", "logs", "database.php"] as $entry) {
       system("/bin/rm -rf " . VARPATH . $entry);
     }
   }
 
-  static function _protect_directory($dir) {
+  public static function _protect_directory($dir) {
     $fp = @fopen("$dir/.htaccess", "w+");
     fwrite($fp, "DirectoryIndex .htaccess\nSetHandler Gallery_Security_Do_Not_Remove\n" .
            "Options None\n<IfModule mod_rewrite.c>\nRewriteEngine off\n</IfModule>\n" .

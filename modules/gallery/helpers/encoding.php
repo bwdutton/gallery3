@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class encoding_Core {
-  static function convert_to_utf8($value) {
+  public static function convert_to_utf8($value) {
     if (function_exists("mb_detect_encoding")) {
       // Rely on mb_detect_encoding()'s strict mode
       $src_encoding = mb_detect_encoding($value, mb_detect_order(), true);
@@ -26,7 +26,7 @@ class encoding_Core {
         if (function_exists("mb_convert_encoding") && $src_encoding) {
           $value = mb_convert_encoding($value, "UTF-8", $src_encoding);
         } else {
-          $value = utf8_encode($value);
+          $value = mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1');
         }
       }
     }

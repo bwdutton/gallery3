@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class auth_Core {
-  static function get_login_form($url) {
-    $form = new Forge($url, "", "post", array("id" => "g-login-form"));
+  public static function get_login_form($url) {
+    $form = new Forge($url, "", "post", ["id" => "g-login-form"]);
     $form->set_attr("class", "g-narrow");
     $form->hidden("continue_url")->value(Session::instance()->get("continue_url"));
     $group = $form->group("login")->label(t("Login"));
@@ -33,18 +33,18 @@ class auth_Core {
     return $form;
   }
 
-  static function login($user) {
+  public static function login($user) {
     identity::set_active_user($user);
     if (identity::is_writable()) {
       $user->login_count += 1;
       $user->last_login = time();
       $user->save();
     }
-    log::info("user", t("User %name logged in", array("name" => $user->name)));
+    log::info("user", t("User %name logged in", ["name" => $user->name]));
     module::event("user_login", $user);
   }
 
-  static function logout() {
+  public static function logout() {
     $user = identity::active_user();
     if (!$user->guest) {
       try {
@@ -54,17 +54,17 @@ class auth_Core {
       }
       module::event("user_logout", $user);
     }
-    log::info("user", t("User %name logged out", array("name" => $user->name)),
+    log::info("user", t("User %name logged out", ["name" => $user->name]),
               t('<a href="%url">%user_name</a>',
-                array("url" => user_profile::url($user->id),
-                      "user_name" => html::clean($user->name))));
+                ["url" => user_profile::url($user->id),
+                      "user_name" => html::clean($user->name)]));
   }
 
   /**
    * After there have been 5 failed auth attempts, any failure leads to getting locked out for a
    * minute.
    */
-  static function too_many_failures($name) {
+  public static function too_many_failures($name) {
     $failed = ORM::factory("failed_auth")
       ->where("name", "=", $name)
       ->find();
@@ -73,13 +73,13 @@ class auth_Core {
             (time() - $failed->time < 60));
   }
 
-  static function validate_too_many_failed_logins($name_input) {
+  public static function validate_too_many_failed_logins($name_input) {
     if (auth::too_many_failures($name_input->value)) {
       $name_input->add_error("too_many_failed_logins", 1);
     }
   }
 
-  static function validate_too_many_failed_auth_attempts($form_input) {
+  public static function validate_too_many_failed_auth_attempts($form_input) {
     if (auth::too_many_failures(identity::active_user()->name)) {
       $form_input->add_error("too_many_failed_auth_attempts", 1);
     }
@@ -88,7 +88,7 @@ class auth_Core {
   /**
    * Record a failed authentication for this user
    */
-  static function record_failed_attempt($name) {
+  public static function record_failed_attempt($name) {
     $failed = ORM::factory("failed_auth")
       ->where("name", "=", $name)
       ->find();
@@ -103,7 +103,7 @@ class auth_Core {
   /**
    * Clear any failed logins for this user
    */
-  static function clear_failed_attempts($user) {
+  public static function clear_failed_attempts($user) {
     ORM::factory("failed_auth")
       ->where("name", "=", $user->name)
       ->delete_all();
@@ -114,7 +114,7 @@ class auth_Core {
    * actively re-authenticate before access is given
    * to the admin area.
    */
-  static function must_reauth_for_admin_area() {
+  public static function must_reauth_for_admin_area() {
     if (!identity::active_user()->admin) {
       access::forbidden();
     }

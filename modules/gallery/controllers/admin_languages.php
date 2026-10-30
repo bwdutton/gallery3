@@ -51,7 +51,7 @@ class Admin_Languages_Controller extends Admin_Controller {
     }
     module::set_var("gallery", "default_locale", $new_default_locale);
 
-    json::reply(array("result" => "success"));
+    json::reply(["result" => "success"]);
   }
 
   public function share() {
@@ -75,7 +75,7 @@ class Admin_Languages_Controller extends Admin_Controller {
   private function _save_api_key($form) {
     $new_key = $form->sharing->api_key->value;
     if ($new_key) {
-      list($connected, $valid) = l10n_client::validate_api_key($new_key);
+      [$connected, $valid] = l10n_client::validate_api_key($new_key);
       if (!$valid) {
         $form->sharing->api_key->add_error($connected ? "invalid" : "no_connection", 1);
       }
@@ -109,7 +109,7 @@ class Admin_Languages_Controller extends Admin_Controller {
   }
 
   private function _share_translations_form() {
-    $form = new Forge("admin/languages/share", "", "post", array("id" => "g-share-translations-form"));
+    $form = new Forge("admin/languages/share", "", "post", ["id" => "g-share-translations-form"]);
     $group = $form->group("sharing")
       ->label("Translations API Key");
     $api_key = l10n_client::api_key();
@@ -118,7 +118,7 @@ class Admin_Languages_Controller extends Admin_Controller {
       ->label(empty($api_key)
               ? t("This is a unique key that will allow you to send translations to the remote
                   server. To get your API key go to %server-link.",
-                  array("server-link" => html::mark_clean(html::anchor($server_link))))
+                  ["server-link" => html::mark_clean(html::anchor($server_link))])
               : t("API key"))
       ->value($api_key)
       ->error_messages("invalid", t("The API key you provided is invalid."))

@@ -41,7 +41,7 @@ class Image_GraphicsMagick_Driver extends Image_Driver {
 
 		// Check to make sure the provided path is correct
 		if ( ! is_file(realpath($config['directory']).'/gm'.$this->ext))
-			throw new Kohana_Exception('The GraphicsMagick directory specified does not contain a required program, :gm:.', array(':gm:' => 'gm'.$this->ext));
+			throw new Kohana_Exception('The GraphicsMagick directory specified does not contain a required program, :gm:.', [':gm:' => 'gm'.$this->ext]);
 
 
 		// Set the installation directory

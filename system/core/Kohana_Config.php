@@ -42,10 +42,10 @@ class Kohana_Config_Core implements ArrayAccess {
 		if ( empty(Kohana_Config::$instance))
 		{
 			//call a 1 time non singleton of Kohana_Config to get a list of drivers
-			$config = new Kohana_Config(array(
-				'config_drivers'=>array(
-				), 'internal_cache'=>FALSE
-			));
+			$config = new Kohana_Config([
+				'config_drivers'=>[
+				], 'internal_cache'=>FALSE
+			]);
 			$core_config = $config->get('core');
 			Kohana_Config::$instance = new Kohana_Config($core_config);
 		}
@@ -77,9 +77,9 @@ class Kohana_Config_Core implements ArrayAccess {
 			unset($drivers[array_search('array', $drivers)]);
 
 		//add array at the very end
-		$this->drivers = $drivers = array_merge($drivers, array(
+		$this->drivers = $drivers = array_merge($drivers, [
 			'array'
-		));
+		]);
 
 		foreach ($this->drivers as & $driver)
 		{
@@ -88,18 +88,18 @@ class Kohana_Config_Core implements ArrayAccess {
 
 			// Ensure the driver loads correctly
 			if (!Kohana::auto_load($driver))
-				throw new Kohana_Exception('The :driver: driver for the :library: library could not be found.', array(
-					':driver:' => $driver, ':library:' => get_class($this)
-				));
+				throw new Kohana_Exception('The :driver: driver for the :library: library could not be found.', [
+					':driver:' => $driver, ':library:' => static::class
+				]);
 
 			// Load the new driver
 			$driver = new $driver($core_config);
 
 			// Ensure the new driver is valid
 			if (!$driver instanceof Config_Driver)
-				throw new Kohana_Exception('The :driver: driver for the :library: library must implement the :interface: interface', array(
-					':driver:' => $driver, ':library:' => get_class($this), ':interface:' => 'Config_Driver'
-				));
+				throw new Kohana_Exception('The :driver: driver for the :library: library must implement the :interface: interface', [
+					':driver:' => $driver, ':library:' => static::class, ':interface:' => 'Config_Driver'
+				]);
 		}
 	}
 

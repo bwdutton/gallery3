@@ -18,11 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_Exception_Core extends Kohana_Exception {
-  var $response = array();
-
-  public function __construct($message, $code, $response=array()) {
+  public function __construct($message, $code, public $response=[]) {
     parent::__construct($message, null, $code);
-    $this->response = $response;
   }
 
   public function sendHeaders() {

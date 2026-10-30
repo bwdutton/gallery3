@@ -78,7 +78,7 @@ class access_Core {
    * @param  Item_Model $item
    * @return boolean
    */
-  static function can($perm_name, $item) {
+  public static function can($perm_name, $item) {
     return access::user_can(identity::active_user(), $perm_name, $item);
   }
 
@@ -90,7 +90,7 @@ class access_Core {
    * @param  Item_Model $item
    * @return boolean
    */
-  static function user_can($user, $perm_name, $item) {
+  public static function user_can($user, $perm_name, $item) {
     if (!$item->loaded()) {
       return false;
     }
@@ -120,7 +120,7 @@ class access_Core {
    * @param  Item_Model $item
    * @return boolean
    */
-  static function required($perm_name, $item) {
+  public static function required($perm_name, $item) {
     if (!access::can($perm_name, $item)) {
       if ($perm_name == "view") {
         // Treat as if the item didn't exist, don't leak any information.
@@ -139,7 +139,7 @@ class access_Core {
    * @param  Item_Model  $item
    * @return boolean
    */
-  static function group_can($group, $perm_name, $item) {
+  public static function group_can($group, $perm_name, $item) {
     // Use the nearest parent album (including the current item) so that we take advantage
     // of the cache when checking many items in a single album.
     $id = ($item->type == "album") ? $item->id : $item->parent_id;
@@ -157,7 +157,7 @@ class access_Core {
    * @param  Item_Model  $item
    * @return boolean     access::ALLOW, access::DENY or access::INHERIT (null) for no intent
    */
-  static function group_intent($group, $perm_name, $item) {
+  public static function group_intent($group, $perm_name, $item) {
     $intent = model_cache::get("access_intent", $item->id, "item_id");
     return $intent->__get("{$perm_name}_{$group->id}");
   }
@@ -171,7 +171,7 @@ class access_Core {
    * @param  Item_Model  $item
    * @return ORM_Model   item that locks this one
    */
-  static function locked_by($group, $perm_name, $item) {
+  public static function locked_by($group, $perm_name, $item) {
     if ($perm_name != "view") {
       return null;
     }
@@ -198,7 +198,7 @@ class access_Core {
   /**
    * Terminate immediately with an HTTP 403 Forbidden response.
    */
-  static function forbidden() {
+  public static function forbidden(): never {
     throw new Kohana_Exception("@todo FORBIDDEN", null, 403);
   }
 
@@ -241,7 +241,7 @@ class access_Core {
    * @param  string  $perm_name
    * @param  Item_Model $item
    */
-  static function allow($group, $perm_name, $item) {
+  public static function allow($group, $perm_name, $item) {
     self::_set($group, $perm_name, $item, self::ALLOW);
   }
 
@@ -252,7 +252,7 @@ class access_Core {
    * @param  string  $perm_name
    * @param  Item_Model $item
    */
-  static function deny($group, $perm_name, $item) {
+  public static function deny($group, $perm_name, $item) {
     self::_set($group, $perm_name, $item, self::DENY);
   }
 
@@ -263,7 +263,7 @@ class access_Core {
    * @param  string  $perm_name
    * @param  Item_Model $item
    */
-  static function reset($group, $perm_name, $item) {
+  public static function reset($group, $perm_name, $item) {
     if ($item->id == 1) {
       throw new Exception("@todo CANT_RESET_ROOT_PERMISSION");
     }
@@ -273,7 +273,7 @@ class access_Core {
   /**
    * Recalculate the permissions for an album's hierarchy.
    */
-  static function recalculate_album_permissions($album) {
+  public static function recalculate_album_permissions($album) {
     foreach (self::_get_all_groups() as $group) {
       foreach (ORM::factory("permission")->find_all() as $perm) {
         if ($perm->name == "view") {
@@ -289,7 +289,7 @@ class access_Core {
   /**
    * Recalculate the permissions for a single photo.
    */
-  static function recalculate_photo_permissions($photo) {
+  public static function recalculate_photo_permissions($photo) {
     $parent = $photo->parent();
     $parent_access_cache = ORM::factory("access_cache")->where("item_id", "=", $parent->id)->find();
     $photo_access_cache = ORM::factory("access_cache")->where("item_id", "=", $photo->id)->find();
@@ -315,7 +315,7 @@ class access_Core {
    * @param  string $display_name   The internationalized version of the displayable name
    * @return void
   */
-  static function register_permission($name, $display_name) {
+  public static function register_permission($name, $display_name) {
     $permission = ORM::factory("permission", $name);
     if ($permission->loaded()) {
       throw new Exception("@todo PERMISSION_ALREADY_EXISTS $name");
@@ -335,7 +335,7 @@ class access_Core {
    * @param  string $perm_name
    * @return void
    */
-  static function delete_permission($name) {
+  public static function delete_permission($name) {
     foreach (self::_get_all_groups() as $group) {
       self::_drop_columns($name, $group);
     }
@@ -351,7 +351,7 @@ class access_Core {
    * @param Group_Model $group
    * @return void
    */
-  static function add_group($group) {
+  public static function add_group($group) {
     foreach (ORM::factory("permission")->find_all() as $perm) {
       self::_add_columns($perm->name, $group);
     }
@@ -363,7 +363,7 @@ class access_Core {
    * @param Group_Model $group
    * @return void
    */
-  static function delete_group($group) {
+  public static function delete_group($group) {
     foreach (ORM::factory("permission")->find_all() as $perm) {
       self::_drop_columns($perm->name, $group);
     }
@@ -375,7 +375,7 @@ class access_Core {
    * @param Item_Model $item
    * @return void
    */
-  static function add_item($item) {
+  public static function add_item($item) {
     $access_intent = ORM::factory("access_intent", $item->id);
     if ($access_intent->loaded()) {
       throw new Exception("@todo ITEM_ALREADY_ADDED $item->id");
@@ -411,7 +411,7 @@ class access_Core {
    * @param Item_Model $item
    * @return void
    */
-  static function delete_item($item) {
+  public static function delete_item($item) {
     ORM::factory("access_intent")->where("item_id", "=", $item->id)->find()->delete();
     ORM::factory("access_cache")->where("item_id", "=", $item->id)->find()->delete();
   }
@@ -419,7 +419,7 @@ class access_Core {
   /**
    * Verify our Cross Site Request Forgery token is valid, else throw an exception.
    */
-  static function verify_csrf() {
+  public static function verify_csrf() {
     $input = Input::instance();
     if ($input->post("csrf", $input->get("csrf", null)) !== Session::instance()->get("csrf")) {
       access::forbidden();
@@ -430,7 +430,7 @@ class access_Core {
    * Get the Cross Site Request Forgery token for this session.
    * @return string
    */
-  static function csrf_token() {
+  public static function csrf_token() {
     $session = Session::instance();
     $csrf = $session->get("csrf");
     if (empty($csrf)) {
@@ -444,7 +444,7 @@ class access_Core {
    * Generate an <input> element containing the Cross Site Request Forgery token for this session.
    * @return string
    */
-  static function csrf_form_field() {
+  public static function csrf_form_field() {
     return "<input type=\"hidden\" name=\"csrf\" value=\"" . access::csrf_token() . "\"/>";
   }
 
@@ -459,7 +459,7 @@ class access_Core {
    if (module::is_active(module::get_var("gallery", "identity_provider", "user"))) {
       return identity::groups();
     } else {
-      return array();
+      return [];
     }
   }
 
@@ -551,7 +551,7 @@ class access_Core {
       ->execute();
 
     $query = ORM::factory("access_intent")
-      ->select(array("access_intents.$field", "items.left_ptr", "items.right_ptr", "items.id"))
+      ->select(["access_intents.$field", "items.left_ptr", "items.right_ptr", "items.id"])
       ->join("items", "items.id", "access_intents.item_id")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
@@ -630,7 +630,7 @@ class access_Core {
     // With non-view permissions, each level can override any permissions that came above it
     // so start at the top and work downwards, overlaying permissions as we go.
     $query = ORM::factory("access_intent")
-      ->select(array("access_intents.$field", "items.left_ptr", "items.right_ptr"))
+      ->select(["access_intents.$field", "items.left_ptr", "items.right_ptr"])
       ->join("items", "items.id", "access_intents.item_id")
       ->where("left_ptr", ">=", $item->left_ptr)
       ->where("right_ptr", "<=", $item->right_ptr)
@@ -662,13 +662,13 @@ class access_Core {
    * @param  string       the permission name
    * @param  string       the new permission value (eg access::DENY)
    */
-  static function update_htaccess_files($album, $group, $perm_name, $value) {
+  public static function update_htaccess_files($album, $group, $perm_name, $value) {
     if ($group->id != identity::everybody()->id ||
         !($perm_name == "view" || $perm_name == "view_full")) {
       return;
     }
 
-    $dirs = array($album->file_path());
+    $dirs = [$album->file_path()];
     if ($perm_name == "view") {
       $dirs[] = dirname($album->resize_path());
       $dirs[] = dirname($album->thumb_path());
@@ -676,7 +676,7 @@ class access_Core {
 
     $base_url = url::base(true);
     $sep = "?";
-    if (strpos($base_url, "?") !== false) {
+    if (str_contains($base_url, "?")) {
       $sep = "&";
     }
     $base_url .= $sep . "kohana_uri=/file_proxy";
@@ -708,7 +708,7 @@ class access_Core {
     }
   }
 
-  static function private_key() {
+  public static function private_key() {
     return module::get_var("gallery", "private_key");
   }
 
@@ -718,7 +718,7 @@ class access_Core {
    * /success.  Then request that url.  If we retrieve it successfully, then our redirects are
    * working and our permission system works.
    */
-  static function htaccess_works() {
+  public static function htaccess_works() {
     $no_htaccess = Kohana::config('core.no_htaccess');
     if ($no_htaccess) return true;
 
@@ -740,14 +740,14 @@ class access_Core {
 
       // Proxy our authorization headers so that if the entire Gallery is covered by Basic Auth
       // this callback will still work.
-      $headers = array();
+      $headers = [];
       if (function_exists("apache_request_headers")) {
         $arh = apache_request_headers();
         if (!empty($arh["Authorization"])) {
           $headers["Authorization"] = $arh["Authorization"];
         }
       }
-      list ($status, $headers, $body) =
+      [$status, $headers, $body] =
         remote::do_request(url::abs_file("var/security_test/success"), "GET", $headers);
       $works = preg_match('#HTTP/\d.\d 200 OK#', $status) && ($body == "success");
     } catch (Exception $e) {

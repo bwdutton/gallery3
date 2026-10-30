@@ -18,15 +18,15 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Model_Core extends ORM {
-  function item() {
+  public function item() {
     return ORM::factory("item", $this->item_id);
   }
 
-  function author() {
+  public function author() {
     return identity::lookup_user($this->author_id);
   }
 
-  function author_name() {
+  public function author_name() {
     $author = $this->author();
     if ($author->guest) {
       return $this->guest_name;
@@ -35,7 +35,7 @@ class Comment_Model_Core extends ORM {
     }
   }
 
-  function author_email() {
+  public function author_email() {
     $author = $this->author();
     if ($author->guest) {
       return $this->guest_email;
@@ -44,7 +44,7 @@ class Comment_Model_Core extends ORM {
     }
   }
 
-  function author_url() {
+  public function author_url() {
     $author = $this->author();
     if ($author->guest) {
       return $this->guest_url;
@@ -59,14 +59,14 @@ class Comment_Model_Core extends ORM {
   public function validate(?Validation $array=null) {
     // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
-      $this->rules = array(
-        "guest_name"  => array("callbacks" => array(array($this, "valid_author"))),
-        "guest_email" => array("callbacks" => array(array($this, "valid_email"))),
-        "guest_url"   => array("rules"     => array("url")),
-        "item_id"     => array("callbacks" => array(array($this, "valid_item"))),
-        "state"       => array("rules"     => array("Comment_Model::valid_state")),
-        "text"        => array("rules"     => array("required")),
-      );
+      $this->rules = [
+        "guest_name"  => ["callbacks" => [$this->valid_author(...)]],
+        "guest_email" => ["callbacks" => [$this->valid_email(...)]],
+        "guest_url"   => ["rules"     => ["url"]],
+        "item_id"     => ["callbacks" => [$this->valid_item(...)]],
+        "state"       => ["rules"     => ["Comment_Model::valid_state"]],
+        "text"        => ["rules"     => ["required"]],
+      ];
     }
 
     parent::validate($array);
@@ -74,7 +74,7 @@ class Comment_Model_Core extends ORM {
 
   private function get_server_var($input, $key) {
     $value = $input->server($key);
-    if (is_null($value)) $value = '';
+    $value ??= '';
     return $value;
   }
 
@@ -178,15 +178,15 @@ class Comment_Model_Core extends ORM {
   /**
    * Make sure that the state is legal.
    */
-  static function valid_state($value) {
-    return in_array($value, array("published", "unpublished", "spam", "deleted"));
+  public static function valid_state($value) {
+    return in_array($value, ["published", "unpublished", "spam", "deleted"]);
   }
 
   /**
    * Same as ORM::as_array() but convert id fields into their RESTful form.
    */
   public function as_restful_array() {
-    $data = array();
+    $data = [];
     foreach ($this->as_array() as $key => $value) {
       if (strncmp($key, "server_", 7)) {
         $data[$key] = $value;

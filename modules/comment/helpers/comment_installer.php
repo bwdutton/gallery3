@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class comment_installer {
-  static function install() {
+  public static function install() {
     $db = Database::instance();
     $db->query("CREATE TABLE IF NOT EXISTS {comments} (
                  `author_id` int(9) default NULL,
@@ -52,7 +52,7 @@ class comment_installer {
     module::set_var("comment", "initial_state", "published");
   }
 
-  static function upgrade($version) {
+  public static function upgrade($version) {
     $db = Database::instance();
     if ($version == 1) {
       $db->query("ALTER TABLE {comments} CHANGE `state` `state` varchar(15) default 'unpublished'");
@@ -107,7 +107,7 @@ class comment_installer {
     }
   }
 
-  static function uninstall() {
+  public static function uninstall() {
     $db = Database::instance();
 
     // Notify listeners that we're deleting some data.  This is probably going to be very

@@ -20,8 +20,8 @@
 class akismet_Core {
   public static $test_mode = TEST_MODE;
 
-  static function get_configure_form() {
-    $form = new Forge("admin/akismet", "", "post", array("id" => "g-configure-akismet-form"));
+  public static function get_configure_form() {
+    $form = new Forge("admin/akismet", "", "post", ["id" => "g-configure-akismet-form"]);
     $group = $form->group("configure_akismet")->label(t("Configure Akismet"));
     $group->input("api_key")->label(t("API Key"))->value(module::get_var("akismet", "api_key"))
       ->callback("akismet::validate_key")
@@ -35,7 +35,7 @@ class akismet_Core {
    * @param  Comment_Model  $comment  A comment to check
    * @return $string "spam", "ham" or "unknown"
    */
-  static function check_comment($comment) {
+  public static function check_comment($comment) {
     if (akismet::$test_mode) {
       return;
     }
@@ -56,7 +56,7 @@ class akismet_Core {
    * Tell Akismet that this comment is spam
    * @param  Comment_Model  $comment  A comment to check
    */
-  static function submit_spam($comment) {
+  public static function submit_spam($comment) {
     if (akismet::$test_mode) {
       return;
     }
@@ -69,7 +69,7 @@ class akismet_Core {
    * Tell Akismet that this comment is ham
    * @param  Comment_Model  $comment  A comment to check
    */
-  static function submit_ham($comment) {
+  public static function submit_ham($comment) {
     if (akismet::$test_mode) {
       return;
     }
@@ -83,7 +83,7 @@ class akismet_Core {
    * @param  string   $api_key the API key
    * @return boolean
    */
-  static function validate_key($api_key_input) {
+  public static function validate_key($api_key_input) {
     if ($api_key_input->value) {
       $request = self::_build_verify_request($api_key_input->value);
       $response = self::_http_post($request, "rest.akismet.com");
@@ -94,12 +94,12 @@ class akismet_Core {
   }
 
 
-  static function check_config() {
+  public static function check_config() {
     $api_key = module::get_var("akismet", "api_key");
     if (empty($api_key)) {
       site_status::warning(
         t("Akismet is not quite ready!  Please provide an <a href=\"%url\">API Key</a>",
-          array("url" => html::mark_clean(url::site("admin/akismet")))),
+          ["url" => html::mark_clean(url::site("admin/akismet"))]),
         "akismet_config");
     } else {
       site_status::clear("akismet_config");
@@ -107,7 +107,7 @@ class akismet_Core {
   }
 
 
-  static function _build_verify_request($api_key) {
+  public static function _build_verify_request($api_key) {
     $base_url = url::base(false, "http");
     $query_string = "key={$api_key}&blog=$base_url";
 
@@ -123,8 +123,8 @@ class akismet_Core {
     return $http_request;
   }
 
-  static function _build_request($function, $comment) {
-    $comment_data = array();
+  public static function _build_request($function, $comment) {
+    $comment_data = [];
     $comment_data["HTTP_ACCEPT"] = $comment->server_http_accept;
     $comment_data["HTTP_ACCEPT_ENCODING"] = $comment->server_http_accept_encoding;
     $comment_data["HTTP_ACCEPT_LANGUAGE"] = $comment->server_http_accept_language;
@@ -147,11 +147,11 @@ class akismet_Core {
     $comment_data["user_agent"] = $comment->server_http_user_agent;
     $comment_data["user_ip"] = $comment->server_remote_addr;
 
-    $query_string = array();
+    $query_string = [];
     foreach ($comment_data as $key => $data) {
       $query_string[] = "$key=" . urlencode($data);
     }
-    $query_string = join("&", $query_string);
+    $query_string = implode("&", $query_string);
 
     $version = module::get_version("akismet");
     $http_request  = "POST /1.1/$function HTTP/1.0\r\n";
@@ -178,11 +178,11 @@ class akismet_Core {
         $response .= fgets($fs, 1160); // One TCP-IP packet
       }
       fclose($fs);
-      list($headers, $body) = explode("\r\n\r\n", $response);
+      [$headers, $body] = explode("\r\n\r\n", $response);
       $headers = explode("\r\n", $headers);
       $body = explode("\r\n", $body);
       $response = new ArrayObject(
-        array("headers" => $headers, "body" => $body), ArrayObject::ARRAY_AS_PROPS);
+        ["headers" => $headers, "body" => $body], ArrayObject::ARRAY_AS_PROPS);
     } else {
       throw new Exception("@todo CONNECTION TO SPAM SERVICE FAILED");
     }

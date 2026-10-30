@@ -5,7 +5,7 @@
 </script>
 
 <div id="g-server-add">
-  <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => html::purify($item->title))) ?></h1>
+  <h1 style="display: none;"><?= t("Add Photos to '%title'", ["title" => html::purify($item->title)]) ?></h1>
 
   <p id="g-description"><?= t("Photos will be added to album:") ?></p>
   <ul class="g-breadcrumbs">

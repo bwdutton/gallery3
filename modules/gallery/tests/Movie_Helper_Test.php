@@ -19,21 +19,21 @@
  */
 class Movie_Helper_Test extends Gallery_Unit_Test_Case {
   public function seconds_to_hhmmssdd_test() {
-    $times = array("00:00:00.50" => 0.5,
+    $times = ["00:00:00.50" => 0.5,
                    "00:00:06.00" => 6,
                    "00:00:59.99" => 59.999,
                    "00:01:00.00" => 60.001,
                    "00:07:00.00" => 7 * 60,
                    "00:45:19.00" => 45 * 60 + 19,
                    "03:45:19.00" => 3 * 3600 + 45 * 60 + 19,
-                   "126:45:19.00" => 126 * 3600 + 45 * 60 + 19);
+                   "126:45:19.00" => 126 * 3600 + 45 * 60 + 19];
     foreach ($times as $hhmmssdd => $seconds) {
       $this->assert_equal($hhmmssdd, movie::seconds_to_hhmmssdd($seconds));
     }
   }
 
   public function hhmmssdd_to_seconds_test() {
-    $times = array("0:00:00.01" => 0.01,
+    $times = ["0:00:00.01" => 0.01,
                    "00:00:00.50" => 0.5,
                    "00:00:06.00" => 6,
                    "00:00:59.99" => 59.99,
@@ -41,7 +41,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
                    "00:07:00.00" => 7 * 60,
                    "00:45:19.00" => 45 * 60 + 19,
                    "03:45:19.00" => 3 * 3600 + 45 * 60 + 19,
-                   "126:45:19.00" => 126 * 3600 + 45 * 60 + 19);
+                   "126:45:19.00" => 126 * 3600 + 45 * 60 + 19];
     foreach ($times as $hhmmssdd => $seconds) {
       $this->assert_equal($seconds, movie::hhmmssdd_to_seconds($hhmmssdd));
     }
@@ -49,7 +49,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function get_file_metadata_test() {
     $movie = test::random_movie();
-    $this->assert_equal(array(360, 288, "video/x-flv", "flv", 6.00),
+    $this->assert_equal([360, 288, "video/x-flv", "flv", 6.00],
                         movie::get_file_metadata($movie->file_path()));
   }
 
@@ -57,7 +57,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       $metadata = movie::get_file_metadata(MODPATH . "gallery/tests/this_does_not_exist");
       $this->assert_true(false, "Shouldn't get here");
-    } catch (Exception $e) {
+    } catch (Exception) {
       // pass
     }
   }
@@ -68,7 +68,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       $metadata = movie::get_file_metadata(TMPPATH . "test_flv_with_no_extension");
       $this->assert_true(false, "Shouldn't get here");
-    } catch (Exception $e) {
+    } catch (Exception) {
       // pass
     }
     unlink(TMPPATH . "test_flv_with_no_extension");
@@ -78,7 +78,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       $metadata = movie::get_file_metadata(MODPATH . "gallery/tests/Movie_Helper_Test.php");
       $this->assert_true(false, "Shouldn't get here");
-    } catch (Exception $e) {
+    } catch (Exception) {
       // pass
     }
   }
@@ -89,7 +89,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       $metadata = movie::get_file_metadata(TMPPATH . "test_flv_with_php_extension.php");
       $this->assert_true(false, "Shouldn't get here");
-    } catch (Exception $e) {
+    } catch (Exception) {
       // pass
     }
     unlink(TMPPATH . "test_flv_with_php_extension.php");
@@ -101,7 +101,7 @@ class Movie_Helper_Test extends Gallery_Unit_Test_Case {
     // Of course, FFmpeg cannot extract width, height, or duration from the file.  Note that this
     // isn't a really a security problem, since the filename doesn't have a php extension and
     // therefore will never be executed.
-    $this->assert_equal(array(0, 0, "video/x-flv", "flv", 0),
+    $this->assert_equal([0, 0, "video/x-flv", "flv", 0],
                         movie::get_file_metadata(TMPPATH . "test_php_with_flv_extension.flv"));
     unlink(TMPPATH . "test_php_with_flv_extension.flv");
   }

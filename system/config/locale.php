@@ -15,7 +15,7 @@
  * for OS's that don't support the first (e.g. Windows). The first valid locale in the array will be used.
  * @see http://php.net/setlocale
  */
-$config['language'] = array('en_US', 'English_United States');
+$config['language'] = ['en_US', 'English_United States'];
 
 /**
  * Locale timezone. Defaults to the timezone you have set in your php config

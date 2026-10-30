@@ -35,19 +35,19 @@ class Admin_Dashboard_Controller extends Admin_Controller {
 
     $form = gallery_block::get_add_block_form();
     if ($form->validate()) {
-      list ($module_name, $id) = explode(":", $form->add_block->id->value);
+      [$module_name, $id] = explode(":", $form->add_block->id->value);
       $available = block_manager::get_available_admin_blocks();
 
       if ($form->add_block->center->value) {
         block_manager::add("dashboard_center", $module_name, $id);
         message::success(
           t("Added <b>%title</b> block to the dashboard center",
-            array("title" => $available["$module_name:$id"])));
+            ["title" => $available["$module_name:$id"]]));
       } else {
         block_manager::add("dashboard_sidebar", $module_name, $id);
         message::success(
           t("Added <b>%title</b> to the dashboard sidebar",
-            array("title" => $available["$module_name:$id"])));
+            ["title" => $available["$module_name:$id"]]));
       }
     }
     url::redirect("admin/dashboard");
@@ -69,8 +69,8 @@ class Admin_Dashboard_Controller extends Admin_Controller {
 
     if (!empty($deleted)) {
       $available = block_manager::get_available_admin_blocks();
-      $title = $available[join(":", $deleted)];
-      message::success(t("Removed <b>%title</b> block", array("title" => $title)));
+      $title = $available[implode(":", $deleted)];
+      message::success(t("Removed <b>%title</b> block", ["title" => $title]));
     }
 
     url::redirect("admin");
@@ -79,16 +79,16 @@ class Admin_Dashboard_Controller extends Admin_Controller {
   public function reorder() {
     access::verify_csrf();
 
-    $active_set = array();
-    foreach (array("dashboard_sidebar", "dashboard_center") as $location) {
+    $active_set = [];
+    foreach (["dashboard_sidebar", "dashboard_center"] as $location) {
       foreach (block_manager::get_active($location) as $id => $info) {
         $active_set[$id] = $info;
       }
     }
 
-    foreach (array("dashboard_sidebar", "dashboard_center") as $location) {
-      $new_blocks = array();
-      foreach (Input::instance()->get($location, array()) as $id) {
+    foreach (["dashboard_sidebar", "dashboard_center"] as $location) {
+      $new_blocks = [];
+      foreach (Input::instance()->get($location, []) as $id) {
         $new_blocks[$id] = $active_set[$id];
       }
       block_manager::set_active($location, $new_blocks);

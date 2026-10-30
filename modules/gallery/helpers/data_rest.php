@@ -23,12 +23,12 @@
  * file_proxy controller, but it uses the REST authentication model.
  */
 class data_rest_Core {
-  static function get($request) {
+  public static function get($request) {
     $item = rest::resolve($request->url);
 
     $p = $request->params;
-    if (!isset($p->size) || !in_array($p->size, array("thumb", "resize", "full"))) {
-      throw new Rest_Exception("Bad Request", 400, array("errors" => array("size" => "invalid")));
+    if (!isset($p->size) || !in_array($p->size, ["thumb", "resize", "full"])) {
+      throw new Rest_Exception("Bad Request", 400, ["errors" => ["size" => "invalid"]]);
     }
 
     // Note: this code is roughly duplicated in file_proxy, so if you modify this, please look to
@@ -89,7 +89,7 @@ class data_rest_Core {
     exit;
   }
 
-  static function resolve($id) {
+  public static function resolve($id) {
     $item = ORM::factory("item", $id);
     if (!access::can("view", $item)) {
       throw new Kohana_404_Exception();
@@ -97,7 +97,7 @@ class data_rest_Core {
     return $item;
   }
 
-  static function url($item, $size) {
+  public static function url($item, $size) {
     if ($size == "full") {
       $file = $item->file_path();
     } else if ($size == "resize") {

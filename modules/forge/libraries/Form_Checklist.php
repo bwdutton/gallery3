@@ -11,15 +11,15 @@
  */
 class Form_Checklist_Core extends Form_Input {
 
-	protected $data = array
-	(
+	protected $data = 
+	[
 		'name'    => '',
 		'type'    => 'checkbox',
 		'class'   => 'checklist',
-		'options' => array(),
-	);
+		'options' => [],
+	];
 
-	protected $protect = array('name', 'type');
+	protected $protect = ['name', 'type'];
 
 	public function __construct($name)
 	{
@@ -31,7 +31,7 @@ class Form_Checklist_Core extends Form_Input {
 		if ($key == 'value')
 		{
 			// Return the currently checked values
-			$array = array();
+			$array = [];
 			foreach ($this->data['options'] as $id => $opt)
 			{
 				// Return the options that are checked
@@ -61,7 +61,7 @@ class Form_Checklist_Core extends Form_Input {
 			$data = $base_data;
 
 			// Get the title and checked status
-			list ($title, $checked) = $opt;
+			[$title, $checked] = $opt;
 
 			// Set the name, value, and checked status
 			$data['value']   = $val;

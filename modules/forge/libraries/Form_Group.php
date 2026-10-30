@@ -11,14 +11,14 @@
  */
 class Form_Group_Core extends Forge {
 
-	protected $data = array
-	(
+	protected $data = 
+	[
 		'type'  => 'group',
 		'name'  => '',
 		'class' => 'group',
 		'label' => '',
 		'message' => ''
-	);
+	];
 
 	// Input method
 	public $method;

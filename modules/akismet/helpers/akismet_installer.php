@@ -18,11 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class akismet_installer {
-  static function activate() {
+  public static function activate() {
     akismet::check_config();
   }
 
-  static function deactivate() {
+  public static function deactivate() {
     site_status::clear("akismet_config");
   }
 }

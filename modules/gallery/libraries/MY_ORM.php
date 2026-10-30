@@ -22,7 +22,7 @@ class ORM extends ORM_Core {
   /**
    * Make sure that we're only using integer ids.
    */
-  static function factory($model, $id=null) {
+  public static function factory($model, $id=null) {
     if ($id && !is_int($id) && !is_string($id)) {
       throw new Exception("@todo ORM::factory requires integer ids");
     }

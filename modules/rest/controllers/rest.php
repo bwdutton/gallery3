@@ -40,7 +40,7 @@ class Rest_Controller extends Controller {
   }
 
   public function reset_api_key_confirm() {
-    $form = new Forge("rest/reset_api_key", "", "post", array("id" => "g-reset-api-key"));
+    $form = new Forge("rest/reset_api_key", "", "post", ["id" => "g-reset-api-key"]);
     $group = $form->group("confirm_reset")->label(t("Confirm resetting your REST API key"));
     $group->submit("")->value(t("Reset"));
     $v = new View("reset_api_key_confirm.html");
@@ -52,7 +52,7 @@ class Rest_Controller extends Controller {
     access::verify_csrf();
     rest::reset_access_key();
     message::success(t("Your REST API key has been reset."));
-    json::reply(array("result" => "success"));
+    json::reply(["result" => "success"]);
   }
 
   public function __call($function, $args) {
@@ -102,7 +102,7 @@ class Rest_Controller extends Controller {
         throw new Rest_Exception("Bad Request", 400);
       }
 
-      $response = call_user_func(array($handler_class, $handler_method), $request);
+      $response = call_user_func([$handler_class, $handler_method], $request);
       if ($handler_method == "post") {
         // post methods must return a response containing a URI.
         header("HTTP/1.1 201 Created");
@@ -114,7 +114,7 @@ class Rest_Controller extends Controller {
       // either need to map the result values to localized strings in the application code, or every
       // client needs its own l10n string set.
       throw new Rest_Exception("Bad Request", 400, $e->validation->errors());
-    } catch (Kohana_404_Exception $e) {
+    } catch (Kohana_404_Exception) {
       throw new Rest_Exception("Not Found", 404);
     }
   }

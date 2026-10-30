@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class recaptcha_event_Core {
-  static function captcha_protect_form($form) {
+  public static function captcha_protect_form($form) {
     if (module::get_var("recaptcha", "public_key")) {
       foreach ($form->inputs as $input) {
         if ($input instanceof Form_Group) {
@@ -32,7 +32,7 @@ class recaptcha_event_Core {
     }
   }
 
-  static function admin_menu($menu, $theme) {
+  public static function admin_menu($menu, $theme) {
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
                ->id("recaptcha")

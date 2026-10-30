@@ -29,7 +29,7 @@ class log_Core {
    * @param string  $message   a detailed log message
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  static function success($category, $message, $html="") {
+  public static function success($category, $message, $html="") {
     self::_add($category, $message, $html, log::SUCCESS);
   }
 
@@ -39,7 +39,7 @@ class log_Core {
    * @param string  $message   a detailed log message
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  static function info($category, $message, $html="") {
+  public static function info($category, $message, $html="") {
     self::_add($category, $message, $html, log::INFO);
   }
 
@@ -49,7 +49,7 @@ class log_Core {
    * @param string  $message   a detailed log message
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  static function warning($category, $message, $html="") {
+  public static function warning($category, $message, $html="") {
     self::_add($category, $message, $html, log::WARNING);
   }
 
@@ -59,7 +59,7 @@ class log_Core {
    * @param string  $message   a detailed log message
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  static function error($category, $message, $html="") {
+  public static function error($category, $message, $html="") {
     self::_add($category, $message, $html, log::ERROR);
   }
 
@@ -90,7 +90,7 @@ class log_Core {
    * @param  integer $severity
    * @return string
    */
-  static function severity_class($severity) {
+  public static function severity_class($severity) {
     switch($severity) {
     case log::SUCCESS:
       return "g-success";

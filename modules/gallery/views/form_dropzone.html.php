@@ -34,14 +34,14 @@
     <?php if ($suhosin_session_encrypt): ?>
     <p class="g-error">
       <?= t("Error: your server is configured to use the <a href=\"%encrypt_url\"><code>suhosin.session.encrypt</code></a> setting from <a href=\"%suhosin_url\">Suhosin</a>.  You must disable this setting to upload photos.",
-          array("encrypt_url" => "http://www.hardened-php.net/suhosin/configuration.html#suhosin.session.encrypt",
-      "suhosin_url" => "http://www.hardened-php.net/suhosin/")) ?>
+          ["encrypt_url" => "http://www.hardened-php.net/suhosin/configuration.html#suhosin.session.encrypt",
+      "suhosin_url" => "http://www.hardened-php.net/suhosin/"]) ?>
     </p>
     <?php endif ?>
 
     <?php if (identity::active_user()->admin && !$movies_allowed): ?>
     <p class="g-warning">
-      <?= t("Movie uploading is disabled on your system. <a href=\"%help_url\">Help!</a>", array("help_url" => url::site("admin/movies"))) ?>
+      <?= t("Movie uploading is disabled on your system. <a href=\"%help_url\">Help!</a>", ["help_url" => url::site("admin/movies")]) ?>
     </p>
     <?php endif ?>
   </div>

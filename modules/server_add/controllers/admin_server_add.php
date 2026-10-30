@@ -43,7 +43,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
       } else {
         $paths[$path] = 1;
         module::set_var("server_add", "authorized_paths", serialize($paths));
-        message::success(t("Added path %path", array("path" => $path)));
+        message::success(t("Added path %path", ["path" => $path]));
         server_add::check_config($paths);
         url::redirect("admin/server_add");
       }
@@ -63,7 +63,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
     if (isset($paths[$path])) {
       unset($paths[$path]);
-      message::success(t("Removed path %path", array("path" => $path)));
+      message::success(t("Removed path %path", ["path" => $path]));
       module::set_var("server_add", "authorized_paths", serialize($paths));
       server_add::check_config($paths);
     }
@@ -71,7 +71,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
   }
 
   public function autocomplete() {
-    $directories = array();
+    $directories = [];
 
     $path_prefix = Input::instance()->get("term");
     foreach (glob("{$path_prefix}*") as $file) {
@@ -85,7 +85,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
 
   private function _get_admin_form() {
     $form = new Forge("admin/server_add/add_path", "", "post",
-                      array("id" => "g-server-add-admin-form", "class" => "g-short-form"));
+                      ["id" => "g-server-add-admin-form", "class" => "g-short-form"]);
     $add_path = $form->group("add_path");
     $add_path->input("path")->label(t("Path"))->rules("required")->id("g-path")
       ->error_messages("not_readable", t("This directory is not readable by the webserver"))

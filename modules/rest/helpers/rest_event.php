@@ -22,7 +22,7 @@ class rest_event {
    * Called just before a user is deleted. This will remove the user from
    * the user_homes directory.
    */
-  static function user_before_delete($user) {
+  public static function user_before_delete($user) {
     db::build()
       ->delete("user_access_keys")
        ->where("id", "=", $user->id)
@@ -30,7 +30,7 @@ class rest_event {
   }
 
 
-  static function change_provider($new_provider) {
+  public static function change_provider($new_provider) {
     db::build()
       ->delete("user_access_keys")
       ->execute();
@@ -40,7 +40,7 @@ class rest_event {
    * Called after a user has been added.  Just add a remote access key
    * on every add.
    */
-  static function user_add_form_admin_completed($user, $form) {
+  public static function user_add_form_admin_completed($user, $form) {
     $key = ORM::factory("user_access_key");
     $key->user_id = $user->id;
     $key->access_key = random::hash();
@@ -50,14 +50,14 @@ class rest_event {
   /**
    * Called when admin is editing a user
    */
-  static function user_edit_form_admin($user, $form) {
+  public static function user_edit_form_admin($user, $form) {
     self::_get_access_key_form($user, $form);
   }
 
   /**
    * Get the form fields for user edit
    */
-  static function _get_access_key_form($user, $form) {
+  public static function _get_access_key_form($user, $form) {
     $key = ORM::factory("user_access_key")
       ->where("user_id", "=", $user->id)
       ->find();
@@ -75,7 +75,7 @@ class rest_event {
       ->label(t("Remote access key"));
   }
 
-  static function show_user_profile($data) {
+  public static function show_user_profile($data) {
     // Guests can't see a REST key
     if (identity::active_user()->guest) {
       return;
@@ -97,6 +97,6 @@ class rest_event {
       $key->save();
     }
     $view->rest_key = $key->access_key;
-    $data->content[] = (object)array("title" => t("REST API"), "view" => $view);
+    $data->content[] = (object)["title" => t("REST API"), "view" => $view];
   }
 }

@@ -21,12 +21,12 @@ class task_Core {
   /**
    * Get all available tasks
    */
-  static function get_definitions() {
-    $tasks = array();
+  public static function get_definitions() {
+    $tasks = [];
     foreach (module::active() as $module) {
       $class_name = "{$module->name}_task";
       if (class_exists($class_name) && method_exists($class_name, "available_tasks")) {
-        foreach (call_user_func(array($class_name, "available_tasks")) as $task) {
+        foreach (call_user_func([$class_name, "available_tasks"]) as $task) {
           $tasks[$task->callback] = $task;
         }
       }
@@ -35,16 +35,16 @@ class task_Core {
     return $tasks;
   }
 
-  static function start($task_callback, $context=array()) {
+  public static function start($task_callback, $context=[]) {
     $tasks = task::get_definitions();
-    $task = task::create($tasks[$task_callback], array());
+    $task = task::create($tasks[$task_callback], []);
 
     $task->log(t("Task %task_name started (task id %task_id)",
-                 array("task_name" => $task->name, "task_id" => $task->id)));
+                 ["task_name" => $task->name, "task_id" => $task->id]));
     return $task;
   }
 
-  static function create($task_def, $context) {
+  public static function create($task_def, $context) {
     $task = ORM::factory("task");
     $task->callback = $task_def->callback;
     $task->name = $task_def->name;
@@ -58,7 +58,7 @@ class task_Core {
     return $task;
   }
 
-  static function cancel($task_id) {
+  public static function cancel($task_id) {
     $task = ORM::factory("task", $task_id);
     if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
@@ -66,20 +66,20 @@ class task_Core {
     $task->done = 1;
     $task->state = "cancelled";
     $task->log(t("Task %task_name cancelled (task id %task_id)",
-                 array("task_name" => $task->name, "task_id" => $task->id)));
+                 ["task_name" => $task->name, "task_id" => $task->id]));
     $task->save();
 
     return $task;
   }
 
-  static function remove($task_id) {
+  public static function remove($task_id) {
     $task = ORM::factory("task", $task_id);
     if ($task->loaded()) {
       $task->delete();
     }
   }
 
-  static function run($task_id) {
+  public static function run($task_id) {
     $task = ORM::factory("task", $task_id);
     if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
@@ -87,7 +87,7 @@ class task_Core {
 
     try {
       $task->state = "running";
-      call_user_func_array($task->callback, array(&$task));
+      call_user_func_array($task->callback, [&$task]);
       if ($task->done) {
         $task->log($task->status);
       }

@@ -9,7 +9,7 @@
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license
  */
-class URI_Core extends Router {
+class URI_Core extends Router implements \Stringable {
 
 	/**
 	 * Returns a singleton instance of URI.
@@ -48,7 +48,7 @@ class URI_Core extends Router {
 
 		$index = (int) $index - 1;
 
-		return isset(URI::$segments[$index]) ? URI::$segments[$index] : $default;
+		return URI::$segments[$index] ?? $default;
 	}
 
 	/**
@@ -70,7 +70,7 @@ class URI_Core extends Router {
 
 		$index = (int) $index - 1;
 
-		return isset(URI::$rsegments[$index]) ? URI::$rsegments[$index] : $default;
+		return URI::$rsegments[$index] ?? $default;
 	}
 
 	/**
@@ -93,7 +93,7 @@ class URI_Core extends Router {
 
 		$index = (int) $index - 1;
 
-		return isset(URI::$arguments[$index]) ? URI::$arguments[$index] : $default;
+		return URI::$arguments[$index] ?? $default;
 	}
 
 	/**
@@ -152,13 +152,13 @@ class URI_Core extends Router {
 		if ($associative === FALSE)
 			return $array;
 
-		$associative = array();
+		$associative = [];
 		$pairs       = array_chunk($array, 2);
 
 		foreach ($pairs as $pair)
 		{
 			// Add the key/value pair to the associative array
-			$associative[$pair[0]] = isset($pair[1]) ? $pair[1] : '';
+			$associative[$pair[0]] = $pair[1] ?? '';
 		}
 
 		return $associative;
@@ -179,9 +179,9 @@ class URI_Core extends Router {
 	 *
 	 * @return  string
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
-		return URI::$current_uri;
+		return (string) URI::$current_uri;
 	}
 
 	/**

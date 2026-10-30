@@ -4,10 +4,10 @@
  *
  * Default paths to scan for tests.
  */
-$config['paths'] = array
-(
+$config['paths'] = 
+[
 	MODPATH.'unit_test/tests',
-);
+];
 
 /**
  * Set to TRUE if you want to hide passed tests from the report.

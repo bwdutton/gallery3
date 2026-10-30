@@ -37,7 +37,7 @@ class IdentityProvider_Core {
    * @param   string  configuration
    * @return  Identity_Core
    */
-  static function &instance() {
+  public static function &instance() {
    if (empty(self::$instance)) {
       // Create a new instance
       self::$instance = new IdentityProvider();
@@ -52,7 +52,7 @@ class IdentityProvider_Core {
    * @param   string  configuration
    * @return  Identity_Core
    */
-  static function reset() {
+  public static function reset() {
     self::$instance = null;
     Kohana_Config::instance()->clear("identity");
   }
@@ -60,11 +60,11 @@ class IdentityProvider_Core {
   /**
    * Return a commen confirmation message
    */
-  static function confirmation_message() {
+  public static function confirmation_message() {
     return t("Are you sure you want to change your Identity Provider? Continuing will delete all existing users.");
   }
 
-  static function change_provider($new_provider) {
+  public static function change_provider($new_provider) {
     if (!identity::active_user()->admin && PHP_SAPI != "cli") {
       // Below, the active user is set to the primary admin.
       access::forbidden();
@@ -123,7 +123,7 @@ class IdentityProvider_Core {
 
         message::error(
           t("Error attempting to enable \"%new_provider\" identity provider, reverted to \"%old_provider\" identity provider",
-            array("new_provider" => $new_provider, "old_provider" => $current_provider)));
+            ["new_provider" => $new_provider, "old_provider" => $current_provider]));
 
         $restore_already_running = false;
       }
@@ -152,7 +152,7 @@ class IdentityProvider_Core {
     // Load the driver
     if ( ! Kohana::auto_load($driver)) {
       throw new Kohana_Exception("core.driver_not_found", $this->config["driver"],
-                                 get_class($this));
+                                 static::class);
     }
 
     // Initialize the driver
@@ -161,7 +161,7 @@ class IdentityProvider_Core {
     // Validate the driver
     if ( !($this->driver instanceof IdentityProvider_Driver)) {
       throw new Kohana_Exception("core.driver_implements", $this->config["driver"],
-                                 get_class($this), "IdentityProvider_Driver");
+                                 static::class, "IdentityProvider_Driver");
     }
 
     Kohana_Log::add("debug", "Identity Library initialized");

@@ -2,7 +2,7 @@
 <link rel="stylesheet" type="text/css" href="<?= url::file("modules/organize/css/organize_dialog.css") ?>" />
 <script type="text/javascript">
   var ORGANIZE_TITLE =
-    <?= t("Organize :: %album_title", array("album_title" => "__TITLE__"))->for_js() ?>;
+    <?= t("Organize :: %album_title", ["album_title" => "__TITLE__"])->for_js() ?>;
   var done_organizing = function(album_id) {
     $("#g-dialog").dialog("close");
     window.location = '<?= url::site("items/__ID__") ?>'.replace("__ID__", album_id);

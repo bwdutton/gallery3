@@ -28,9 +28,9 @@ class Photos_Controller extends Items_Controller {
     access::required("view", $photo);
 
     $template = new Theme_View("page.html", "item", "photo");
-    $template->set_global(array("item" => $photo,
-                                "children" => array(),
-                                "children_count" => 0));
+    $template->set_global(["item" => $photo,
+                                "children" => [],
+                                "children_count" => 0]);
     $template->set_global(item::get_display_context($photo));
     $template->content = new View("photo.html");
 
@@ -67,17 +67,17 @@ class Photos_Controller extends Items_Controller {
 
       log::success("content", "Updated photo", "<a href=\"{$photo->url()}\">view</a>");
       message::success(
-        t("Saved photo %photo_title", array("photo_title" => html::purify($photo->title))));
+        t("Saved photo %photo_title", ["photo_title" => html::purify($photo->title)]));
 
       if ($form->from_id->value == $photo->id) {
         // Use the new url; it might have changed.
-        json::reply(array("result" => "success", "location" => $photo->url()));
+        json::reply(["result" => "success", "location" => $photo->url()]);
       } else {
         // Stay on the same page
-        json::reply(array("result" => "success"));
+        json::reply(["result" => "success"]);
       }
     } else {
-      json::reply(array("result" => "error", "html" => (string)$form));
+      json::reply(["result" => "error", "html" => (string)$form]);
     }
   }
 

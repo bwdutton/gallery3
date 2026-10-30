@@ -44,23 +44,23 @@ class Kohana_Log_Core {
 
 				// Load the driver
 				if ( ! Kohana::auto_load($driver))
-					throw new Kohana_Exception('Log Driver Not Found: %driver%', array('%driver%' => $driver));
+					throw new Kohana_Exception('Log Driver Not Found: %driver%', ['%driver%' => $driver]);
 
 				// Initialize the driver
 				$driver = new $driver(array_merge(Kohana::config('log'), Kohana::config('log_'.$driver_name)));
 
 				// Validate the driver
 				if ( ! ($driver instanceof Log_Driver))
-					throw new Kohana_Exception('%driver% does not implement the Log_Driver interface', array('%driver%' => $driver));
+					throw new Kohana_Exception('%driver% does not implement the Log_Driver interface', ['%driver%' => $driver]);
 
 				Kohana_Log::$drivers[] = $driver;
 			}
 
 			// Always save logs on shutdown
-			Event::add('system.shutdown', array('Kohana_Log', 'save'));
+			Event::add('system.shutdown', ['Kohana_Log', 'save']);
 		}
 
-		Kohana_Log::$messages[] = array('date' => time(), 'type' => $type, 'message' => $message);
+		Kohana_Log::$messages[] = ['date' => time(), 'type' => $type, 'message' => $message];
 	}
 
 	/**
@@ -81,10 +81,10 @@ class Kohana_Log_Core {
 			{
 				$driver->save(Kohana_Log::$messages);
 			}
-			catch(Exception $e){}
+			catch(Exception){}
 		}
 
 		// Reset the messages
-		Kohana_Log::$messages = array();
+		Kohana_Log::$messages = [];
 	}
 }

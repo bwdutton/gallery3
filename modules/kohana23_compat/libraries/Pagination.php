@@ -27,7 +27,7 @@
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Pagination_Core {
+class Pagination_Core implements \Stringable {
 
         // Config values
         protected $base_url       = '';
@@ -58,7 +58,7 @@ class Pagination_Core {
          * @param   array   configuration settings
          * @return  object
          */
-        public function factory($config = array())
+        public function factory($config = [])
         {
                 return new Pagination($config);
         }
@@ -69,13 +69,10 @@ class Pagination_Core {
          * @param   array  configuration settings
          * @return  void
          */
-        public function __construct($config = array())
+        public function __construct($config = [])
         {
                 // No custom group name given
-                if ( ! isset($config['group']))
-                {
-                        $config['group'] = 'default';
-                }
+                $config['group'] ??= 'default';
 
                 // Pagination setup
                 $this->initialize($config);
@@ -88,7 +85,7 @@ class Pagination_Core {
          * @param   array  configuration settings
          * @return  void
          */
-        public function initialize($config = array())
+        public function initialize($config = [])
         {
                 // Load config group
                 if (isset($config['group']))
@@ -204,11 +201,8 @@ class Pagination_Core {
                 if ($this->auto_hide === TRUE AND $this->total_pages <= 1)
                         return '';
 
-                if ($style === NULL)
-                {
-                        // Use default style
-                        $style = $this->style;
-                }
+                // Use default style
+                $style ??= $this->style;
 
                 // Return rendered pagination view
                 return View::factory($this->directory.$style, get_object_vars($this))->render();
@@ -219,7 +213,7 @@ class Pagination_Core {
          *
          * @return  string  pagination html
          */
-        public function __toString()
+        public function __toString(): string
         {
                 return $this->render();
         }

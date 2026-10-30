@@ -30,13 +30,13 @@ class Login_Controller extends Controller {
   public function auth_ajax() {
     access::verify_csrf();
 
-    list ($valid, $form) = $this->_auth("login/auth_ajax");
+    [$valid, $form] = $this->_auth("login/auth_ajax");
     if ($valid) {
-      json::reply(array("result" => "success"));
+      json::reply(["result" => "success"]);
     } else {
       $view = new View("login_ajax.html");
       $view->form = $form;
-      json::reply(array("result" => "error", "html" => (string)$view));
+      json::reply(["result" => "error", "html" => (string)$view]);
     }
   }
 
@@ -51,10 +51,10 @@ class Login_Controller extends Controller {
   public function auth_html() {
     access::verify_csrf();
 
-    list ($valid, $form) = $this->_auth("login/auth_html");
+    [$valid, $form] = $this->_auth("login/auth_html");
     if ($valid) {
       $continue_url = $form->continue_url->value;
-      url::redirect($continue_url ? $continue_url : item::root()->abs_url());
+      url::redirect($continue_url ?: item::root()->abs_url());
     } else {
       $view = new Theme_View("page.html", "other", "login");
       $view->page_title = t("Log in to Gallery");
@@ -72,7 +72,7 @@ class Login_Controller extends Controller {
       if (empty($user) || !identity::is_correct_password($user, $form->login->password->value)) {
         $form->login->inputs["name"]->add_error("invalid_login", 1);
         $name = $form->login->inputs["name"]->value;
-        log::warning("user", t("Failed login for %name", array("name" => $name)));
+        log::warning("user", t("Failed login for %name", ["name" => $name]));
         module::event("user_auth_failed", $name);
         $valid = false;
       }
@@ -85,6 +85,6 @@ class Login_Controller extends Controller {
     // Either way, regenerate the session id to avoid session trapping
     Session::instance()->regenerate();
 
-    return array($valid, $form);
+    return [$valid, $form];
   }
 }

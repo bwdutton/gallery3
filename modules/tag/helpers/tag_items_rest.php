@@ -18,21 +18,21 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class tag_items_rest_Core {
-  static function get($request) {
+  public static function get($request) {
     $tag = rest::resolve($request->url);
-    $items = array();
+    $items = [];
     foreach ($tag->items() as $item) {
       if (access::can("view", $item)) {
         $items[] = rest::url("tag_item", $tag, $item);
       }
     }
 
-    return array(
+    return [
       "url" => $request->url,
-      "members" => $items);
+      "members" => $items];
   }
 
-  static function post($request) {
+  public static function post($request) {
     $tag = rest::resolve($request->params->entity->tag);
     $item = rest::resolve($request->params->entity->item);
     access::required("view", $item);
@@ -42,23 +42,23 @@ class tag_items_rest_Core {
     }
 
     tag::add($item, $tag->name);
-    return array(
+    return [
       "url" => rest::url("tag_item", $tag, $item),
-      "members" => array(
+      "members" => [
         "tag" => rest::url("tag", $tag),
-        "item" => rest::url("item", $item)));
+        "item" => rest::url("item", $item)]];
   }
 
-  static function delete($request) {
+  public static function delete($request) {
     $tag = rest::resolve($request->url);
     $tag->remove_items();
   }
 
-  static function resolve($id) {
+  public static function resolve($id) {
     return ORM::factory("tag", $id);
   }
 
-  static function url($tag) {
+  public static function url($tag) {
     return url::abs_site("rest/tag_items/{$tag->id}");
   }
 }

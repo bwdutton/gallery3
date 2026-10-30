@@ -50,29 +50,29 @@ $("document").ready(function() {
       <?php if (isset($g2_version)): ?>
       <ul>
         <li>
-          <?= t("Gallery version %version detected", array("version" => $g2_version)) ?>
+          <?= t("Gallery version %version detected", ["version" => $g2_version]) ?>
         </li>
         <?php if ($g2_sizes["thumb"]["size"] && $thumb_size != $g2_sizes["thumb"]["size"]): ?>
         <li>
           <?= t("Your most common thumbnail size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
-                array("g2_pixels" => $g2_sizes["thumb"]["size"],
+                ["g2_pixels" => $g2_sizes["thumb"]["size"],
                       "g3_pixels" => $thumb_size,
-                      "url" => html::mark_clean(url::site("admin/theme_options")))) ?>
+                      "url" => html::mark_clean(url::site("admin/theme_options"))]) ?>
         </li>
         <?php endif ?>
 
         <?php if ($g2_sizes["resize"]["size"] && $resize_size != $g2_sizes["resize"]["size"]): ?>
         <li>
           <?= t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 intermediate size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
-                array("g2_pixels" => $g2_sizes["resize"]["size"],
+                ["g2_pixels" => $g2_sizes["resize"]["size"],
                       "g3_pixels" => $resize_size,
-                      "url" => html::mark_clean(url::site("admin/theme_options")))) ?>
+                      "url" => html::mark_clean(url::site("admin/theme_options"))]) ?>
         </li>
         <?php endif ?>
 
         <li>
           <?php
-          $t = array();
+          $t = [];
           $t[] = t2("1 user", "%count users", $g2_stats["users"]);
           $t[] = t2("1 group", "%count groups", $g2_stats["groups"]);
           $t[] = t2("1 album", "%count albums", $g2_stats["albums"]);
@@ -82,14 +82,14 @@ $("document").ready(function() {
                     $g2_stats["tags"]);
           ?>
           <?= t("Your Gallery 2 has the following importable data in it: %t0, %t1, %t2, %t3, %t4, %t5",
-                array("t0" => $t[0], "t1" => $t[1], "t2" => $t[2],
-                      "t3" => $t[3], "t4" => $t[4], "t5" => $t[5])) ?>
+                ["t0" => $t[0], "t1" => $t[1], "t2" => $t[2],
+                      "t3" => $t[3], "t4" => $t[4], "t5" => $t[5]]) ?>
         </li>
 
         <?php if ($g3_resource_count): ?>
         <li>
           <?php
-          $t = array();
+          $t = [];
           $t[] = t2("1 user", "%count users", $g3_stats["user"]);
           $t[] = t2("1 group", "%count groups", $g3_stats["group"]);
           $t[] = t2("1 album", "%count albums", $g3_stats["album"]);
@@ -98,8 +98,8 @@ $("document").ready(function() {
           $t[] = t2("1 tagged photo/movie/album", "%count tagged photos/movies/albums", $g3_stats["tag"]);
           ?>
           <?= t("It looks like you've imported the following Gallery 2 data already: %t0, %t1, %t2, %t3, %t4, %t5",
-                array("t0" => $t[0], "t1" => $t[1], "t2" => $t[2],
-                      "t3" => $t[3], "t4" => $t[4], "t5" => $t[5])) ?>
+                ["t0" => $t[0], "t1" => $t[1], "t2" => $t[2],
+                      "t3" => $t[3], "t4" => $t[4], "t5" => $t[5]]) ?>
         </li>
         <?php endif ?>
       </ul>

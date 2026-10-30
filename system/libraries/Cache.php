@@ -11,7 +11,7 @@
  */
 class Cache_Core {
 
-	protected static $instances = array();
+	protected static $instances = [];
 
 	// Configuration
 	protected $config;
@@ -27,11 +27,8 @@ class Cache_Core {
 	 */
 	public static function & instance($config = FALSE)
 	{
-		if ( ! isset(Cache::$instances[$config]))
-		{
-			// Create a new instance
-			Cache::$instances[$config] = new Cache($config);
-		}
+		// Create a new instance
+        Cache::$instances[$config] ??= new Cache($config);
 
 		return Cache::$instances[$config];
 	}
@@ -50,7 +47,7 @@ class Cache_Core {
 
 			// Test the config group name
 			if (($config = Kohana::config('cache.'.$config)) === NULL)
-				throw new Cache_Exception('The :group: group is not defined in your configuration.', array(':group:' => $name));
+				throw new Cache_Exception('The :group: group is not defined in your configuration.', [':group:' => $name]);
 		}
 
 		if (is_array($config))
@@ -73,7 +70,7 @@ class Cache_Core {
 		// Load the driver
 		if ( ! Kohana::auto_load($driver))
 			throw new Cache_Exception('The :driver: driver for the :class: library could not be found',
-									   array(':driver:' => $this->config['driver'], ':class:' => get_class($this)));
+									   [':driver:' => $this->config['driver'], ':class:' => static::class]);
 
 		// Initialize the driver
 		$this->driver = new $driver($this->config['params']);
@@ -81,7 +78,7 @@ class Cache_Core {
 		// Validate the driver
 		if ( ! ($this->driver instanceof Cache_Driver))
 			throw new Cache_Exception('The :driver: driver for the :library: library must implement the :interface: interface',
-									   array(':driver:' => $this->config['driver'], ':library:' => get_class($this), ':interface:' => 'Cache_Driver'));
+									   [':driver:' => $this->config['driver'], ':library:' => static::class, ':interface:' => 'Cache_Driver']);
 
 		Kohana_Log::add('debug', 'Cache Library initialized');
 	}
@@ -91,14 +88,11 @@ class Cache_Core {
 	 */
 	public function set($key, $value = NULL, $tags = NULL, $lifetime = NULL)
 	{
-		if ($lifetime === NULL)
-		{
-			$lifetime = $this->config['lifetime'];
-		}
+		$lifetime ??= $this->config['lifetime'];
 
 		if ( ! is_array($key))
 		{
-			$key = array($key => $value);
+			$key = [$key => $value];
 		}
 
 		if ($this->config['prefix'] !== NULL)
@@ -123,7 +117,7 @@ class Cache_Core {
 
 		if ( ! is_array($keys))
 		{
-			$keys = array($keys);
+			$keys = [$keys];
 			$single = TRUE;
 		}
 
@@ -148,7 +142,7 @@ class Cache_Core {
 	{
 		if ( ! is_array($tags))
 		{
-			$tags = array($tags);
+			$tags = [$tags];
 		}
 
 		if ($this->config['prefix'] !== NULL)
@@ -169,7 +163,7 @@ class Cache_Core {
 	{
 		if ( ! is_array($keys))
 		{
-			$keys = array($keys);
+			$keys = [$keys];
 		}
 
 		if ($this->config['prefix'] !== NULL)
@@ -187,7 +181,7 @@ class Cache_Core {
 	{
 		if ( ! is_array($tags))
 		{
-			$tags = array($tags);
+			$tags = [$tags];
 		}
 
 		if ($this->config['prefix'] !== NULL)
@@ -211,7 +205,7 @@ class Cache_Core {
 	 */
 	protected function add_prefix($array, $to_key = TRUE)
 	{
-		$out = array();
+		$out = [];
 
 		foreach($array as $key => $value)
 		{
@@ -233,7 +227,7 @@ class Cache_Core {
 	 */
 	protected function strip_prefix($array)
 	{
-		$out = array();
+		$out = [];
 
 		$start = strlen($this->config['prefix']);
 

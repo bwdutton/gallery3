@@ -261,7 +261,7 @@ class valid_Core {
 	{
 		if ( ! is_array($lengths))
 		{
-			$lengths = array(7,10,11);
+			$lengths = [7,10,11];
 		}
 
 		// Remove all non-digit characters from the number

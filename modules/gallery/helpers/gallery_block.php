@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gallery_block_Core {
-  static function get_admin_list() {
-    return array(
+  public static function get_admin_list() {
+    return [
       "welcome" => t("Welcome to Gallery 3!"),
       "photo_stream" => t("Photo stream"),
       "log_entries" => t("Log entries"),
@@ -27,14 +27,14 @@ class gallery_block_Core {
       "platform_info" => t("Platform information"),
       "project_news" => t("Gallery project news"),
       "upgrade_checker" => t("Check for Gallery upgrades")
-    );
+    ];
   }
 
-  static function get_site_list() {
-    return array("language" => t("Language preference"));
+  public static function get_site_list() {
+    return ["language" => t("Language preference")];
   }
 
-  static function get($block_id) {
+  public static function get($block_id) {
     $block = new Block();
     switch ($block_id) {
     case "welcome":
@@ -56,7 +56,7 @@ class gallery_block_Core {
       $block->title = t("Log entries");
       $block->content = new View("admin_block_log_entries.html");
       $block->content->entries = ORM::factory("log")
-        ->order_by(array("timestamp" => "DESC", "id" => "DESC"))->find_all(5);
+        ->order_by(["timestamp" => "DESC", "id" => "DESC"])->find_all(5);
       break;
 
     case "stats":
@@ -101,7 +101,7 @@ class gallery_block_Core {
         $block->css_id = "g-user-language-block";
         $block->title = t("Language preference");
         $block->content = new View("user_languages_block.html");
-        $block->content->installed_locales = array_merge(array("" => t("« none »")), $locales);
+        $block->content->installed_locales = array_merge(["" => t("« none »")], $locales);
         $block->content->selected = (string) locales::cookie_locale();
       } else {
         $block = "";
@@ -121,10 +121,10 @@ class gallery_block_Core {
     return $block;
   }
 
-  static function get_add_block_form() {
+  public static function get_add_block_form() {
     $available_blocks = block_manager::get_available_admin_blocks();
 
-    $active = array();
+    $active = [];
     foreach (array_merge(block_manager::get_active("dashboard_sidebar"),
                          block_manager::get_active("dashboard_center")) as $b) {
       unset($available_blocks[implode(":", $b)]);
@@ -135,7 +135,7 @@ class gallery_block_Core {
     }
 
     $form = new Forge("admin/dashboard/add_block", "", "post",
-                      array("id" => "g-add-dashboard-block-form"));
+                      ["id" => "g-add-dashboard-block-form"]);
     $group = $form->group("add_block")->label(t("Add Block"));
     $group->dropdown("id")->label(t("Available blocks"))->options($available_blocks);
     $group->submit("center")->value(t("Add to center"));

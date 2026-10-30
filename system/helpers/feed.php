@@ -39,13 +39,13 @@ class feed_Core {
 
 		// Feed could not be loaded
 		if ($feed === FALSE)
-			return array();
+			return [];
 
 		// Detect the feed type. RSS 1.0/2.0 and Atom 1.0 are supported.
 		$feed = isset($feed->channel) ? $feed->xpath('//item') : $feed->entry;
 
 		$i = 0;
-		$items = array();
+		$items = [];
 
 		foreach ($feed as $item)
 		{
@@ -69,7 +69,7 @@ class feed_Core {
 	 */
 	public static function create($info, $items, $format = 'rss2', $encoding = 'UTF-8')
 	{
-		$info += array('title' => 'Generated Feed', 'link' => '', 'generator' => 'KohanaPHP');
+		$info += ['title' => 'Generated Feed', 'link' => '', 'generator' => 'KohanaPHP'];
 
 		$feed = '<?xml version="1.0" encoding="'.$encoding.'"?><rss version="2.0"><channel></channel></rss>';
 		$feed = simplexml_load_string($feed);
@@ -81,7 +81,7 @@ class feed_Core {
 				// Convert timestamps to RFC 822 formatted dates
 				$value = date(DATE_RFC822, $value);
 			}
-			elseif (($name === 'link' OR $name === 'docs') AND strpos($value, '://') === FALSE)
+			elseif (($name === 'link' OR $name === 'docs') AND !str_contains($value, '://'))
 			{
 				// Convert URIs to URLs
 				$value = url::site($value, 'http');
@@ -103,7 +103,7 @@ class feed_Core {
 					// Convert timestamps to RFC 822 formatted dates
 					$value = date(DATE_RFC822, $value);
 				}
-				elseif (($name === 'link' OR $name === 'guid') AND strpos($value, '://') === FALSE)
+				elseif (($name === 'link' OR $name === 'guid') AND !str_contains($value, '://'))
 				{
 					// Convert URIs to URLs
 					$value = url::site($value, 'http');

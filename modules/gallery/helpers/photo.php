@@ -24,8 +24,8 @@
  * Note: by design, this class does not do any permission checking.
  */
 class photo_Core {
-  static function get_edit_form($photo) {
-    $form = new Forge("photos/update/$photo->id", "", "post", array("id" => "g-edit-photo-form"));
+  public static function get_edit_form($photo) {
+    $form = new Forge("photos/update/$photo->id", "", "post", ["id" => "g-edit-photo-form"]);
     $form->hidden("from_id")->value($photo->id);
     $group = $form->group("edit_item")->label(t("Edit Photo"));
     $group->input("title")->label(t("Title"))->value($photo->title)
@@ -64,7 +64,7 @@ class photo_Core {
    * @param integer $max    the target size for the largest dimension
    * @param string  $format the output format using %d placeholders for width and height
    */
-  static function img_dimensions($width, $height, $max, $format="width=\"%d\" height=\"%d\"") {
+  public static function img_dimensions($width, $height, $max, $format="width=\"%d\" height=\"%d\"") {
     if (!$width || !$height) {
       return "";
     }
@@ -100,7 +100,7 @@ class photo_Core {
    *     -> throw exception
    * Note: photo_get_file_metadata events can change any of the above cases (except the last one).
    */
-  static function get_file_metadata($file_path) {
+  public static function get_file_metadata($file_path) {
     if (!is_readable($file_path)) {
       throw new Exception("@todo UNREADABLE_FILE");
     }
@@ -141,6 +141,6 @@ class photo_Core {
       throw new Exception("@todo ILLEGAL_OR_UNINDENTIFIABLE_FILE");
     }
 
-    return array($metadata->width, $metadata->height, $metadata->mime_type, $metadata->extension);
+    return [$metadata->width, $metadata->height, $metadata->mime_type, $metadata->extension];
   }
 }

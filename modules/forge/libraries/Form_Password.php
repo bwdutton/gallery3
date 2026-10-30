@@ -11,13 +11,13 @@
  */
 class Form_Password_Core extends Form_Input {
 
-	protected $data = array
-	(
+	protected $data = 
+	[
 		'type'  => 'password',
 		'class' => 'password',
 		'value' => '',
-	);
+	];
 
-	protected $protect = array('type');
+	protected $protect = ['type'];
 
 } // End Form Password

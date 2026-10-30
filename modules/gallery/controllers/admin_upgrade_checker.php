@@ -18,14 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Admin_Upgrade_Checker_Controller extends Admin_Controller {
-  function check_now() {
+  public function check_now() {
     access::verify_csrf();
     upgrade_checker::fetch_version_info();
     $message = upgrade_checker::get_upgrade_message();
     if ($message) {
       $message .= t(
         " <a href=\"%hide-url\"><i>(remind me later)</i></a>",
-        array("hide-url" => url::site("admin/upgrade_checker/remind_me_later?csrf=__CSRF__")));
+        ["hide-url" => url::site("admin/upgrade_checker/remind_me_later?csrf=__CSRF__")]);
       site_status::info($message, "upgrade_checker");
     } else {
       site_status::clear("upgrade_checker");
@@ -33,7 +33,7 @@ class Admin_Upgrade_Checker_Controller extends Admin_Controller {
     url::redirect("admin/dashboard");
   }
 
-  function remind_me_later() {
+  public function remind_me_later() {
     access::verify_csrf();
     site_status::clear("upgrade_checker");
     if ($referer = Input::instance()->server("HTTP_REFERER")) {
@@ -43,7 +43,7 @@ class Admin_Upgrade_Checker_Controller extends Admin_Controller {
     }
   }
 
-  function set_auto($val) {
+  public function set_auto($val) {
     access::verify_csrf();
     module::set_var("gallery", "upgrade_checker_auto_enabled", (bool)$val);
 

@@ -18,12 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class watermark_Core {
-  static function get_add_form() {
+  public static function get_add_form() {
     for ($i = 1; $i <= 100; $i++) {
       $range[$i] = "$i%";
     }
 
-    $form = new Forge("admin/watermarks/add", "", "post", array("id" => "g-add-watermark-form"));
+    $form = new Forge("admin/watermarks/add", "", "post", ["id" => "g-add-watermark-form"]);
     $group = $form->group("add_watermark")->label(t("Upload watermark"));
     $group->upload("file")->label(t("Watermark"))->rules("allow[jpg,png,gif]|size[1MB]|required")
       ->error_messages("required", "You must select a watermark")
@@ -39,12 +39,12 @@ class watermark_Core {
     return $form;
   }
 
-  static function get_edit_form() {
+  public static function get_edit_form() {
     for ($i = 1; $i <= 100; $i++) {
       $range[$i] = "$i%";
     }
 
-    $form = new Forge("admin/watermarks/edit", "", "post", array("id" => "g-edit-watermark-form"));
+    $form = new Forge("admin/watermarks/edit", "", "post", ["id" => "g-edit-watermark-form"]);
     $group = $form->group("edit_watermark")->label(t("Edit Watermark"));
     $group->dropdown("position")->label(t("Watermark Position"))
       ->options(self::positions())
@@ -56,15 +56,15 @@ class watermark_Core {
     return $form;
   }
 
-  static function get_delete_form() {
-    $form = new Forge("admin/watermarks/delete", "", "post", array("id" => "g-delete-watermark-form"));
+  public static function get_delete_form() {
+    $form = new Forge("admin/watermarks/delete", "", "post", ["id" => "g-delete-watermark-form"]);
     $group = $form->group("delete_watermark")->label(t("Really delete Watermark?"));
     $group->submit("")->value(t("Delete"));
     return $form;
   }
 
-  static function positions() {
-    return array("northwest" => t("Northwest"),
+  public static function positions() {
+    return ["northwest" => t("Northwest"),
                  "north" => t("North"),
                  "northeast" => t("Northeast"),
                  "west" => t("West"),
@@ -72,10 +72,10 @@ class watermark_Core {
                  "east" => t("East"),
                  "southwest" => t("Southwest"),
                  "south" => t("South"),
-                 "southeast" => t("Southeast"));
+                 "southeast" => t("Southeast")];
   }
 
-  static function position($key) {
+  public static function position($key) {
     $positions = self::positions();
     return $positions[$key];
   }

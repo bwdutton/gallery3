@@ -136,7 +136,7 @@ class url_Core {
 	 */
 	public static function file($file, $index = FALSE)
 	{
-		if (strpos($file, '://') === FALSE)
+		if (!str_contains($file, '://'))
 		{
 			// Add the base URL to the filename
 			$file = url::base($index).$file;
@@ -214,8 +214,8 @@ class url_Core {
 			return FALSE;
 		}
 
-		$codes = array
-		(
+		$codes = 
+		[
 			'refresh' => 'Refresh',
 			'300' => 'Multiple Choices',
 			'301' => 'Moved Permanently',
@@ -224,7 +224,7 @@ class url_Core {
 			'304' => 'Not Modified',
 			'305' => 'Use Proxy',
 			'307' => 'Temporary Redirect'
-		);
+		];
 
 		// Validate the method and default to 302
 		$method = isset($codes[$method]) ? (string) $method : '302';
@@ -251,7 +251,7 @@ class url_Core {
 		// Run the redirect event
 		Event::run('system.redirect', $uri);
 
-		if (strpos($uri, '://') === FALSE)
+		if (!str_contains($uri, '://'))
 		{
 			// HTTP headers expect absolute URLs
 			$uri = url::site($uri, request::protocol());

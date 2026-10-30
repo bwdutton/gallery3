@@ -21,12 +21,12 @@
 /**
  * Safe string representation (regarding security - cross site scripting).
  */
-class SafeString_Core {
+class SafeString_Core implements \Stringable {
   private $_raw_string;
   protected $_is_safe_html = false;
 
   /** Constructor */
-  function __construct($string) {
+  public function __construct($string) {
     if ($string instanceof SafeString) {
       $this->_is_safe_html = $string->_is_safe_html;
       $string = $string->unescaped();
@@ -37,7 +37,7 @@ class SafeString_Core {
   /**
    * Factory method returning a new SafeString instance for the given string.
    */
-  static function of($string) {
+  public static function of($string) {
     return new SafeString($string);
   }
 
@@ -45,7 +45,7 @@ class SafeString_Core {
    * Factory method returning a new SafeString instance after HTML purifying
    * the given string.
    */
-  static function purify($string) {
+  public static function purify($string) {
     if ($string instanceof SafeString) {
       if ($string->_is_safe_html) {
         return $string;
@@ -60,7 +60,7 @@ class SafeString_Core {
   /**
    * Factory method returning a new SafeString instance which won't HTML escape.
    */
-  static function of_safe_html($string) {
+  public static function of_safe_html($string) {
     $safe_string = new SafeString($string);
     $safe_string->_is_safe_html = true;
     return $safe_string;
@@ -70,11 +70,11 @@ class SafeString_Core {
    * Safe for use in HTML.
    * @see #for_html()
    */
-  function __toString() {
+  public function __toString(): string {
     if ($this->_is_safe_html) {
       return $this->_raw_string;
     } else {
-      return self::_escape_for_html($this->_raw_string);
+      return (string) self::_escape_for_html($this->_raw_string);
     }
   }
 
@@ -86,7 +86,7 @@ class SafeString_Core {
    * </pre>
    * @return the string escaped for use in HTML.
    */
-  function for_html() {
+  public function for_html() {
     return $this;
   }
 
@@ -100,7 +100,7 @@ class SafeString_Core {
    * </pre>
    * @return the string escaped for use in JavaScript.
    */
-  function for_js() {
+  public function for_js() {
     return json_encode((string) $this->_raw_string);
   }
 
@@ -116,11 +116,11 @@ class SafeString_Core {
    * </pre>
    * @return the string escaped for use in HTML attributes.
    */
-  function for_html_attr() {
+  public function for_html_attr() {
     $string = (string) $this->for_html();
     return strtr($string,
-                 array("'"=>"&#039;",
-                       '"'=>'&quot;'));
+                 ["'"=>"&#039;",
+                       '"'=>'&quot;']);
   }
 
   /**
@@ -131,14 +131,14 @@ class SafeString_Core {
    * </pre>
    * @return the string escaped for use in HTML.
    */
-  function purified_html() {
+  public function purified_html() {
     return self::purify($this);
   }
 
   /**
    * Returns the raw, unsafe string. Do not use lightly.
    */
-  function unescaped() {
+  public function unescaped() {
     return $this->_raw_string;
   }
 

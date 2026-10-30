@@ -19,7 +19,7 @@
  */
 class Gallery_View_Core extends View {
   protected $theme_name = null;
-  protected $combine_queue = array();
+  protected $combine_queue = [];
 
   /**
    * Provide a url to a resource within the current theme.  This allows us to refer to theme
@@ -50,13 +50,13 @@ class Gallery_View_Core extends View {
       $v->total = $this->children_count;
 
       if ($this->page != 1) {
-        $v->first_page_url = url::site(url::merge(array("page" => 1)));
-        $v->previous_page_url = url::site(url::merge(array("page" => $this->page - 1)));
+        $v->first_page_url = url::site(url::merge(["page" => 1]));
+        $v->previous_page_url = url::site(url::merge(["page" => $this->page - 1]));
       }
 
       if ($this->page != $this->max_pages) {
-        $v->next_page_url = url::site(url::merge(array("page" => $this->page + 1)));
-        $v->last_page_url = url::site(url::merge(array("page" => $this->max_pages)));
+        $v->next_page_url = url::site(url::merge(["page" => $this->page + 1]));
+        $v->last_page_url = url::site(url::merge(["page" => $this->max_pages]));
       }
 
       $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
@@ -84,7 +84,7 @@ class Gallery_View_Core extends View {
   public function start_combining($types) {
     foreach (explode(",", $types) as $type) {
       // Initialize the core group so it gets included first.
-      $this->combine_queue[$type] = array("core" => array());
+      $this->combine_queue[$type] = ["core" => []];
     }
   }
 
@@ -140,7 +140,7 @@ class Gallery_View_Core extends View {
     if (is_null($group)) {
       $groups = array_keys($this->combine_queue[$type]);
     } else {
-      $groups = array($group);
+      $groups = [$group];
     }
 
     $buf = "";
@@ -151,13 +151,13 @@ class Gallery_View_Core extends View {
 
       // Include the url in the cache key so that if the Gallery moves, we don't use old cached
       // entries.
-      $key = array(url::abs_file(""));
+      $key = [url::abs_file("")];
       foreach (array_keys($this->combine_queue[$type][$group]) as $path) {
         $stats = stat($path);
         // 7 == size, 9 == mtime, see http://php.net/stat
         $key[] = "$path $stats[7] $stats[9]";
       }
-      $key = md5(join(" ", $key)) . (($type=="css") ? ".css" : ".js");
+      $key = md5(implode(" ", $key)) . (($type=="css") ? ".css" : ".js");
 
       if (gallery::allow_css_and_js_combining()) {
         // Combine enabled - if we're at the start of the buffer, add a comment.
@@ -189,13 +189,13 @@ class Gallery_View_Core extends View {
           $combine_data->contents = $contents;
           module::event("after_combine", $combine_data);
 
-          $cache->set($key, $combine_data->contents, array($type), 30 * 84600);
+          $cache->set($key, $combine_data->contents, [$type], 30 * 84600);
 
           $use_gzip = function_exists("gzencode") &&
             (int) ini_get("zlib.output_compression") === 0;
           if ($use_gzip) {
             $cache->set("{$key}_gz", gzencode($combine_data->contents, 9, FORCE_GZIP),
-                        array($type, "gzip"), 30 * 84600);
+                        [$type, "gzip"], 30 * 84600);
           }
         }
 
@@ -235,7 +235,7 @@ class Gallery_View_Core extends View {
 
     $css = file_get_contents($css_file);
     if (preg_match_all($PATTERN, $css, $matches, PREG_SET_ORDER)) {
-      $search = $replace = array();
+      $search = $replace = [];
       foreach ($matches as $match) {
         $relative = dirname($css_file) . "/$match[1]";
         if (!empty($relative)) {
@@ -253,7 +253,7 @@ class Gallery_View_Core extends View {
                               $css, $matches, PREG_SET_ORDER);
 
     if ($imports) {
-      $search = $replace = array();
+      $search = $replace = [];
       foreach ($matches as $match) {
         $search[] = $match[0];
         $replace[] = $this->process_css(dirname($css_file) . "/$match[1]");

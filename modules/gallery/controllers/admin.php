@@ -59,7 +59,7 @@ class Admin_Controller extends Controller {
       throw new Kohana_404_Exception();
     }
 
-    call_user_func_array(array(new $controller_name, $method), $args);
+    call_user_func_array([new $controller_name, $method], $args);
   }
 
   private static function _reauth_check() {

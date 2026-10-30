@@ -11,26 +11,26 @@
  */
 class Form_Dateselect_Core extends Form_Input {
 
-	protected $data = array
-	(
+	protected $data = 
+	[
 		'name'  => '',
 		'class' => 'dropdown',
-	);
+	];
 
-	protected $protect = array('type');
+	protected $protect = ['type'];
 
 	// Precision for the parts, you can use @ to insert a literal @ symbol
-	protected $parts = array
-	(
-		'month'   => array(),
-		'day'     => array(1),
-		'year'    => array(),
+	protected $parts = 
+	[
+		'month'   => [],
+		'day'     => [1],
+		'year'    => [],
 		' @ ',
-		'hour'    => array(),
+		'hour'    => [],
 		':',
-		'minute'  => array(5),
-		'am_pm'   => array(),
-	);
+		'minute'  => [5],
+		'am_pm'   => [],
+	];
 
 	public function __construct($name)
 	{
@@ -83,7 +83,7 @@ class Form_Dateselect_Core extends Form_Input {
 			if ($type == 'am_pm')
 			{
 				// Options are static
-				$options = array('AM' => 'AM', 'PM' => 'PM');
+				$options = ['AM' => 'AM', 'PM' => 'PM'];
 			}
 			else
 			{
@@ -91,7 +91,7 @@ class Form_Dateselect_Core extends Form_Input {
 				$type .= 's';
 
 				// Use the date helper to generate the options
-				$options = empty($val) ? date::$type() : call_user_func_array(array('date', $type), $val);
+				$options = empty($val) ? date::$type() : call_user_func_array(['date', $type], $val);
 			}
 
 			$input .= form::dropdown($data, $options, $selected);
@@ -104,7 +104,7 @@ class Form_Dateselect_Core extends Form_Input {
 	{
 		$time = array_combine
 		(
-			array('month', 'day', 'year', 'hour', 'minute', 'am_pm'), 
+			['month', 'day', 'year', 'hour', 'minute', 'am_pm'], 
 			explode('--', date('n--j--Y--g--i--A', $timestamp))
 		);
 

@@ -16,10 +16,10 @@ abstract class Database_Core {
 	const CROSS_REQUEST   =  5;
 	const PER_REQUEST     =  6;
 
-	protected static $instances = array();
+	protected static $instances = [];
 
 	// Global benchmarks
-	public static $benchmarks = array();
+	public static $benchmarks = [];
 
 	// Last execute query
 	protected $last_query;
@@ -28,7 +28,7 @@ abstract class Database_Core {
 	protected $config;
 
 	// Required configuration keys
-	protected $config_required = array();
+	protected $config_required = [];
 
 	// Raw server connection
 	protected $connection;
@@ -89,7 +89,7 @@ abstract class Database_Core {
 			elseif ($this->config['cache'] === TRUE)
 			{
 				// Use array
-				$this->cache = array();
+				$this->cache = [];
 			}
 		}
 	}
@@ -167,8 +167,8 @@ abstract class Database_Core {
 	 */
 	public static function parse_dsn($dsn)
 	{
-		$db = array
-		(
+		$db = 
+		[
 			'type'     => FALSE,
 			'user'     => FALSE,
 			'pass'     => FALSE,
@@ -176,10 +176,10 @@ abstract class Database_Core {
 			'port'     => FALSE,
 			'socket'   => FALSE,
 			'database' => FALSE
-		);
+		];
 
 		// Get the protocol and arguments
-		list ($db['type'], $connection) = explode('://', $dsn, 2);
+		[$db['type'], $connection] = explode('://', $dsn, 2);
 
 		if ($connection[0] === '/')
 		{
@@ -209,7 +209,7 @@ abstract class Database_Core {
 			{
 				if ($connection['host'] === 'unix(')
 				{
-					list($db['socket'], $connection['path']) = explode(')', $connection['path'], 2);
+					[$db['socket'], $connection['path']] = explode(')', $connection['path'], 2);
 				}
 				else
 				{
@@ -278,7 +278,7 @@ abstract class Database_Core {
 		if ($this->config['benchmark'] === TRUE)
 		{
 			// Benchmark the query
-			Database::$benchmarks[] = array('query' => $sql, 'time' => $stop - $start, 'rows' => count($result));
+			Database::$benchmarks[] = ['query' => $sql, 'time' => $stop - $start, 'rows' => count($result)];
 		}
 
 		return $result;
@@ -329,7 +329,7 @@ abstract class Database_Core {
 		if ($this->config['benchmark'] === TRUE)
 		{
 			// Benchmark the query
-			Database::$benchmarks[] = array('query' => $sql, 'time' => $stop - $start, 'rows' => count($result));
+			Database::$benchmarks[] = ['query' => $sql, 'time' => $stop - $start, 'rows' => count($result)];
 		}
 
 		return $result;
@@ -384,7 +384,7 @@ abstract class Database_Core {
 			}
 			else
 			{
-				$this->cache = array();
+				$this->cache = [];
 			}
 		}
 	}
@@ -445,10 +445,10 @@ abstract class Database_Core {
 			$alias = key($table);
 			$table = current($table);
 		}
-		elseif (strpos(' ', $table) !== FALSE)
+		elseif (str_contains(' ', $table))
 		{
 			// Using format 'user u'
-			list($table, $alias) = explode(' ', $table);
+			[$table, $alias] = explode(' ', $table);
 		}
 
 		if ($table instanceof Database_Expression)
@@ -525,9 +525,9 @@ abstract class Database_Core {
 			return (string) $column;
 		}
 
-		if ($this->config['table_prefix'] AND strpos($column, '.') !== FALSE)
+		if ($this->config['table_prefix'] AND str_contains($column, '.'))
 		{
-			if (strpos($column, '"') !== FALSE)
+			if (str_contains($column, '"'))
 			{
 				// Find "table.column" and replace them with "[prefix]table.column"
 				$column = preg_replace('/"([^.]++)\.([^"]++)"/', '"'.$this->config['table_prefix'].'$1.$2"', $column);
@@ -541,7 +541,7 @@ abstract class Database_Core {
 
 		if ($this->config['escape'])
 		{
-			if (strpos($column, '"') === FALSE)
+			if (!str_contains($column, '"'))
 			{
 				// Quote the column
 				$column = $this->quote.$column.$this->quote;
@@ -605,11 +605,8 @@ abstract class Database_Core {
 	{
 		static $sql_types;
 
-		if ($sql_types === NULL)
-		{
-			// Load SQL data types
-			$sql_types = Kohana::config('sql_types');
-		}
+		// Load SQL data types
+        $sql_types ??= Kohana::config('sql_types');
 
 		$str = trim($str);
 
@@ -631,7 +628,7 @@ abstract class Database_Core {
 		}
 
 		if (empty($sql_types[$type]))
-			throw new Database_Exception('Undefined field type :type', array(':type' => $str));
+			throw new Database_Exception('Undefined field type :type', [':type' => $str]);
 
 		// Fetch the field definition
 		$field = $sql_types[$type];

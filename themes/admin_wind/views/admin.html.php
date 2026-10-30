@@ -7,7 +7,7 @@
     <?php $theme->start_combining("script,css") ?>
     <title>
       <?php if ($page_title): ?>
-        <?= t("Gallery Admin: %page_title", array("page_title" => $page_title)) ?>
+        <?= t("Gallery Admin: %page_title", ["page_title" => $page_title]) ?>
       <?php else: ?>
         <?= t("Admin dashboard") ?>
       <?php endif ?>

@@ -11,11 +11,11 @@
  */
 class Form_Hidden_Core extends Form_Input {
 
-	protected $data = array
-	(
+	protected $data = 
+	[
 		'name'  => '',
 		'value' => '',
-	);
+	];
 
 	public function render()
 	{

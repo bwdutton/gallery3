@@ -28,7 +28,7 @@ class site_status_Core {
    * @param string  $msg           a detailed message
    * @param string  $permanent_key make this message permanent and store it under this key
    */
-  static function success($msg, $permanent_key) {
+  public static function success($msg, $permanent_key) {
     self::_add($msg, self::SUCCESS, $permanent_key);
   }
 
@@ -37,7 +37,7 @@ class site_status_Core {
    * @param string  $msg           a detailed message
    * @param string  $permanent_key make this message permanent and store it under this key
    */
-  static function info($msg, $permanent_key) {
+  public static function info($msg, $permanent_key) {
     self::_add($msg, self::INFO, $permanent_key);
   }
 
@@ -46,7 +46,7 @@ class site_status_Core {
    * @param string  $msg           a detailed message
    * @param string  $permanent_key make this message permanent and store it under this key
    */
-  static function warning($msg, $permanent_key) {
+  public static function warning($msg, $permanent_key) {
     self::_add($msg, self::WARNING, $permanent_key);
   }
 
@@ -55,7 +55,7 @@ class site_status_Core {
    * @param string  $msg           a detailed message
    * @param string  $permanent_key make this message permanent and store it under this key
    */
-  static function error($msg, $permanent_key) {
+  public static function error($msg, $permanent_key) {
     self::_add($msg, self::ERROR, $permanent_key);
   }
 
@@ -81,7 +81,7 @@ class site_status_Core {
    * Remove any permanent message by key.
    * @param string $permanent_key
    */
-  static function clear($permanent_key) {
+  public static function clear($permanent_key) {
     $message = ORM::factory("message")->where("key", "=", $permanent_key)->find();
     if ($message->loaded()) {
       $message->delete();
@@ -94,11 +94,11 @@ class site_status_Core {
    * issues that need to be resolved.  Transient ones are only displayed once.
    * @return html text
    */
-  static function get() {
+  public static function get() {
     if (!identity::active_user()->admin) {
       return;
     }
-    $buf = array();
+    $buf = [];
     foreach (ORM::factory("message")->find_all() as $msg) {
       $value = str_replace("__CSRF__", access::csrf_token(), $msg->value);
       $buf[] = "<li class=\"" . site_status::severity_class($msg->severity) . "\">$value</li>";
@@ -114,7 +114,7 @@ class site_status_Core {
    * @param  integer $severity
    * @return string
    */
-  static function severity_class($severity) {
+  public static function severity_class($severity) {
     switch($severity) {
     case site_status::SUCCESS:
       return "g-success";

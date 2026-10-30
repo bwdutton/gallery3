@@ -64,28 +64,28 @@ class Locales_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function locale_from_http_request_best_match_vs_installed_test() {
-    locales::update_installed(array("no_NO", "pt_PT", "ja_JP"));
+    locales::update_installed(["no_NO", "pt_PT", "ja_JP"]);
     $_SERVER["HTTP_ACCEPT_LANGUAGE"] = "en,en-us,ja_JP;q=0.7,no-fr;q=0.9";
     $locale = locales::locale_from_http_request();
     $this->assert_equal("no_NO", $locale);
   }
 
   public function locale_from_http_request_best_match_vs_installed_2_test() {
-    locales::update_installed(array("no_NO", "pt_PT", "ja_JP"));
+    locales::update_installed(["no_NO", "pt_PT", "ja_JP"]);
     $_SERVER["HTTP_ACCEPT_LANGUAGE"] = "en,en-us,ja_JP;q=0.5,no-fr;q=0.9";
     $locale = locales::locale_from_http_request();
     $this->assert_equal("no_NO", $locale);
   }
 
   public function locale_from_http_request_no_match_vs_installed_test() {
-    locales::update_installed(array("no_NO", "pt_PT", "ja_JP"));
+    locales::update_installed(["no_NO", "pt_PT", "ja_JP"]);
     $_SERVER["HTTP_ACCEPT_LANGUAGE"] = "en,en-us,de";
     $locale = locales::locale_from_http_request();
     $this->assert_equal(null, $locale);
   }
 
   public function locale_from_http_request_prefer_inexact_same_language_match_over_exact_other_language_match_test() {
-    locales::update_installed(array("de_DE", "ar_AR", "fa_IR", "he_IL", "en_US"));
+    locales::update_installed(["de_DE", "ar_AR", "fa_IR", "he_IL", "en_US"]);
     // Accept-Language header from Firefox 3.5/Ubuntu
     $_SERVER["HTTP_ACCEPT_LANGUAGE"] = "he,en-us;q=0.9,de-ch;q=0.5,en;q=0.3";
     $locale = locales::locale_from_http_request();

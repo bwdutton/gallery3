@@ -24,11 +24,8 @@ class upload_Core {
 		// Load file data from FILES if not passed as array
 		$file = is_array($file) ? $file : $_FILES[$file];
 
-		if ($filename === NULL)
-		{
-			// Use the default filename, with a timestamp pre-pended
-			$filename = time().$file['name'];
-		}
+		// Use the default filename, with a timestamp pre-pended
+        $filename ??= time().$file['name'];
 
 		if (Kohana::config('upload.remove_spaces') === TRUE)
 		{
@@ -36,11 +33,8 @@ class upload_Core {
 			$filename = preg_replace('/\s+/', '_', $filename);
 		}
 
-		if ($directory === NULL)
-		{
-			// Use the pre-configured upload directory
-			$directory = Kohana::config('upload.directory', TRUE);
-		}
+		// Use the pre-configured upload directory
+        $directory ??= Kohana::config('upload.directory', TRUE);
 
 		// Make sure the directory ends with a slash
 		$directory = rtrim($directory, '/').'/';
@@ -52,7 +46,7 @@ class upload_Core {
 		}
 
 		if ( ! is_writable($directory))
-			throw new Kohana_Exception('The upload destination folder, :dir:, does not appear to be writable.', array(':dir:' => $directory));
+			throw new Kohana_Exception('The upload destination folder, :dir:, does not appear to be writable.', [':dir:' => $directory]);
 
 		if (is_uploaded_file($file['tmp_name']) AND move_uploaded_file($file['tmp_name'], $filename = $directory.$filename))
 		{
@@ -142,13 +136,12 @@ class upload_Core {
 			return FALSE;
 
 		// Make the size into a power of 1024
-		switch (substr($size, -1))
-		{
-			case 'G': $size = intval($size) * pow(1024, 3); break;
-			case 'M': $size = intval($size) * pow(1024, 2); break;
-			case 'K': $size = intval($size) * pow(1024, 1); break;
-			default:  $size = intval($size);                break;
-		}
+		$size = match (substr($size, -1)) {
+            'G' => intval($size) * 1024 ** 3,
+            'M' => intval($size) * 1024 ** 2,
+            'K' => intval($size) * 1024 ** 1,
+            default => intval($size),
+        };
 
 		// Test that the file is under or equal to the max size
 		return ($file['size'] <= $size);

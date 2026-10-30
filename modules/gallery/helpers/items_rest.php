@@ -36,9 +36,9 @@ class items_rest_Core {
    *     Also limits the types returned in the member collections (same behaviour as item_rest).
    *     Ignored if ancestors_for is set.
    */
-  static function get($request) {
-    $items = array();
-    $types = array();
+  public static function get($request) {
+    $items = [];
+    $types = [];
 
     if (isset($request->params->urls)) {
       if (isset($request->params->type)) {
@@ -69,7 +69,7 @@ class items_rest_Core {
     return $items;
   }
 
-  static function resolve($id) {
+  public static function resolve($id) {
     $item = ORM::factory("item", $id);
     if (!access::can("view", $item)) {
       throw new Kohana_404_Exception();
@@ -78,11 +78,11 @@ class items_rest_Core {
   }
 
   private static function _format_restful_item($item, $types) {
-    $item_rest = array("url" => rest::url("item", $item),
+    $item_rest = ["url" => rest::url("item", $item),
                        "entity" => $item->as_restful_array(),
-                       "relationships" => rest::relationships("item", $item));
+                       "relationships" => rest::relationships("item", $item)];
     if ($item->type == "album") {
-      $members = array();
+      $members = [];
       foreach ($item->viewable()->children() as $child) {
         if (empty($types) || in_array($child->type, $types)) {
           $members[] = rest::url("item", $child);

@@ -24,26 +24,26 @@ class Task_Definition_Core {
   public $name;
   public $severity;
 
-  static function factory() {
+  public static function factory() {
     return new Task_Definition();
   }
 
-  function callback($callback) {
+  public function callback($callback) {
     $this->callback = $callback;
     return $this;
   }
 
-  function description($description) {
+  public function description($description) {
     $this->description = $description;
     return $this;
   }
 
-  function name($name) {
+  public function name($name) {
     $this->name = $name;
     return $this;
   }
 
-  function severity($severity) {
+  public function severity($severity) {
     $this->severity = $severity;
     return $this;
   }

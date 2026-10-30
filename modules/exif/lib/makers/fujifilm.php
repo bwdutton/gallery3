@@ -31,27 +31,26 @@
 //====================================================================
 function lookup_Fujifilm_tag($tag) {
 	
-	switch($tag) {
-		case "0000": $tag = "Version";break;
-		case "1000": $tag = "Quality";break;
-		case "1001": $tag = "Sharpness";break;
-		case "1002": $tag = "WhiteBalance";break;
-		case "1003": $tag = "Color";break;	
-		case "1004": $tag = "Tone";break;	
-		case "1010": $tag = "FlashMode";break;	
-		case "1011": $tag = "FlashStrength";break;	
-		case "1020": $tag = "Macro";break;	
-		case "1021": $tag = "FocusMode";break;	
-		case "1030": $tag = "SlowSync";break;	
-		case "1031": $tag = "PictureMode";break;	
-		case "1100": $tag = "ContinuousTakingBracket";break;	
-		case "1200": $tag = "Unknown";break;	
-		case "1300": $tag = "BlurWarning";break;	
-		case "1301": $tag = "FocusWarning";break;	
-		case "1302": $tag = "AEWarning";break;	
-		
-		default: $tag = "unknown:".$tag;break;
-	}
+	$tag = match ($tag) {
+        "0000" => "Version",
+        "1000" => "Quality",
+        "1001" => "Sharpness",
+        "1002" => "WhiteBalance",
+        "1003" => "Color",
+        "1004" => "Tone",
+        "1010" => "FlashMode",
+        "1011" => "FlashStrength",
+        "1020" => "Macro",
+        "1021" => "FocusMode",
+        "1030" => "SlowSync",
+        "1031" => "PictureMode",
+        "1100" => "ContinuousTakingBracket",
+        "1200" => "Unknown",
+        "1300" => "BlurWarning",
+        "1301" => "FocusWarning",
+        "1302" => "AEWarning",
+        default => "unknown:".$tag,
+    };
 	
 	return $tag;
 }

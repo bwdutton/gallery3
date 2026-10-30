@@ -18,17 +18,17 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class comment_rest_Core {
-  static function get($request) {
+  public static function get($request) {
     $comment = rest::resolve($request->url);
     access::required("view", $comment->item());
 
-    return array(
+    return [
       "url" => $request->url,
       "entity" => $comment->as_restful_array(),
-      "relationships" => rest::relationships("comment", $comment));
+      "relationships" => rest::relationships("comment", $comment)];
   }
 
-  static function put($request) {
+  public static function put($request) {
     // Only admins can edit comments, for now
     if (!identity::active_user()->admin) {
       access::forbidden();
@@ -40,7 +40,7 @@ class comment_rest_Core {
     $comment->save();
   }
 
-  static function delete($request) {
+  public static function delete($request) {
     if (!identity::active_user()->admin) {
       access::forbidden();
     }
@@ -51,16 +51,16 @@ class comment_rest_Core {
     $comment->delete();
   }
 
-  static function relationships($resource_type, $resource) {
+  public static function relationships($resource_type, $resource) {
     switch ($resource_type) {
     case "item":
-      return array(
-        "comments" => array(
-          "url" => rest::url("item_comments", $resource)));
+      return [
+        "comments" => [
+          "url" => rest::url("item_comments", $resource)]];
     }
   }
 
-  static function resolve($id) {
+  public static function resolve($id) {
     $comment = ORM::factory("comment", $id);
     if (!access::can("view", $comment->item())) {
       throw new Kohana_404_Exception();
@@ -68,7 +68,7 @@ class comment_rest_Core {
     return $comment;
   }
 
-  static function url($comment) {
+  public static function url($comment) {
     return url::abs_site("rest/comment/{$comment->id}");
   }
 }

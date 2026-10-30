@@ -68,7 +68,7 @@
             <th><?= t("Actions") ?></th>
           </tr>
 
-          <?php foreach ($users as $i => $user): ?>
+          <?php foreach ($users as $user): ?>
           <tr id="g-user-<?= $user->id ?>" class="<?= text::alternate("g-odd", "g-even") ?> g-user <?= $user->admin ? "g-admin" : "" ?>">
             <td id="g-user-<?= $user->id ?>" class="g-core-info g-draggable">
               <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
@@ -128,7 +128,7 @@
 
       <div class="g-block-content">
         <ul>
-          <?php foreach ($groups as $i => $group): ?>
+          <?php foreach ($groups as $group): ?>
           <li id="g-group-<?= $group->id ?>" class="g-group g-left <?= ($group->special ? "g-default-group" : "") ?>">
             <?php $v = new View("admin_users_group.html"); $v->group = $group; ?>
             <?= $v ?>

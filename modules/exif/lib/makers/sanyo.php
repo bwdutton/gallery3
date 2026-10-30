@@ -32,15 +32,15 @@
 //====================================================================
 function lookup_Sanyo_tag($tag) {
 	
-	switch($tag) {
-		case "0200": $tag = "SpecialMode";break;
-		case "0201": $tag = "Quality";break;
-		case "0202": $tag = "Macro";break;
-		case "0203": $tag = "Unknown";break;
-		case "0204": $tag = "DigiZoom";break;
-		case "0f00": $tag = "DataDump";break;
-		default: $tag = "unknown:".$tag;break;
-	}
+	$tag = match ($tag) {
+        "0200" => "SpecialMode",
+        "0201" => "Quality",
+        "0202" => "Macro",
+        "0203" => "Unknown",
+        "0204" => "DigiZoom",
+        "0f00" => "DataDump",
+        default => "unknown:".$tag,
+    };
 	
 	return $tag;
 }

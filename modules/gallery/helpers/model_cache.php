@@ -18,9 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class model_cache_Core {
-  private static $cache = array();
+  private static $cache = [];
 
-  static function get($model_name, $id, $field_name="id") {
+  public static function get($model_name, $id, $field_name="id") {
     if (TEST_MODE || empty(self::$cache[$model_name][$field_name][$id])) {
       $model = ORM::factory($model_name)->where($field_name, "=", $id)->find();
       if (!$model->loaded()) {
@@ -32,11 +32,11 @@ class model_cache_Core {
     return self::$cache[$model_name][$field_name][$id];
   }
 
-  static function clear() {
-    self::$cache = array();
+  public static function clear() {
+    self::$cache = [];
   }
 
-  static function set($model) {
+  public static function set($model) {
     self::$cache[$model->object_name][$model->primary_key][$model->{$model->primary_key} ?? ''] = $model;
   }
 }

@@ -13,7 +13,7 @@
     </h2></div>
     <div class="label source"><h2><?= t("Source") ?></div>
     <div class="label translation"><h2><?= t("Translation to %language",
-                                             array("language" => locales::display_name())) ?></h2></div>
+                                             ["language" => locales::display_name()]) ?></h2></div>
   </div>
   <div id="l10n-client-string-select">
     <ul class="string-list">

@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
-$lang = array
-(
+$lang = 
+[
 	'class'                => 'Class',
 	'method'               => 'Method',
 	'invalid_test_path'    => 'Failed to open test path: %s.',
@@ -42,4 +42,4 @@ $lang = array
 	'assert_not_empty'     => 'assert_not_empty: Expected not an empty value, but was given (%s) %s.',
 	'assert_pattern'       => 'assert_pattern: Expected %s to match %s.',
 	'assert_not_pattern'   => 'assert_not_pattern: Expected %s to not match %s.',
-);
+];

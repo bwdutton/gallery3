@@ -21,12 +21,12 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
   protected $_save;
 
   public function setup() {
-    $this->_save = array($_POST, $_SERVER);
+    $this->_save = [$_POST, $_SERVER];
     $_SERVER["HTTP_REFERER"] = "HTTP_REFERER";
   }
 
   public function teardown() {
-    list($_POST, $_SERVER) = $this->_save;
+    [$_POST, $_SERVER] = $this->_save;
   }
 
   public function add_watermark_test() {
@@ -45,8 +45,8 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
     $results = ob_get_clean();
 
     // Add should be successful
-    $this->assert_equal(json_encode(array("result" => "success",
-                                          "location" => url::site("admin/watermarks"))), $results);
+    $this->assert_equal(json_encode(["result" => "success",
+                                          "location" => url::site("admin/watermarks")]), $results);
     $this->assert_equal(file_get_contents($source_path),
                         file_get_contents(VARPATH . "modules/watermark/$name.jpg"));
     $this->assert_equal("$name.jpg", module::get_var("watermark", "name"));
@@ -95,8 +95,8 @@ class Admin_Watermarks_Controller_Test extends Gallery_Unit_Test_Case {
     $results = ob_get_clean();
 
     // Add should be successful with file renamed as jpg
-    $this->assert_equal(json_encode(array("result" => "success",
-                                          "location" => url::site("admin/watermarks"))), $results);
+    $this->assert_equal(json_encode(["result" => "success",
+                                          "location" => url::site("admin/watermarks")]), $results);
     $this->assert_equal(file_get_contents($source_path),
                         file_get_contents(VARPATH . "modules/watermark/$name.jpg"));
     $this->assert_equal("$name.jpg", module::get_var("watermark", "name"));

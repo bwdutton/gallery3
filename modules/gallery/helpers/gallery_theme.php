@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gallery_theme_Core {
-  static function head($theme) {
+  public static function head($theme) {
     $session = Session::instance();
     $buf = "";
     $buf .= $theme->css("gallery.css");
@@ -54,7 +54,7 @@ class gallery_theme_Core {
     return $buf;
   }
 
-  static function admin_head($theme) {
+  public static function admin_head($theme) {
     $buf = $theme->css("gallery.css");
     $buf .= $theme->script("gallery.panel.js");
     $session = Session::instance();
@@ -70,7 +70,7 @@ class gallery_theme_Core {
     return $buf;
   }
 
-  static function page_bottom($theme) {
+  public static function page_bottom($theme) {
     $session = Session::instance();
     if (gallery::show_profiler()) {
       Profiler::enable();
@@ -95,7 +95,7 @@ class gallery_theme_Core {
     return $content;
   }
 
-  static function admin_page_bottom($theme) {
+  public static function admin_page_bottom($theme) {
     $session = Session::instance();
     if (gallery::show_profiler()) {
       Profiler::enable();
@@ -130,21 +130,21 @@ class gallery_theme_Core {
     return $content;
   }
 
-  static function credits() {
+  public static function credits() {
     $version_string = SafeString::of_safe_html(
       '<bdo dir="ltr">Gallery ' . gallery::version_string() . '</bdo>');
     return "<li class=\"g-first\">" .
       t(module::get_var("gallery", "credits"),
-        array("url" => "http://galleryproject.org",
-              "gallery_version" => $version_string)) .
+        ["url" => "http://galleryproject.org",
+              "gallery_version" => $version_string]) .
       "</li>";
   }
 
-  static function admin_credits() {
+  public static function admin_credits() {
     return gallery_theme::credits();
   }
 
-  static function body_attributes() {
+  public static function body_attributes() {
     if (locales::is_rtl()) {
       return 'class="rtl"';
     }

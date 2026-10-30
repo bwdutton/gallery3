@@ -356,8 +356,8 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
     // Verify that we don't get confused by the part slugs, using the fallback code.
     db::build()
       ->update("items")
-      ->set(array("relative_url_cache" => null))
-      ->where("id", "IN", array($level3->id, $level3b->id))
+      ->set(["relative_url_cache" => null])
+      ->where("id", "IN", [$level3->id, $level3b->id])
       ->execute();
     $this->assert_same(
       $level3->id,

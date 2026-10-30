@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Permissions_Controller extends Controller {
-  function browse($id) {
+  public function browse($id) {
     $item = ORM::factory("item", $id);
     access::required("view", $item);
     access::required("edit", $item);
@@ -36,7 +36,7 @@ class Permissions_Controller extends Controller {
     print $view;
   }
 
-  function form($id) {
+  public function form($id) {
     $item = ORM::factory("item", $id);
     access::required("view", $item);
     access::required("edit", $item);
@@ -48,7 +48,7 @@ class Permissions_Controller extends Controller {
     print $this->_get_form($item);
   }
 
-  function change($command, $group_id, $perm_id, $item_id) {
+  public function change($command, $group_id, $perm_id, $item_id) {
     access::verify_csrf();
 
     $group = identity::lookup_group($group_id);

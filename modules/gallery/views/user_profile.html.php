@@ -34,7 +34,7 @@
     <img src="<?= $user->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
        alt="<?= html::clean_attribute($user->display_name()) ?>"
        class="g-avatar g-left" width="40" height="40" />
-    <?= t("User profile: %name", array("name" => $user->display_name())) ?>
+    <?= t("User profile: %name", ["name" => $user->display_name()]) ?>
   </h1>
   <?php foreach ($info_parts as $info): ?>
   <div class="g-block">

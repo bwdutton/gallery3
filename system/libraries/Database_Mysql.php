@@ -20,16 +20,13 @@ class Database_Mysql_Core extends Database {
 		if ($this->connection)
 			return;
 
-		if (Database_Mysql::$set_names === NULL)
-		{
-			// Determine if we can use mysql_set_charset(), which is only
-			// available on PHP 5.2.3+ when compiled against MySQL 5.0+
-			Database_Mysql::$set_names = ! function_exists('mysql_set_charset');
-		}
+		// Determine if we can use mysql_set_charset(), which is only
+        // available on PHP 5.2.3+ when compiled against MySQL 5.0+
+        Database_Mysql::$set_names ??= ! function_exists('mysql_set_charset');
 
 		extract($this->config['connection']);
 
-		$host = isset($host) ? $host : $socket;
+		$host ??= $socket;
 		$port = isset($port) ? ':'.$port : '';
 
 		try
@@ -39,23 +36,23 @@ class Database_Mysql_Core extends Database {
 				? mysql_pconnect($host.$port, $user, $pass, $params)
 				: mysql_connect($host.$port, $user, $pass, TRUE, $params);
 		}
-		catch (Kohana_PHP_Exception $e)
+		catch (Kohana_PHP_Exception)
 		{
 			// No connection exists
 			$this->connection = NULL;
 
 			// Unable to connect to the database
 			throw new Database_Exception('#:errno: :error',
-				array(':error' => mysql_error(),
-				':errno' => mysql_errno()));
+				[':error' => mysql_error(),
+				':errno' => mysql_errno()]);
 		}
 
 		if ( ! mysql_select_db($database, $this->connection))
 		{
 			// Unable to select database
 			throw new Database_Exception('#:errno: :error',
-				array(':error' => mysql_error($this->connection),
-				':errno' => mysql_errno($this->connection)));
+				[':error' => mysql_error($this->connection),
+				':errno' => mysql_errno($this->connection)]);
 		}
 
 		if (isset($this->config['character_set']))
@@ -77,7 +74,7 @@ class Database_Mysql_Core extends Database {
 				$status = mysql_close($this->connection);
 			}
 		}
-		catch (Exception $e)
+		catch (Exception)
 		{
 			// Database is probably not disconnected
 			$status = is_resource($this->connection);
@@ -106,8 +103,8 @@ class Database_Mysql_Core extends Database {
 		{
 			// Unable to set charset
 			throw new Database_Exception('#:errno: :error',
-				array(':error' => mysql_error($this->connection),
-				':errno' => mysql_errno($this->connection)));
+				[':error' => mysql_error($this->connection),
+				':errno' => mysql_errno($this->connection)]);
 		}
 	}
 
@@ -132,8 +129,8 @@ class Database_Mysql_Core extends Database {
 		if (($value = mysql_real_escape_string($value, $this->connection)) === FALSE)
 		{
 			throw new Database_Exception('#:errno: :error',
-				array(':error' => mysql_error($this->connection),
-				':errno' => mysql_errno($this->connection)));
+				[':error' => mysql_error($this->connection),
+				':errno' => mysql_errno($this->connection)]);
 		}
 
 		return $value;
@@ -142,7 +139,7 @@ class Database_Mysql_Core extends Database {
 	public function list_constraints($table)
 	{
 		$prefix = strlen($this->table_prefix());
-		$result = array();
+		$result = [];
 
 		$constraints = $this->query('
 			SELECT c.constraint_name, c.constraint_type, k.column_name, k.referenced_table_name, k.referenced_column_name
@@ -166,7 +163,7 @@ class Database_Mysql_Core extends Database {
 					}
 					else
 					{
-						$result[$row['constraint_name']] = array($row['constraint_type'], array($row['column_name']), substr($row['referenced_table_name'], $prefix), array($row['referenced_column_name']));
+						$result[$row['constraint_name']] = [$row['constraint_type'], [$row['column_name']], substr($row['referenced_table_name'], $prefix), [$row['referenced_column_name']]];
 					}
 				break;
 				case 'PRIMARY KEY':
@@ -177,7 +174,7 @@ class Database_Mysql_Core extends Database {
 					}
 					else
 					{
-						$result[$row['constraint_name']] = array($row['constraint_type'], array($row['column_name']));
+						$result[$row['constraint_name']] = [$row['constraint_type'], [$row['column_name']]];
 					}
 				break;
 			}
@@ -188,7 +185,7 @@ class Database_Mysql_Core extends Database {
 
 	public function list_fields($table)
 	{
-		$result = array();
+		$result = [];
 
 		foreach ($this->query('SHOW COLUMNS FROM '.$this->quote_table($table))->as_array() as $row)
 		{
@@ -200,7 +197,7 @@ class Database_Mysql_Core extends Database {
 
 			if (isset($column['length']) AND $column['type'] === 'float')
 			{
-				list($column['precision'], $column['scale']) = explode(',', $column['length']);
+				[$column['precision'], $column['scale']] = explode(',', $column['length']);
 			}
 
 			$result[$row['Field']] = $column;
@@ -212,7 +209,7 @@ class Database_Mysql_Core extends Database {
 	public function list_tables()
 	{
 		$prefix = strlen($this->table_prefix());
-		$tables = array();
+		$tables = [];
 
 		foreach ($this->query('SHOW TABLES LIKE '.$this->quote($this->table_prefix().'%'))->as_array() as $row)
 		{

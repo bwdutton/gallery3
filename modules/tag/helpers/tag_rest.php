@@ -18,25 +18,25 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class tag_rest_Core {
-  static function get($request) {
+  public static function get($request) {
     $tag = rest::resolve($request->url);
-    $tag_items = array();
+    $tag_items = [];
     foreach ($tag->items() as $item) {
       if (access::can("view", $item)) {
         $tag_items[] = rest::url("tag_item", $tag, $item);
       }
     }
 
-    return array(
+    return [
       "url" => $request->url,
       "entity" => $tag->as_array(),
-      "relationships" => array(
-        "items" => array(
+      "relationships" => [
+        "items" => [
           "url" => rest::url("tag_items", $tag),
-          "members" => $tag_items)));
+          "members" => $tag_items]]];
   }
 
-  static function put($request) {
+  public static function put($request) {
     // Who can we allow to edit a tag name?  If we allow anybody to do it then any logged in
     // user can rename all your tags to something offensive.  Right now limit renaming to admins.
     if (!identity::active_user()->admin) {
@@ -49,7 +49,7 @@ class tag_rest_Core {
     }
   }
 
-  static function delete($request) {
+  public static function delete($request) {
     // Restrict deleting tags to admins.  Otherwise, a logged in user can do great harm to an
     // install.
     if (!identity::active_user()->admin) {
@@ -59,21 +59,21 @@ class tag_rest_Core {
     $tag->delete();
   }
 
-  static function relationships($resource_type, $resource) {
+  public static function relationships($resource_type, $resource) {
     switch ($resource_type) {
     case "item":
-      $tags = array();
+      $tags = [];
       foreach (tag::item_tags($resource) as $tag) {
         $tags[] = rest::url("tag_item", $tag, $resource);
       }
-      return array(
-        "tags" => array(
+      return [
+        "tags" => [
           "url" => rest::url("item_tags", $resource),
-          "members" => $tags));
+          "members" => $tags]];
     }
   }
 
-  static function resolve($id) {
+  public static function resolve($id) {
     $tag = ORM::factory("tag", $id);
     if (!$tag->loaded()) {
       throw new Kohana_404_Exception();
@@ -82,7 +82,7 @@ class tag_rest_Core {
     return $tag;
   }
 
-  static function url($tag) {
+  public static function url($tag) {
     return url::abs_site("rest/tag/{$tag->id}");
   }
 }

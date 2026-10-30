@@ -29,7 +29,7 @@ class group_Core {
    *
    * @return Group_Definition the group object
    */
-  static function everybody() {
+  public static function everybody() {
     return model_cache::get("group", 1);
   }
 
@@ -38,7 +38,7 @@ class group_Core {
    *
    * @return Group_Definition the group object
    */
-  static function registered_users() {
+  public static function registered_users() {
     return model_cache::get("group", 2);
   }
 
@@ -47,7 +47,7 @@ class group_Core {
    * @param integer      $id the user id
    * @return Group_Definition  the group object, or null if the id was invalid.
    */
-  static function lookup($id) {
+  public static function lookup($id) {
     return self::_lookup_by_field("id", $id);
   }
 
@@ -56,7 +56,7 @@ class group_Core {
    * @param integer      $id the group name
    * @return Group_Definition  the group object, or null if the name was invalid.
    */
-  static function lookup_by_name($name) {
+  public static function lookup_by_name($name) {
     return self::_lookup_by_field("name", $name);
   }
 
@@ -73,7 +73,7 @@ class group_Core {
         return $group;
       }
     } catch (Exception $e) {
-      if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
+      if (!str_contains($e->getMessage(), "MISSING_MODEL")) {
         throw $e;
       }
     }

@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class organize_event_Core {
-  static function site_menu($menu, $theme) {
+  public static function site_menu($menu, $theme) {
     $item = $theme->item();
 
     if ($item && $item->is_album() && access::can("edit", $item)) {
@@ -31,7 +31,7 @@ class organize_event_Core {
     }
   }
 
-  static function context_menu($menu, $theme, $item) {
+  public static function context_menu($menu, $theme, $item) {
     if (access::can("edit", $item)) {
       if ($item->is_album()) {
         $menu->get("options_menu")

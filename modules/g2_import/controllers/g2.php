@@ -37,8 +37,8 @@ class G2_Controller extends Controller {
 
     // Tags did not have mappings created, so we need to catch them first. However, if a g2_itemId was
     // passed, we'll want to show lookup the mapping anyway
-    if (($path && 0 === strpos($path, "tag/")) || $view == "tags.VirtualAlbum") {
-      if (0 === strpos($path, "tag/")) {
+    if (($path && str_starts_with($path, "tag/")) || $view == "tags.VirtualAlbum") {
+      if (str_starts_with($path, "tag/")) {
         $tag_name = substr($path, 4);
       }
       if ($view == "tags.VirtualAlbum") {
@@ -64,14 +64,14 @@ class G2_Controller extends Controller {
         // Requests by id are either core.DownloadItem or core.ShowItem requests. Later versions of
         // Gallery 2 don't specify g2_view if it's the default (core.ShowItem). And in some cases
         // (bbcode, embedding) people are using the id style URLs although URL rewriting is enabled.
-        $where = array(array("g2_id", "=", $id));
+        $where = [["g2_id", "=", $id]];
         if ($view == "core.DownloadItem") {
-          $where[] = array("resource_type", "IN", array("file", "resize", "thumbnail", "full"));
+          $where[] = ["resource_type", "IN", ["file", "resize", "thumbnail", "full"]];
         } else if ($view) {
-          $where[] = array("g2_url", "LIKE", "%" . Database::escape_for_like("g2_view=$view") . "%");
+          $where[] = ["g2_url", "LIKE", "%" . Database::escape_for_like("g2_view=$view") . "%"];
         } // else: Assuming that the first search hit is sufficiently good.
       } else if ($path) {
-        $where = array(array("g2_url", "IN", array($path, str_replace(" ", "+", $path))));
+        $where = [["g2_url", "IN", [$path, str_replace(" ", "+", $path)]]];
       } else {
         throw new Kohana_404_Exception();
       }

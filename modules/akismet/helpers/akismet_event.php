@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class akismet_event_Core {
-  static function comment_created($comment) {
+  public static function comment_created($comment) {
     if (!module::get_var("akismet", "api_key")) {
       return;
     }
@@ -40,7 +40,7 @@ class akismet_event_Core {
     $comment->save();
   }
 
-  static function comment_updated($original, $new) {
+  public static function comment_updated($original, $new) {
     if (!module::get_var("akismet", "api_key")) {
       return;
     }
@@ -52,7 +52,7 @@ class akismet_event_Core {
     }
   }
 
-  static function admin_menu($menu, $theme) {
+  public static function admin_menu($menu, $theme) {
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
                ->id("akismet")

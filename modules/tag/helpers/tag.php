@@ -28,7 +28,7 @@ class tag_Core {
    * @return Tag_Model
    * @throws Exception("@todo {$tag_name} WAS_NOT_ADDED_TO {$item->id}")
    */
-  static function add($item, $tag_name) {
+  public static function add($item, $tag_name) {
     if (empty($tag_name)) {
       throw new exception("@todo MISSING_TAG_NAME");
     }
@@ -47,7 +47,7 @@ class tag_Core {
    *
    * @return ORM_Iterator of Tag_Model in descending tag count order
    */
-  static function popular_tags($count) {
+  public static function popular_tags($count) {
     $count = max($count, 1);
     return ORM::factory("tag")
       ->order_by("count", "DESC")
@@ -61,7 +61,7 @@ class tag_Core {
    * @param integer $count the number of tags
    * @return View
    */
-  static function cloud($count) {
+  public static function cloud($count) {
     $tags = tag::popular_tags($count)->as_array();
     if ($tags) {
       $cloud = new View("tag_cloud.html");
@@ -69,13 +69,13 @@ class tag_Core {
       if (!$cloud->max_count) {
         return;
       }
-      usort($tags, array("tag", "sort_by_name"));
+      usort($tags, ["tag", "sort_by_name"]);
       $cloud->tags = $tags;
       return $cloud;
     }
   }
 
-  static function sort_by_name($tag1, $tag2) {
+  public static function sort_by_name($tag1, $tag2) {
     return strcasecmp($tag1->name, $tag2->name);
   }
 
@@ -83,7 +83,7 @@ class tag_Core {
    * Return all the tags for a given item.
    * @return array
    */
-  static function item_tags($item) {
+  public static function item_tags($item) {
     return ORM::factory("tag")
       ->join("items_tags", "tags.id", "items_tags.tag_id", "left")
       ->where("items_tags.item_id", "=", $item->id)
@@ -94,15 +94,15 @@ class tag_Core {
    * Return all the items for a given tag.
    * @return array
    */
-  static function tag_items($tag) {
+  public static function tag_items($tag) {
     return ORM::factory("item")
       ->join("items_tags", "items_tags.item_id", "items.id", "left")
       ->where("items_tags.tag_id", "=", $tag->id)
       ->find_all();
   }
 
-  static function get_add_form($item) {
-    $form = new Forge("tags/create/{$item->id}", "", "post", array("id" => "g-add-tag-form", "class" => "g-short-form"));
+  public static function get_add_form($item) {
+    $form = new Forge("tags/create/{$item->id}", "", "post", ["id" => "g-add-tag-form", "class" => "g-short-form"]);
     $label = $item->is_album() ?
       t("Add tag to album") :
       ($item->is_photo() ? t("Add tag to photo") : t("Add tag to movie"));
@@ -114,10 +114,10 @@ class tag_Core {
     return $form;
   }
 
-  static function get_delete_form($tag) {
-    $form = new Forge("admin/tags/delete/$tag->id", "", "post", array("id" => "g-delete-tag-form"));
+  public static function get_delete_form($tag) {
+    $form = new Forge("admin/tags/delete/$tag->id", "", "post", ["id" => "g-delete-tag-form"]);
     $group = $form->group("delete_tag")
-      ->label(t("Really delete tag %tag_name?", array("tag_name" => $tag->name)));
+      ->label(t("Really delete tag %tag_name?", ["tag_name" => $tag->name]));
     $group->submit("")->value(t("Delete Tag"));
     return $form;
   }
@@ -125,7 +125,7 @@ class tag_Core {
   /**
    * Delete all tags associated with an item
    */
-  static function clear_all($item) {
+  public static function clear_all($item) {
     db::build()
       ->update("tags")
       ->set("count", db::expr("`count` - 1"))
@@ -141,7 +141,7 @@ class tag_Core {
   /**
    * Remove all items from a tag
    */
-  static function remove_items($tag) {
+  public static function remove_items($tag) {
     db::build()
       ->delete("items_tags")
       ->where("tag_id", "=", $tag->id)
@@ -153,7 +153,7 @@ class tag_Core {
   /**
    * Get rid of any tags that have no associated items.
    */
-  static function compact() {
+  public static function compact() {
     // @todo There's a potential race condition here which we can solve by adding a lock around
     // this and all the cases where we create/update tags.  I'm loathe to do that since it's an
     // extremely rare case.
@@ -168,7 +168,7 @@ class tag_Core {
    * @param Item_Model $item
    * @param array      $where an array of arrays, each compatible with ORM::where()
    */
-  static function get_position($tag, $item, $where=array()) {
+  public static function get_position($tag, $item, $where=[]) {
     return ORM::factory("item")
       ->viewable()
       ->join("items_tags", "items.id", "items_tags.item_id")

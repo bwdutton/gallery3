@@ -24,8 +24,8 @@
  * Note: by design, this class does not do any permission checking.
  */
 class comment_Core {
-  static function get_add_form($item) {
-    $form = new Forge("comments/create/{$item->id}", "", "post", array("id" => "g-comment-form"));
+  public static function get_add_form($item) {
+    $form = new Forge("comments/create/{$item->id}", "", "post", ["id" => "g-comment-form"]);
     $group = $form->group("add_comment")->label(t("Add comment"));
     $group->input("name")
       ->label(t("Name"))
@@ -52,7 +52,7 @@ class comment_Core {
     return $form;
   }
 
-  static function prefill_add_form($form) {
+  public static function prefill_add_form($form) {
     $active = identity::active_user();
     if (!$active->guest) {
       $group = $form->add_comment;
@@ -63,7 +63,7 @@ class comment_Core {
     return $form;
   }
 
-  static function can_comment() {
+  public static function can_comment() {
     return !identity::active_user()->guest ||
       module::get_var("comment", "access_permissions") == "everybody";
   }

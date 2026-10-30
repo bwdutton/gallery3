@@ -38,7 +38,7 @@ class Akismet_Helper_Test extends Gallery_Unit_Test_Case {
 
     // Set the server fields to a known placeholder
     foreach ($comment->list_fields("comments") as $name => $field) {
-      if (strpos($name, "server_") === 0) {
+      if (str_starts_with($name, "server_")) {
         $comment->$name = substr($name, strlen("server_"));
       }
     }

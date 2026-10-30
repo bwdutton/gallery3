@@ -18,14 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class comment_event_Core {
-  static function item_deleted($item) {
+  public static function item_deleted($item) {
     db::build()
       ->delete("comments")
       ->where("item_id", "=", $item->id)
       ->execute();
   }
 
-  static function user_deleted($user) {
+  public static function user_deleted($user) {
     $guest = identity::guest();
     if (!empty($guest)) {          // could be empty if there is not identity provider
       db::build()
@@ -39,7 +39,7 @@ class comment_event_Core {
     }
   }
 
-  static function identity_provider_changed($old_provider, $new_provider) {
+  public static function identity_provider_changed($old_provider, $new_provider) {
     $guest = identity::guest();
     db::build()
       ->update("comments")
@@ -50,7 +50,7 @@ class comment_event_Core {
       ->execute();
   }
 
-  static function admin_menu($menu, $theme) {
+  public static function admin_menu($menu, $theme) {
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
                ->id("comment")
@@ -64,7 +64,7 @@ class comment_event_Core {
                ->url(url::site("admin/manage_comments")));
   }
 
-  static function photo_menu($menu, $theme) {
+  public static function photo_menu($menu, $theme) {
     $menu
       ->append(Menu::factory("link")
                ->id("comments")
@@ -73,7 +73,7 @@ class comment_event_Core {
                ->css_id("g-comments-link"));
   }
 
-  static function item_index_data($item, $data) {
+  public static function item_index_data($item, $data) {
     foreach (db::build()
              ->select("text")
              ->from("comments")
@@ -83,7 +83,7 @@ class comment_event_Core {
     }
   }
 
-  static function show_user_profile($data) {
+  public static function show_user_profile($data) {
     $view = new View("user_profile_comments.html");
     $view->comments = ORM::factory("comment")
       ->order_by("created", "DESC")
@@ -91,7 +91,7 @@ class comment_event_Core {
       ->where("author_id", "=", $data->user->id)
       ->find_all();
     if ($view->comments->count()) {
-      $data->content[] = (object)array("title" => t("Comments"), "view" => $view);
+      $data->content[] = (object)["title" => t("Comments"), "view" => $view];
     }
   }
 }

@@ -25,12 +25,11 @@
 # requirements (there can be none), but merely suggestions.
 #
 class PasswordHash {
-	var $itoa64;
-	var $iteration_count_log2;
-	var $portable_hashes;
-	var $random_state;
+	public $itoa64;
+	public $iteration_count_log2;
+	public $random_state;
 
-	function __construct($iteration_count_log2, $portable_hashes)
+	public function __construct($iteration_count_log2, public $portable_hashes)
 	{
 		$this->itoa64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
@@ -38,12 +37,10 @@ class PasswordHash {
 			$iteration_count_log2 = 8;
 		$this->iteration_count_log2 = $iteration_count_log2;
 
-		$this->portable_hashes = $portable_hashes;
-
 		$this->random_state = microtime() . getmypid();
 	}
 
-	function get_random_bytes($count)
+	public function get_random_bytes($count)
 	{
 		$output = '';
 		if (($fh = @fopen('/dev/urandom', 'rb'))) {
@@ -65,7 +62,7 @@ class PasswordHash {
 		return $output;
 	}
 
-	function encode64($input, $count)
+	public function encode64($input, $count)
 	{
 		$output = '';
 		$i = 0;
@@ -88,7 +85,7 @@ class PasswordHash {
 		return $output;
 	}
 
-	function gensalt_private($input)
+	public function gensalt_private($input)
 	{
 		$output = '$P$';
 		$output .= $this->itoa64[min($this->iteration_count_log2 +
@@ -98,16 +95,16 @@ class PasswordHash {
 		return $output;
 	}
 
-	function crypt_private($password, $setting)
+	public function crypt_private($password, $setting)
 	{
 		$output = '*0';
 		if (substr($setting, 0, 2) == $output)
 			$output = '*1';
 
-		if (substr($setting, 0, 3) != '$P$')
+		if (!str_starts_with($setting, '$P$'))
 			return $output;
 
-		$count_log2 = strpos($this->itoa64, $setting[3]);
+		$count_log2 = strpos($this->itoa64, (string) $setting[3]);
 		if ($count_log2 < 7 || $count_log2 > 30)
 			return $output;
 
@@ -141,7 +138,7 @@ class PasswordHash {
 		return $output;
 	}
 
-	function gensalt_extended($input)
+	public function gensalt_extended($input)
 	{
 		$count_log2 = min($this->iteration_count_log2 + 8, 24);
 		# This should be odd to not reveal weak DES keys, and the
@@ -159,7 +156,7 @@ class PasswordHash {
 		return $output;
 	}
 
-	function gensalt_blowfish($input)
+	public function gensalt_blowfish($input)
 	{
 		# This one needs to use a different order of characters and a
 		# different encoding scheme from the one in encode64() above.
@@ -200,7 +197,7 @@ class PasswordHash {
 		return $output;
 	}
 
-	function HashPassword($password)
+	public function HashPassword($password)
 	{
 		$random = '';
 
@@ -235,7 +232,7 @@ class PasswordHash {
 		return '*';
 	}
 
-	function CheckPassword($password, $stored_hash)
+	public function CheckPassword($password, $stored_hash)
 	{
 		$hash = $this->crypt_private($password, $stored_hash);
 		if ($hash[0] == '*')

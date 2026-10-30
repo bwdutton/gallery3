@@ -32,11 +32,11 @@ class cookie_Core {
 		// Fetch default options
 		$config = Kohana::config('cookie');
 
-		foreach (array('value', 'expire', 'domain', 'path', 'secure', 'httponly') as $item)
+		foreach (['value', 'expire', 'domain', 'path', 'secure', 'httponly'] as $item)
 		{
-			if ($$item === NULL AND isset($config[$item]))
+			if (${$item} === NULL AND isset($config[$item]))
 			{
-				$$item = $config[$item];
+				${$item} = $config[$item];
 			}
 		}
 
@@ -48,7 +48,7 @@ class cookie_Core {
 
 		$value = cookie::salt($name, $value).'~'.$value;
 
-		return setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
+		return setcookie($name, $value, ['expires' => $expire, 'path' => $path, 'domain' => $domain, 'secure' => $secure, 'httponly' => $httponly]);
 	}
 
 	/**
@@ -64,7 +64,7 @@ class cookie_Core {
 		// Return an array of all the cookies if we don't have a name
 		if ($name === NULL)
 		{
-			$cookies = array();
+			$cookies = [];
 
 			foreach($_COOKIE AS $key => $value)
 			{
@@ -87,7 +87,7 @@ class cookie_Core {
 		if (isset($cookie[$split]) AND $cookie[$split] === '~')
 		{
 			 // Separate the salt and the value
-			list ($hash, $value) = explode('~', $cookie, 2);
+			[$hash, $value] = explode('~', $cookie, 2);
 
 			if (cookie::salt($name, $value) === $hash)
 			{

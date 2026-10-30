@@ -11,7 +11,7 @@
  */
 abstract class Log_Driver {
 
-	protected $config = array();
+	protected $config = [];
 
 	public function __construct(array $config)
 	{

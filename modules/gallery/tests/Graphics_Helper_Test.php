@@ -21,13 +21,13 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
   public function generate_photo_test() {
     $photo = test::random_photo();
     // Check that the images were correctly resized
-    $this->assert_equal(array(640, 480, "image/jpeg", "jpg"),
+    $this->assert_equal([640, 480, "image/jpeg", "jpg"],
                         photo::get_file_metadata($photo->resize_path()));
-    $this->assert_equal(array(200, 150, "image/jpeg", "jpg"),
+    $this->assert_equal([200, 150, "image/jpeg", "jpg"],
                         photo::get_file_metadata($photo->thumb_path()));
     // Check that the items table got updated
-    $this->assert_equal(array(640, 480), array($photo->resize_width, $photo->resize_height));
-    $this->assert_equal(array(200, 150), array($photo->thumb_width, $photo->thumb_height));
+    $this->assert_equal([640, 480], [$photo->resize_width, $photo->resize_height]);
+    $this->assert_equal([200, 150], [$photo->thumb_width, $photo->thumb_height]);
     // Check that the images are not marked dirty
     $this->assert_equal(0, $photo->resize_dirty);
     $this->assert_equal(0, $photo->thumb_dirty);
@@ -36,10 +36,10 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
   public function generate_movie_test() {
     $movie = test::random_movie();
     // Check that the image was correctly resized
-    $this->assert_equal(array(200, 160, "image/jpeg", "jpg"),
+    $this->assert_equal([200, 160, "image/jpeg", "jpg"],
                         photo::get_file_metadata($movie->thumb_path()));
     // Check that the items table got updated
-    $this->assert_equal(array(200, 160), array($movie->thumb_width, $movie->thumb_height));
+    $this->assert_equal([200, 160], [$movie->thumb_width, $movie->thumb_height]);
     // Check that the image is not marked dirty
     $this->assert_equal(0, $movie->thumb_dirty);
   }
@@ -52,7 +52,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal(file_get_contents($photo->thumb_path()),
                         file_get_contents($album->thumb_path()));
     // Check that the items table got updated
-    $this->assert_equal(array(200, 150), array($album->thumb_width, $album->thumb_height));
+    $this->assert_equal([200, 150], [$album->thumb_width, $album->thumb_height]);
     // Check that the image is not marked dirty
     $this->assert_equal(0, $album->thumb_dirty);
   }
@@ -69,10 +69,10 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $photo->save();
     $album->reload();
     // Check that the image was correctly resized and converted to jpg
-    $this->assert_equal(array(200, 150, "image/jpeg", "jpg"),
+    $this->assert_equal([200, 150, "image/jpeg", "jpg"],
                         photo::get_file_metadata($album->thumb_path()));
     // Check that the items table got updated
-    $this->assert_equal(array(200, 150), array($album->thumb_width, $album->thumb_height));
+    $this->assert_equal([200, 150], [$album->thumb_width, $album->thumb_height]);
     // Check that the image is not marked dirty
     $this->assert_equal(0, $album->thumb_dirty);
   }
@@ -83,7 +83,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_same(file_get_contents(MODPATH . "gallery/images/missing_album_cover.jpg"),
                        file_get_contents($album->thumb_path()));
     // Check that the items table got updated with new metadata
-    $this->assert_equal(array(200, 200), array($album->thumb_width, $album->thumb_height));
+    $this->assert_equal([200, 200], [$album->thumb_width, $album->thumb_height]);
     // Check that the image is *not* marked as dirty
     $this->assert_equal(0, $album->thumb_dirty);
   }
@@ -98,7 +98,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       graphics::generate($photo);
       $this->assert_true(false, "Shouldn't get here");
-    } catch (Exception $e) {
+    } catch (Exception) {
       // Exception expected
     }
     // Check that the images got replaced with missing image placeholders
@@ -107,8 +107,8 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_same(file_get_contents(MODPATH . "gallery/images/missing_photo.jpg"),
                        file_get_contents($photo->thumb_path()));
     // Check that the items table got updated with new metadata
-    $this->assert_equal(array(200, 200), array($photo->resize_width, $photo->resize_height));
-    $this->assert_equal(array(200, 200), array($photo->thumb_width, $photo->thumb_height));
+    $this->assert_equal([200, 200], [$photo->resize_width, $photo->resize_height]);
+    $this->assert_equal([200, 200], [$photo->thumb_width, $photo->thumb_height]);
     // Check that the images are marked as dirty
     $this->assert_equal(1, $photo->resize_dirty);
     $this->assert_equal(1, $photo->thumb_dirty);
@@ -126,7 +126,7 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_same(file_get_contents(MODPATH . "gallery/images/missing_movie.jpg"),
                        file_get_contents($movie->thumb_path()));
     // Check that the items table got updated with new metadata
-    $this->assert_equal(array(200, 200), array($movie->thumb_width, $movie->thumb_height));
+    $this->assert_equal([200, 200], [$movie->thumb_width, $movie->thumb_height]);
     // Check that the image is *not* marked as dirty
     $this->assert_equal(0, $movie->thumb_dirty);
   }
@@ -144,14 +144,14 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       graphics::generate($album);
       $this->assert_true(false, "Shouldn't get here");
-    } catch (Exception $e) {
+    } catch (Exception) {
       // Exception expected
     }
     // Check that the image got replaced with a missing image placeholder
     $this->assert_same(file_get_contents(MODPATH . "gallery/images/missing_photo.jpg"),
                        file_get_contents($album->thumb_path()));
     // Check that the items table got updated with new metadata
-    $this->assert_equal(array(200, 200), array($album->thumb_width, $album->thumb_height));
+    $this->assert_equal([200, 200], [$album->thumb_width, $album->thumb_height]);
     // Check that the images are marked as dirty
     $this->assert_equal(1, $album->thumb_dirty);
   }

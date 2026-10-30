@@ -18,7 +18,7 @@ abstract class Image_Driver {
 	protected $tmp_image;
 
 	// Processing errors
-	protected $errors = array();
+	protected $errors = [];
 
 	/**
 	 * Executes a set of actions, defined in pairs.
@@ -46,7 +46,7 @@ abstract class Image_Driver {
 	 */
 	protected function sanitize_geometry( & $geometry)
 	{
-		list($width, $height) = $this->properties();
+		[$width, $height] = $this->properties();
 
 		// Turn off error reporting
 		$reporting = error_reporting(0);
@@ -114,7 +114,7 @@ abstract class Image_Driver {
 	 * @param   integer   direction to flip
 	 * @return  boolean
 	 */
-	abstract function flip($direction);
+	abstract public function flip($direction);
 
 	/**
 	 * Crop an image. Valid properties are: width, height, top, left.
@@ -122,7 +122,7 @@ abstract class Image_Driver {
 	 * @param   array     new properties
 	 * @return  boolean
 	 */
-	abstract function crop($properties);
+	abstract public function crop($properties);
 
 	/**
 	 * Resize an image. Valid properties are: width, height, and master.

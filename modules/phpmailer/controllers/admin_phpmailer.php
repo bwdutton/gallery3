@@ -60,7 +60,7 @@ class Admin_PHPMailer_Controller extends Admin_Controller {
   private function _get_admin_form() {
     // Make a new Form.
     $form = new Forge("admin/phpmailer/saveprefs", "", "post",
-                      array("id" => "g-php-mailer-admin-form"));
+                      ["id" => "g-php-mailer-admin-form"]);
 
     // Create the input boxes for the PHPMailer Settings
     $phpmailerGroup = $form->group("PHPMailerSettings");
@@ -86,7 +86,7 @@ class Admin_PHPMailer_Controller extends Admin_Controller {
                    ->label(t("SMTP Port"))
                    ->value(module::get_var("phpmailer", "smtp_port"));
     $phpmailerSMTP->dropdown("phpmailer_smtps")
-                  ->options(array("" => "", "ssl" => t("SSL"), "tls" => t("TLS")))
+                  ->options(["" => "", "ssl" => t("SSL"), "tls" => t("TLS")])
                   ->selected(module::get_var("phpmailer", "smtps"));
 
     // Add a save button to the form.

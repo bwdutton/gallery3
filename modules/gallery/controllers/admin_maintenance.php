@@ -36,7 +36,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
                       "%count tasks are stalled",
                       $stalled_count),
                    t('<a href="%url">view</a>',
-                     array("url" => html::mark_clean(url::site("admin/maintenance")))));
+                     ["url" => html::mark_clean(url::site("admin/maintenance"))]));
     }
 
     $view = new Admin_View("admin.html");
@@ -70,7 +70,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view->task = $task;
 
     log::info("tasks", t("Task %task_name started (task id %task_id)",
-                         array("task_name" => $task->name, "task_id" => $task->id)),
+                         ["task_name" => $task->name, "task_id" => $task->id]),
               html::anchor("admin/maintenance", t("maintenance")));
     print $view;
   }
@@ -90,9 +90,9 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view->task = $task;
 
     $task->log(t("Task %task_name resumed (task id %task_id)",
-                 array("task_name" => $task->name, "task_id" => $task->id)));
+                 ["task_name" => $task->name, "task_id" => $task->id]));
     log::info("tasks", t("Task %task_name resumed (task id %task_id)",
-                         array("task_name" => $task->name, "task_id" => $task->id)),
+                         ["task_name" => $task->name, "task_id" => $task->id]),
               html::anchor("admin/maintenance", t("maintenance")));
     print $view;
   }
@@ -206,32 +206,32 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       switch ($task->state) {
       case "success":
         log::success("tasks", t("Task %task_name completed (task id %task_id)",
-                                array("task_name" => $task->name, "task_id" => $task->id)),
+                                ["task_name" => $task->name, "task_id" => $task->id]),
                      html::anchor("admin/maintenance", t("maintenance")));
         message::success(t("Task completed successfully"));
         break;
 
       case "error":
         log::error("tasks", t("Task %task_name failed (task id %task_id)",
-                              array("task_name" => $task->name, "task_id" => $task->id)),
+                              ["task_name" => $task->name, "task_id" => $task->id]),
                    html::anchor("admin/maintenance", t("maintenance")));
         message::success(t("Task failed"));
         break;
       }
       // Using sprintf("%F") to avoid comma as decimal separator.
-      json::reply(array("result" => "success",
-                        "task" => array(
+      json::reply(["result" => "success",
+                        "task" => [
                           "percent_complete" => sprintf("%F", $task->percent_complete),
                           "status" => (string) $task->status,
-                          "done" => (bool) $task->done),
-                        "location" => url::site("admin/maintenance")));
+                          "done" => (bool) $task->done],
+                        "location" => url::site("admin/maintenance")]);
 
     } else {
-      json::reply(array("result" => "in_progress",
-                        "task" => array(
+      json::reply(["result" => "in_progress",
+                        "task" => [
                           "percent_complete" => sprintf("%F", $task->percent_complete),
                           "status" => (string) $task->status,
-                          "done" => (bool) $task->done)));
+                          "done" => (bool) $task->done]]);
     }
   }
 

@@ -9,21 +9,19 @@
  * @copyright  (c) 2008-2009 Kohana Team
  * @license    http://kohanaphp.com/license
  */
-class Database_Query_Core {
+class Database_Query_Core implements \Stringable {
 
-	protected $sql;
 	protected $params;
 	protected $ttl = FALSE;
 
-	public function __construct($sql = NULL)
-	{
-		$this->sql = $sql;
-	}
+	public function __construct(protected $sql = NULL)
+    {
+    }
 
-	public function __toString()
+	public function __toString(): string
 	{
 		// Return the SQL of this query
-		return $this->sql;
+		return (string) $this->sql;
 	}
 
 	public function sql($sql)
@@ -61,7 +59,7 @@ class Database_Query_Core {
 		if ( ! empty($this->params))
 		{
 			// Quote all of the values
-			$params = array_map(array($db, 'quote'), $this->params);
+			$params = array_map([$db, 'quote'], $this->params);
 
 			// Replace the values in the SQL
 			$sql = strtr($sql, $params);

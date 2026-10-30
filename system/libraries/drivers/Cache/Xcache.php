@@ -11,14 +11,10 @@
  * @TODO       Check if XCache cleans its own keys.
  */
 class Cache_Xcache_Driver extends Cache_Driver {
-	protected $config;
-
-	public function __construct($config)
+	public function __construct(protected $config)
 	{
 		if ( ! extension_loaded('xcache'))
 			throw new Cache_Exception('The xcache PHP extension must be loaded to use this driver.');
-
-		$this->config = $config;
 	}
 
 	public function set($items, $tags = NULL, $lifetime = NULL)
@@ -44,7 +40,7 @@ class Cache_Xcache_Driver extends Cache_Driver {
 
 	public function get($keys, $single = FALSE)
 	{
-		$items = array();
+		$items = [];
 
 		foreach ($keys as $key)
 		{
@@ -64,7 +60,7 @@ class Cache_Xcache_Driver extends Cache_Driver {
 		}
 		else
 		{
-			return ($items === FALSE) ? array() : $items;
+			return ($items === FALSE) ? [] : $items;
 		}
 	}
 
@@ -127,9 +123,9 @@ class Cache_Xcache_Driver extends Cache_Driver {
 
 	private function auth($reverse = FALSE)
 	{
-		static $backup = array();
+		static $backup = [];
 
-		$keys = array('PHP_AUTH_USER', 'PHP_AUTH_PW');
+		$keys = ['PHP_AUTH_USER', 'PHP_AUTH_PW'];
 
 		foreach ($keys as $key)
 		{

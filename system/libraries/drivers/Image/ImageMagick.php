@@ -47,7 +47,7 @@ class Image_ImageMagick_Driver extends Image_Driver {
 
 		// Check to make sure the provided path is correct
 		if ( ! is_file(realpath($config['directory']).'/convert'.$this->ext))
-			throw new Kohana_Exception('The ImageMagick directory specified does not contain a required program, :im:', array(':im:' => 'convert'.$this->ext));
+			throw new Kohana_Exception('The ImageMagick directory specified does not contain a required program, :im:', [':im:' => 'convert'.$this->ext]);
 
 		// Set the installation directory
 		$this->dir = str_replace('\\', '/', realpath($config['directory'])).'/';

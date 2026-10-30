@@ -97,7 +97,7 @@ class expires_Core {
 				header('Cache-Control: public,max-age='.$seconds);
 
 				// Clear any output
-				Event::add('system.display', function() { Kohana::$output = ""; });
+				Event::add('system.display', function(): void { Kohana::$output = ""; });
 
 				exit;
 			}

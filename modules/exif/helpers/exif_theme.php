@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class exif_theme_Core {
-  static function sidebar_bottom($theme) {
+  public static function sidebar_bottom($theme) {
     $item = $theme->item();
     if ($item && $item->is_photo()) {
       $record = db::build()

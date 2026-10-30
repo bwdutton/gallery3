@@ -17,27 +17,24 @@
  * @copyright  (c) 2008-2009 Kohana Team
  * @license    http://kohanaphp.com/license
  */
-class Database_Builder_Core {
+class Database_Builder_Core implements \Stringable {
 
 	// Valid ORDER BY directions
-	protected $order_directions = array('ASC', 'DESC', 'RAND()');
-
-	// Database object
-	protected $db;
+	protected $order_directions = ['ASC', 'DESC', 'RAND()'];
 
 	// Builder members
-	protected $select   = array();
-	protected $from     = array();
-	protected $join     = array();
-	protected $where    = array();
-	protected $group_by = array();
-	protected $having   = array();
-	protected $order_by = array();
+	protected $select   = [];
+	protected $from     = [];
+	protected $join     = [];
+	protected $where    = [];
+	protected $group_by = [];
+	protected $having   = [];
+	protected $order_by = [];
 	protected $limit    = NULL;
 	protected $offset   = NULL;
-	protected $set      = array();
-	protected $columns  = array();
-	protected $values   = array();
+	protected $set      = [];
+	protected $columns  = [];
+	protected $values   = [];
 	protected $type;
 	protected $distinct = FALSE;
 	protected $reset    = TRUE;
@@ -45,10 +42,9 @@ class Database_Builder_Core {
 	// TTL for caching (using Cache library)
 	protected $ttl      = FALSE;
 
-	public function __construct($db = 'default')
-	{
-		$this->db = $db;
-	}
+	public function __construct(protected $db = 'default')
+    {
+    }
 
 	/**
 	 * Compiles the builder object into a SQL query. Useful for debugging
@@ -60,7 +56,7 @@ class Database_Builder_Core {
 	 *
 	 * @return  string Compiled query
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		return $this->compile();
 	}
@@ -90,7 +86,7 @@ class Database_Builder_Core {
 
 		if ($columns === NULL)
 		{
-			$columns = array('*');
+			$columns = ['*'];
 		}
 		elseif ( ! is_array($columns))
 		{
@@ -190,12 +186,12 @@ class Database_Builder_Core {
 		{
 			foreach ($columns as $column)
 			{
-				$this->where[] = array('AND' => $column);
+				$this->where[] = ['AND' => $column];
 			}
 		}
 		else
 		{
-			$this->where[] = array('AND' => array($columns, $op, $value));
+			$this->where[] = ['AND' => [$columns, $op, $value]];
 		}
 		return $this;
 	}
@@ -216,12 +212,12 @@ class Database_Builder_Core {
 		{
 			foreach ($columns as $column)
 			{
-				$this->where[] = array('OR' => $column);
+				$this->where[] = ['OR' => $column];
 			}
 		}
 		else
 		{
-			$this->where[] = array('OR' => array($columns, $op, $value));
+			$this->where[] = ['OR' => [$columns, $op, $value]];
 		}
 		return $this;
 	}
@@ -250,7 +246,7 @@ class Database_Builder_Core {
 	{
 		if (is_string($keys))
 		{
-			$keys = array($keys => $value);
+			$keys = [$keys => $value];
 		}
 
 		if ($type !== NULL)
@@ -258,7 +254,7 @@ class Database_Builder_Core {
 			$type = strtoupper($type);
 		}
 
-		$this->join[] = array($table, $keys, $type);
+		$this->join[] = [$table, $keys, $type];
 
 		return $this;
 	}
@@ -422,12 +418,12 @@ class Database_Builder_Core {
 		{
 			foreach ($columns as $column)
 			{
-				$this->having[] = array('AND' => $column);
+				$this->having[] = ['AND' => $column];
 			}
 		}
 		else
 		{
-			$this->having[] = array('AND' => array($columns, $op, $value));
+			$this->having[] = ['AND' => [$columns, $op, $value]];
 		}
 		return $this;
 	}
@@ -447,12 +443,12 @@ class Database_Builder_Core {
 		{
 			foreach ($columns as $column)
 			{
-				$this->having[] = array('OR' => $column);
+				$this->having[] = ['OR' => $column];
 			}
 		}
 		else
 		{
-			$this->having[] = array('OR' => array($columns, $op, $value));
+			$this->having[] = ['OR' => [$columns, $op, $value]];
 		}
 		return $this;
 	}
@@ -473,18 +469,18 @@ class Database_Builder_Core {
 			{
 				if (is_string($column))
 				{
-					$this->order_by[] = array($column => $direction);
+					$this->order_by[] = [$column => $direction];
 				}
 				else
 				{
 					// $direction is the column name when the array key is numeric
-					$this->order_by[] = array($direction => NULL);
+					$this->order_by[] = [$direction => NULL];
 				}
 			}
 		}
 		else
 		{
-			$this->order_by[] = array($columns => $direction);
+			$this->order_by[] = [$columns => $direction];
 		}
 		return $this;
 	}
@@ -540,11 +536,11 @@ class Database_Builder_Core {
 	{
 		if ($clause === 'WHERE')
 		{
-			$this->where[] = array('AND' => '(');
+			$this->where[] = ['AND' => '('];
 		}
 		else
 		{
-			$this->having[] = array('AND' => '(');
+			$this->having[] = ['AND' => '('];
 		}
 
 		return $this;
@@ -561,11 +557,11 @@ class Database_Builder_Core {
 	{
 		if ($clause === 'WHERE')
 		{
-			$this->where[] = array('OR' => '(');
+			$this->where[] = ['OR' => '('];
 		}
 		else
 		{
-			$this->having[] = array('OR' => '(');
+			$this->having[] = ['OR' => '('];
 		}
 
 		return $this;
@@ -582,11 +578,11 @@ class Database_Builder_Core {
 	{
 		if ($clause === 'WHERE')
 		{
-			$this->where[] = array(')');
+			$this->where[] = [')'];
 		}
 		else
 		{
-			$this->having[] = array(')');
+			$this->having[] = [')'];
 		}
 
 		return $this;
@@ -604,7 +600,7 @@ class Database_Builder_Core {
 	{
 		if (is_string($keys))
 		{
-			$keys = array($keys => $value);
+			$keys = [$keys => $value];
 		}
 
 		$this->set = array_merge($keys, $this->set);
@@ -724,10 +720,10 @@ class Database_Builder_Core {
 				}
 				else
 				{
-					list($columns, $op, $value) = $condition;
+					[$columns, $op, $value] = $condition;
 
 					// Stores each individual condition
-					$vals = array();
+					$vals = [];
 
 					if ($columns instanceof Database_Expression)
 					{
@@ -740,7 +736,7 @@ class Database_Builder_Core {
 
 						if ( ! is_array($columns))
 						{
-							$columns = array($columns => $value);
+							$columns = [$columns => $value];
 						}
 
 						foreach ($columns as $column => $value)
@@ -761,7 +757,7 @@ class Database_Builder_Core {
 								else
 								{
 									// Return as list
-									$value = array_map(array($this->db, 'quote'), $value);
+									$value = array_map([$this->db, 'quote'], $value);
 									$value = '('.implode(', ', $value).')';
 								}
 							}
@@ -805,7 +801,7 @@ class Database_Builder_Core {
 	 */
 	protected function compile_columns()
 	{
-		return '('.implode(', ', array_map(array($this->db, 'quote_column'), $this->columns)).')';
+		return '('.implode(', ', array_map([$this->db, 'quote_column'], $this->columns)).')';
 	}
 
 	/**
@@ -815,11 +811,11 @@ class Database_Builder_Core {
 	 */
 	protected function compile_values()
 	{
-		$values = array();
+		$values = [];
 		foreach ($this->values as $group)
 		{
 			// Each set of values to be inserted
-			$values[] = '('.implode(', ', array_map(array($this->db, 'quote'), $group)).')';
+			$values[] = '('.implode(', ', array_map([$this->db, 'quote'], $group)).')';
 		}
 
 		return implode(', ', $values);
@@ -930,7 +926,7 @@ class Database_Builder_Core {
 		}
 
 		// Grab the count AS records_found
-		$result = $this->select(array('records_found' => 'COUNT("*")'))->execute();
+		$result = $this->select(['records_found' => 'COUNT("*")'])->execute();
 
 		return $result->get('records_found');
 	}
@@ -1056,7 +1052,7 @@ class Database_Builder_Core {
 	 */
 	protected function compile_select()
 	{
-		$vals = array();
+		$vals = [];
 
 		foreach ($this->select as $alias => $name)
 		{
@@ -1086,7 +1082,7 @@ class Database_Builder_Core {
 	 */
 	protected function compile_from()
 	{
-		$vals = array();
+		$vals = [];
 
 		foreach ($this->from as $alias => $name)
 		{
@@ -1115,7 +1111,7 @@ class Database_Builder_Core {
 		$sql = '';
 		foreach ($this->join as $join)
 		{
-			list($table, $keys, $type) = $join;
+			[$table, $keys, $type] = $join;
 
 			if ($type !== NULL)
 			{
@@ -1161,7 +1157,7 @@ class Database_Builder_Core {
 	 */
 	protected function compile_group_by()
 	{
-		$vals = array();
+		$vals = [];
 
 		foreach ($this->group_by as $column)
 		{
@@ -1179,7 +1175,7 @@ class Database_Builder_Core {
 	 */
 	protected function compile_order_by()
 	{
-		$ordering = array();
+		$ordering = [];
 
 		foreach ($this->order_by as $column => $order_by)
 		{
@@ -1206,7 +1202,7 @@ class Database_Builder_Core {
 	 */
 	protected function compile_set()
 	{
-		$vals = array();
+		$vals = [];
 
 		foreach ($this->set as $key => $value)
 		{
@@ -1222,17 +1218,17 @@ class Database_Builder_Core {
 	 */
 	protected function _reset()
 	{
-		$this->select   = array();
-		$this->from     = array();
-		$this->join     = array();
-		$this->where    = array();
-		$this->group_by = array();
-		$this->having   = array();
-		$this->order_by = array();
+		$this->select   = [];
+		$this->from     = [];
+		$this->join     = [];
+		$this->where    = [];
+		$this->group_by = [];
+		$this->having   = [];
+		$this->order_by = [];
 		$this->limit    = NULL;
 		$this->offset   = NULL;
-		$this->set      = array();
-		$this->values   = array();
+		$this->set      = [];
+		$this->values   = [];
 		$this->type     = NULL;
 		$this->distinct = FALSE;
 		$this->reset    = TRUE;

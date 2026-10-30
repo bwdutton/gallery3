@@ -10,7 +10,7 @@
 <div class="g-block ui-helper-clearfix">
   <h1> <?= t("Theme choice") ?> </h1>
   <p>
-    <?= t("Make your Gallery beautiful <a href=\"%url\">with a new theme</a>!  There are separate themes for the regular site and for the administration interface.  Click a theme below to preview and activate it.", array("url" => "http://codex.galleryproject.org/Category:Gallery_3:Themes")) ?>
+    <?= t("Make your Gallery beautiful <a href=\"%url\">with a new theme</a>!  There are separate themes for the regular site and for the administration interface.  Click a theme below to preview and activate it.", ["url" => "http://codex.galleryproject.org/Category:Gallery_3:Themes"]) ?>
   </p>
 
   <div class="g-block-content">
@@ -33,7 +33,7 @@
         <?php if (!$info->site) continue ?>
         <?php if ($id == $site) continue ?>
         <div class="g-block ui-helper-clearfix">
-          <a href="<?= url::site("admin/themes/preview/site/$id") ?>" class="g-dialog-link" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
+          <a href="<?= url::site("admin/themes/preview/site/$id") ?>" class="g-dialog-link" title="<?= t("Theme Preview: %theme_name", ["theme_name" => $info->name])->for_html_attr() ?>">
             <img src="<?= url::file("themes/{$id}/thumbnail.png") ?>"
                  alt="<?= html::clean_attribute($info->name) ?>" />
             <h3> <?= $info->name ?> </h3>
@@ -48,7 +48,7 @@
 
         <?php if (!$count): ?>
         <p>
-          <?= t("There are no other site themes available. <a href=\"%url\">Download one now!</a>", array("url" => "http://codex.galleryproject.org/Category:Gallery_3:Themes")) ?>
+          <?= t("There are no other site themes available. <a href=\"%url\">Download one now!</a>", ["url" => "http://codex.galleryproject.org/Category:Gallery_3:Themes"]) ?>
         </p>
         <?php endif ?>
       </div>
@@ -73,7 +73,7 @@
         <?php if (!$info->admin) continue ?>
         <?php if ($id == $admin) continue ?>
         <div class="g-block ui-helper-clearfix">
-          <a href="<?= url::site("admin/themes/preview/admin/$id") ?>" class="g-dialog-link" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
+          <a href="<?= url::site("admin/themes/preview/admin/$id") ?>" class="g-dialog-link" title="<?= t("Theme Preview: %theme_name", ["theme_name" => $info->name])->for_html_attr() ?>">
             <img src="<?= url::file("themes/{$id}/thumbnail.png") ?>"
                  alt="<?= html::clean_attribute($info->name) ?>" />
             <h3> <?= $info->name ?> </h3>
@@ -88,7 +88,7 @@
 
         <?php if (!$count): ?>
         <p>
-          <?= t("There are no other admin themes available. <a href=\"%url\">Download one now!</a>", array("url" => "http://codex.galleryproject.org/Category:Gallery_3:Themes")) ?>
+          <?= t("There are no other admin themes available. <a href=\"%url\">Download one now!</a>", ["url" => "http://codex.galleryproject.org/Category:Gallery_3:Themes"]) ?>
         </p>
         <?php endif ?>
       </div>

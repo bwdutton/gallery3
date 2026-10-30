@@ -11,7 +11,7 @@
 			<p style="text-align:center">
 <?php
 	echo __('You can go to the <a href="%site%">home page</a> or <a href="%uri%">try again</a>.',
-		array('%site%' => htmlspecialchars(url::site(), ENT_QUOTES, Kohana::CHARSET), '%uri%' => htmlspecialchars(url::site(Router::$current_uri), ENT_QUOTES, Kohana::CHARSET)));
+		['%site%' => htmlspecialchars(url::site(), ENT_QUOTES, Kohana::CHARSET), '%uri%' => htmlspecialchars(url::site(Router::$current_uri), ENT_QUOTES, Kohana::CHARSET)]);
 ?>
 			</p>
 		</div>

@@ -67,11 +67,11 @@ class format_Core {
 	public static function url($str = '')
 	{
 		// Clear protocol-only strings like "http://"
-		if ($str === '' OR substr($str, -3) === '://')
+		if ($str === '' OR str_ends_with($str, '://'))
 			return '';
 
 		// If no protocol given, prepend "http://" by default
-		if (strpos($str, '://') === FALSE)
+		if (!str_contains($str, '://'))
 			return 'http://'.$str;
 
 		// Return the original URL

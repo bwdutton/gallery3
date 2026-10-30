@@ -23,7 +23,7 @@ class ajax_Core {
    *
    * @param  string $message string to print
    */
-  static function response($content) {
+  public static function response($content) {
     header("Content-Type: text/plain; charset=" . Kohana::CHARSET);
     print "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n";
     print $content;

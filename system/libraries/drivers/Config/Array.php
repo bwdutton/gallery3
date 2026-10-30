@@ -61,7 +61,7 @@ class Config_Array_Driver extends Config_Driver {
 		}
 
 		// Load matching configs
-		$configuration = array();
+		$configuration = [];
 
 		if ($files = Kohana::find_file('config', $group, $required))
 		{

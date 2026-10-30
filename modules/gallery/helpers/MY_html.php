@@ -29,7 +29,7 @@ class html extends html_Core {
    *   <div><?= html::clean($php_var) ?>
    * </pre>
    */
-  static function clean($html) {
+  public static function clean($html) {
     return new SafeString($html);
   }
 
@@ -42,7 +42,7 @@ class html extends html_Core {
    *   <div><?= html::purify($item->title) ?>
    * </pre>
    */
-  static function purify($html) {
+  public static function purify($html) {
     return SafeString::purify($html);
   }
 
@@ -56,7 +56,7 @@ class html extends html_Core {
    *     array("url" => html::mark_clean(url::current())))
    * </pre>
    */
-  static function mark_clean($html) {
+  public static function mark_clean($html) {
     return SafeString::of_safe_html($html);
   }
 
@@ -69,7 +69,7 @@ class html extends html_Core {
    *   </script>
    * </pre>
    */
-  static function js_string($string) {
+  public static function js_string($string) {
     return SafeString::of($string)->for_js();
   }
 
@@ -85,7 +85,7 @@ class html extends html_Core {
    * </pre>
    * @return the string escaped for use in HTML attributes.
    */
-  static function clean_attribute($string) {
+  public static function clean_attribute($string) {
     return html::clean($string)->for_html_attr();
   }
 }

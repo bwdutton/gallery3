@@ -149,7 +149,7 @@
     </script>
   </head>
   <body>
-    <?php try { $user = identity::active_user(); } catch (Exception $e) { } ?>
+    <?php try { $user = identity::active_user(); } catch (Exception) { } ?>
     <div class="big_box" id="framework_error">
       <div class="crashlogo">
         :-(
@@ -279,7 +279,7 @@
               <?php endforeach?>
             </table>
           </div>
-          <?php foreach (array("_SESSION", "_GET", "_POST", "_FILES", "_COOKIE", "_SERVER") as $var): ?>
+          <?php foreach (["_SESSION", "_GET", "_POST", "_FILES", "_COOKIE", "_SERVER"] as $var): ?>
           <?php if ( empty($GLOBALS[$var]) OR ! is_array($GLOBALS[$var])) continue ?>
           <h3><a href="#<?= $env_id = "$error_id.environment" . strtolower($var) ?>"
                  onclick="return koggle('<?= $env_id ?>')">$<?= $var?></a></h3>

@@ -19,7 +19,7 @@
  */
 class Controller_Auth_Test extends Gallery_Unit_Test_Case {
   public function find_missing_auth_test() {
-    $found = array();
+    $found = [];
     $git_ignores = explode("\n", shell_exec('git ls-files -o -i --exclude-standard'));
     $controllers = array_diff(glob("*/*/controllers/*.php"), $git_ignores);
     $feeds = array_diff(glob("*/*/helpers/*_rss.php"), $git_ignores);
@@ -34,7 +34,7 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
       }
 
       // List of all tokens without whitespace, simplifying parsing.
-      $tokens = array();
+      $tokens = [];
       foreach (token_get_all(file_get_contents($controller)) as $token) {
         if (!is_array($token) || $token[0] != T_WHITESPACE) {
           $tokens[] = $token;
@@ -47,7 +47,7 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
       $function = null;
       for ($token_number = 0; $token_number < count($tokens); $token_number++) {
         $token = $tokens[$token_number];
-        if (self::_token_matches(array(T_CURLY_OPEN), $tokens, $token_number)) {
+        if (self::_token_matches([T_CURLY_OPEN], $tokens, $token_number)) {
           // Treat this just like a normal open curly brace
           $token = "{";
         }
@@ -71,7 +71,7 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
           // An array token
 
           if ($open_braces == 0 && $token[0] == T_EXTENDS) {
-            if (self::_token_matches(array(T_STRING, "Admin_Controller"), $tokens, $token_number + 1)) {
+            if (self::_token_matches([T_STRING, "Admin_Controller"], $tokens, $token_number + 1)) {
               $is_admin_controller = true;
             }
           } else if ($open_braces == 1 && $token[0] == T_FUNCTION) {
@@ -81,14 +81,14 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
             // "private function", or "private static function"
             $previous = $tokens[$token_number - 1][0];
             $previous_2 = $tokens[$token_number - 2][0];
-            $is_private = in_array($previous, array(T_PRIVATE, T_PROTECTED)) ||
-              in_array($previous_2, array(T_PRIVATE, T_PROTECTED));
+            $is_private = in_array($previous, [T_PRIVATE, T_PROTECTED]) ||
+              in_array($previous_2, [T_PRIVATE, T_PROTECTED]);
             $is_static = $previous == T_STATIC || $previous_2 == T_STATIC;
 
             // Search forward to get function name
             do {
               $token_number++;
-              if (self::_token_matches(array(T_STRING), $tokens, $token_number)) {
+              if (self::_token_matches([T_STRING], $tokens, $token_number)) {
                 $token = $tokens[$token_number];
                 $name = $token[1];
                 break;
@@ -112,32 +112,32 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
           if ($function && $open_braces >= 2) {
             if ($token[0] == T_STRING) {
               if ($token[1] == "access" &&
-                  self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-                  self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
-                  in_array($tokens[$token_number + 2][1], array("forbidden", "required")) &&
+                  self::_token_matches([T_DOUBLE_COLON, "::"], $tokens, $token_number + 1) &&
+                  self::_token_matches([T_STRING], $tokens, $token_number + 2) &&
+                  in_array($tokens[$token_number + 2][1], ["forbidden", "required"]) &&
                   self::_token_matches("(", $tokens, $token_number + 3)) {
                 $token_number += 3;
                 $function->checks_authorization(true);
               } else if ($token[1] == "access" &&
-                  self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-                  self::_token_matches(array(T_STRING, "verify_csrf"), $tokens, $token_number + 2) &&
+                  self::_token_matches([T_DOUBLE_COLON, "::"], $tokens, $token_number + 1) &&
+                  self::_token_matches([T_STRING, "verify_csrf"], $tokens, $token_number + 2) &&
                   self::_token_matches("(", $tokens, $token_number + 3)) {
                 $token_number += 3;
                 $function->checks_csrf(true);
-              } else if (in_array($token[1], array("Input", "Forge")) &&
-                         self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1)) {
+              } else if (in_array($token[1], ["Input", "Forge"]) &&
+                         self::_token_matches([T_DOUBLE_COLON, "::"], $tokens, $token_number + 1)) {
                 $token_number++;
                 $function->uses_input(true);
               }
             } else if ($token[0] == T_VARIABLE) {
               if ($token[1] == '$this' &&
-                  self::_token_matches(array(T_OBJECT_OPERATOR), $tokens, $token_number + 1) &&
-                  self::_token_matches(array(T_STRING, "input"), $tokens, $token_number + 2)) {
+                  self::_token_matches([T_OBJECT_OPERATOR], $tokens, $token_number + 1) &&
+                  self::_token_matches([T_STRING, "input"], $tokens, $token_number + 2)) {
                 $token_number += 2;
                 $function->uses_input(true);
               }
             } else if ($token[0] == T_OBJECT_OPERATOR) {
-              if (self::_token_matches(array(T_STRING, "validate"), $tokens, $token_number + 1) &&
+              if (self::_token_matches([T_STRING, "validate"], $tokens, $token_number + 1) &&
                   self::_token_matches("(", $tokens, $token_number + 2)) {
                 $token_number += 2;
                 $function->checks_csrf(true);
@@ -156,7 +156,7 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
       $is_admin_controller = true;
       foreach ($functions as $function) {
         $is_admin_controller &= $function->is_admin_controller;
-        $flags = array();
+        $flags = [];
         if ($function->uses_input() && !$function->checks_csrf()) {
           $flags[] = "DIRTY_CSRF";
         }
@@ -173,7 +173,7 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
                 $controller, $function->name, implode("|", $flags));
       }
 
-      if (strpos(basename($controller), "admin_") === 0 && !$is_admin_controller) {
+      if (str_starts_with(basename($controller), "admin_") && !$is_admin_controller) {
         fprintf($fd, "%-60s %-20s %s\n",
                 $controller, basename($controller), "NO_ADMIN_CONTROLLER");
       }
@@ -206,40 +206,35 @@ class Controller_Auth_Test extends Gallery_Unit_Test_Case {
     }
   }
 
-  static function _function($name, $line, $is_admin_controller) {
+  public static function _function($name, $line, $is_admin_controller) {
     return new Controller_Auth_Test_Function($name, $line, $is_admin_controller);
   }
 }
 
 class Controller_Auth_Test_Function {
-  public $name;
-  public $line;
-  public $is_admin_controller = false;
   private $_uses_input = false;
   private $_checks_authorization = false;
   private $_checks_csrf = false;
 
-  function __construct($name, $line, $is_admin_controller) {
-    $this->name = $name;
-    $this->line = $line;
-    $this->is_admin_controller = $is_admin_controller;
+  public function __construct(public $name, public $line, public $is_admin_controller)
+  {
   }
 
-  function uses_input($val=null) {
+  public function uses_input($val=null) {
     if ($val !== null) {
       $this->_uses_input = (bool) $val;
     }
     return $this->_uses_input;
   }
 
-  function checks_authorization($val=null) {
+  public function checks_authorization($val=null) {
     if ($val !== null) {
       $this->_checks_authorization = (bool) $val;
     }
     return $this->_checks_authorization;
   }
 
-  function checks_csrf($val=null) {
+  public function checks_csrf($val=null) {
     if ($val !== null) {
       $this->_checks_csrf = $val;
     }

@@ -17,11 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-$config["default"] = array(
+$config["default"] = [
   "directory"      => "pagination",
   "style"          => "classic",
   "uri_segment"    => 3,
   "query_string"   => "",
   "items_per_page" => 20,
   "auto_hide"      => FALSE
-);
+];

@@ -55,7 +55,7 @@ class Kohana_Exception_Core extends Exception {
 	{
 		if ( ! Kohana_Exception::$enabled)
 		{
-			set_exception_handler(array('Kohana_Exception', 'handle'));
+			set_exception_handler(['Kohana_Exception', 'handle']);
 
 			Kohana_Exception::$enabled = TRUE;
 		}
@@ -87,7 +87,7 @@ class Kohana_Exception_Core extends Exception {
 	public static function text($e)
 	{
 		return sprintf('%s [ %s ]: %s ~ %s [ %d ]',
-			get_class($e), $e->getCode(), strip_tags($e->getMessage()), Kohana_Exception::debug_path($e->getFile()), $e->getLine());
+			$e::class, $e->getCode(), strip_tags($e->getMessage()), Kohana_Exception::debug_path($e->getFile()), $e->getLine());
 	}
 
 	/**
@@ -104,7 +104,7 @@ class Kohana_Exception_Core extends Exception {
 		try
 		{
 			// Get the exception information
-			$type    = get_class($e);
+			$type    = $e::class;
 			$code    = $e->getCode();
 			$message = $e->getMessage();
 
@@ -121,7 +121,7 @@ class Kohana_Exception_Core extends Exception {
 			{
 				// Do not show the details
 				$file = $line = NULL;
-				$trace = array();
+				$trace = [];
 
 				$template = '_disabled';
 			}
@@ -306,18 +306,15 @@ class Kohana_Exception_Core extends Exception {
 		}
 		elseif (is_array($var))
 		{
-			$output = array();
+			$output = [];
 
 			// Indentation for this variable
 			$space = str_repeat($s = '    ', $level);
 
 			static $marker;
 
-			if ($marker === NULL)
-			{
-				// Make a unique marker
-				$marker = uniqid("\x00");
-			}
+			// Make a unique marker
+            $marker ??= uniqid("\x00");
 
 			if (empty($var))
 			{
@@ -359,7 +356,7 @@ class Kohana_Exception_Core extends Exception {
 			// Copy the object as an array
 			$array = (array) $var;
 
-			$output = array();
+			$output = [];
 
 			// Indentation for this variable
 			$space = str_repeat($s = '    ', $level);
@@ -367,7 +364,7 @@ class Kohana_Exception_Core extends Exception {
 			$hash = spl_object_hash($var);
 
 			// Objects that are being dumped
-			static $objects = array();
+			static $objects = [];
 
 			if (empty($var))
 			{
@@ -409,7 +406,7 @@ class Kohana_Exception_Core extends Exception {
 				$output[] = "{\n$space$s...\n$space}";
 			}
 
-			return '<small>object</small> <span>'.get_class($var).'('.count($array).')</span> '.implode("\n", $output);
+			return '<small>object</small> <span>'.$var::class.'('.count($array).')</span> '.implode("\n", $output);
 		}
 		else
 		{
@@ -429,19 +426,19 @@ class Kohana_Exception_Core extends Exception {
 		// Normalize directory separator
 		$file = str_replace('\\', '/', $file);
 
-		if (strpos($file, APPPATH) === 0)
+		if (str_starts_with($file, APPPATH))
 		{
 			$file = 'APPPATH/'.substr($file, strlen(APPPATH));
 		}
-		elseif (strpos($file, SYSPATH) === 0)
+		elseif (str_starts_with($file, SYSPATH))
 		{
 			$file = 'SYSPATH/'.substr($file, strlen(SYSPATH));
 		}
-		elseif (strpos($file, MODPATH) === 0)
+		elseif (str_starts_with($file, MODPATH))
 		{
 			$file = 'MODPATH/'.substr($file, strlen(MODPATH));
 		}
-		elseif (strpos($file, DOCROOT) === 0)
+		elseif (str_starts_with($file, DOCROOT))
 		{
 			$file = 'DOCROOT/'.substr($file, strlen(DOCROOT));
 		}
@@ -464,19 +461,19 @@ class Kohana_Exception_Core extends Exception {
 	{
 		// Make sure we can read the source file
 		if ( ! is_readable($file))
-			return array();
+			return [];
 
 		// Open the file and set the line position
 		$file = fopen($file, 'r');
 		$line = 0;
 
 		// Set the reading range
-		$range = array('start' => $line_number - $padding, 'end' => $line_number + $padding);
+		$range = ['start' => $line_number - $padding, 'end' => $line_number + $padding];
 
 		// Set the zero-padding amount for line numbers
 		$format = '% '.strlen($range['end']).'d';
 
-		$source = array();
+		$source = [];
 		while (($row = fgets($file)) !== FALSE)
 		{
 			// Increment the line number
@@ -503,16 +500,13 @@ class Kohana_Exception_Core extends Exception {
 	 */
 	public static function trace($trace = NULL)
 	{
-		if ($trace === NULL)
-		{
-			// Start a new trace
-			$trace = debug_backtrace();
-		}
+		// Start a new trace
+        $trace ??= debug_backtrace();
 
 		// Non-standard function calls
-		$statements = array('include', 'include_once', 'require', 'require_once');
+		$statements = ['include', 'include_once', 'require', 'require_once'];
 
-		$output = array();
+		$output = [];
 		foreach ($trace as $step)
 		{
 			if ( ! isset($step['function']))
@@ -545,12 +539,12 @@ class Kohana_Exception_Core extends Exception {
 				if (empty($step['args']))
 				{
 					// No arguments
-					$args = array();
+					$args = [];
 				}
 				else
 				{
 					// Sanitize the file path
-					$args = array($step['args'][0]);
+					$args = [$step['args'][0]];
 				}
 			}
 			elseif (isset($step['args']))
@@ -582,7 +576,7 @@ class Kohana_Exception_Core extends Exception {
 					$params = $reflection->getParameters();
 				}
 
-				$args = array();
+				$args = [];
 
 				foreach ($step['args'] as $i => $arg)
 				{
@@ -605,13 +599,13 @@ class Kohana_Exception_Core extends Exception {
 				$function = $step['class'].$step['type'].$step['function'];
 			}
 
-			$output[] = array(
+			$output[] = [
 				'function' => $function,
-				'args'     => isset($args)   ? $args : NULL,
-				'file'     => isset($file)   ? $file : NULL,
-				'line'     => isset($line)   ? $line : NULL,
-				'source'   => isset($source) ? $source : NULL,
-			);
+				'args'     => $args ?? NULL,
+				'file'     => $file ?? NULL,
+				'line'     => $line ?? NULL,
+				'source'   => $source ?? NULL,
+			];
 
 			unset($function, $args, $file, $line, $source);
 		}

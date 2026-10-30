@@ -37,7 +37,7 @@ class JCrypt
 		if (
 			function_exists('openssl_random_pseudo_bytes')
 			&& (version_compare(PHP_VERSION, '5.3.4') >= 0
-				|| substr(PHP_OS, 0, 3) !== 'WIN'
+				|| !str_starts_with(PHP_OS, 'WIN')
 			)
 		)
 		{
@@ -78,7 +78,7 @@ class JCrypt
 			 * Collect any entropy available from the PHP system and filesystem.
 			 * If we have ssl data that isn't strong, we use it once.
 			 */
-			$entropy = rand() . uniqid(mt_rand(), true) . $sslStr;
+			$entropy = random_int(0, mt_getrandmax()) . uniqid(mt_rand(), true) . $sslStr;
 			$entropy .= implode('', @fstat(fopen( __FILE__, 'r')));
 			$entropy .= memory_get_usage();
 			$sslStr = '';

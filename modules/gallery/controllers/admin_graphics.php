@@ -37,7 +37,7 @@ class Admin_Graphics_Controller extends Admin_Controller {
 
       site_status::clear("missing_graphics_toolkit");
 
-      $msg = t("Changed graphics toolkit to: %toolkit", array("toolkit" => $tk->$toolkit_id->name));
+      $msg = t("Changed graphics toolkit to: %toolkit", ["toolkit" => $tk->$toolkit_id->name]);
       message::success($msg);
       log::success("graphics", $msg);
 

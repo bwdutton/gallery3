@@ -7,17 +7,14 @@
  * @copyright  (c) 2008-2009 Kohana Team
  * @license    http://kohanaphp.com/license
  */
-class Database_Expression_Core {
+class Database_Expression_Core implements \Stringable {
 
-	protected $expression;
+	public function __construct(protected $expression)
+    {
+    }
 
-	public function __construct($expression)
+	public function __toString(): string
 	{
-		$this->expression = $expression;
-	}
-
-	public function __toString()
-	{
-		return $this->expression;
+		return (string) $this->expression;
 	}
 }
