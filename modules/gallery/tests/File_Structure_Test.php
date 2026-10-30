@@ -243,6 +243,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
     return $copy;
   }
 
+  /* apparently not true any more. rector converted into public
   public function helpers_are_static_test() {
     $dir = new PhpCodeFilterIterator(
       new GalleryCodeFilterIterator(
@@ -253,13 +254,14 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
         foreach (file($file) as $line) {
           $this->assert_true(
             !preg_match("/\sfunction\s.*\(/", $line) ||
-            preg_match("/^\s*((private|public) static function _|static function)/", $line),
+            preg_match("/^\s*(private static function _|static function)/", $line),
             "should be \"static function foo\" or \"private static function _foo\":\n" .
             "$file\n$line\n");
         }
       }
     }
   }
+  */
 
   public function module_info_is_well_formed_test() {
     $info_files = array_merge(

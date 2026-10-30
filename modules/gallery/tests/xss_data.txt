@@ -40,7 +40,7 @@ modules/comment/views/comments.html.php                      28  DIRTY_ATTR $com
 modules/comment/views/comments.html.php                      31  DIRTY_ATTR $comment->author()->avatar_url(40,$theme->url(,true))
 modules/comment/views/user_profile_comments.html.php         5   DIRTY_ATTR $comment->id
 modules/comment/views/user_profile_comments.html.php         10  DIRTY_JS $comment->item()->url()
-modules/comment/views/user_profile_comments.html.php         11  DIRTY    $comment->item()->thumb_img(array(),50)
+modules/comment/views/user_profile_comments.html.php         11  DIRTY    $comment->item()->thumb_img([],50)
 modules/exif/views/exif_dialog.html.php                      14  DIRTY    $details[$i]["caption"]
 modules/exif/views/exif_dialog.html.php                      21  DIRTY    $details[$i]["caption"]
 modules/g2_import/views/admin_g2_import.html.php             5   DIRTY_JS url::site("__ARGS__")
@@ -61,8 +61,8 @@ modules/gallery/views/admin_dashboard.html.php               5   DIRTY_JS $csrf
 modules/gallery/views/admin_dashboard.html.php               37  DIRTY    $obsolete_modules_message
 modules/gallery/views/admin_dashboard.html.php               42  DIRTY    $blocks
 modules/gallery/views/admin_graphics.html.php                25  DIRTY    newView("admin_graphics_none.html")
-modules/gallery/views/admin_graphics.html.php                27  DIRTY    newView("admin_graphics_$active.html",array("tk"=>$tk->$active,"is_active"=>true))
-modules/gallery/views/admin_graphics.html.php                34  DIRTY    newView("admin_graphics_$id.html",array("tk"=>$tk->$id,"is_active"=>false))
+modules/gallery/views/admin_graphics.html.php                27  DIRTY    newView("admin_graphics_$active.html",["tk"=>$tk->$active,"is_active"=>true])
+modules/gallery/views/admin_graphics.html.php                34  DIRTY    newView("admin_graphics_$id.html",["tk"=>$tk->$id,"is_active"=>false])
 modules/gallery/views/admin_graphics_gd.html.php             2   DIRTY_ATTR $is_active?" g-selected":""
 modules/gallery/views/admin_graphics_gd.html.php             2   DIRTY_ATTR $tk->installed?" g-installed-toolkit":" g-unavailable"
 modules/gallery/views/admin_graphics_gd.html.php             19  DIRTY    $tk->error
@@ -193,7 +193,7 @@ modules/gallery/views/form_uploadify.html.php                33  DIRTY_JS url::f
 modules/gallery/views/form_uploadify.html.php                34  DIRTY_JS $simultaneous_upload_limit
 modules/gallery/views/form_uploadify.html.php                35  DIRTY_JS $size_limit_bytes
 modules/gallery/views/form_uploadify.html.php                164 DIRTY_ATTR request::protocol()
-modules/gallery/views/in_place_edit.html.php                 2   DIRTY    form::open($action,array("method"=>"post","id"=>"g-in-place-edit-form","class"=>"g-short-form"))
+modules/gallery/views/in_place_edit.html.php                 2   DIRTY    form::open($action,["method"=>"post","id"=>"g-in-place-edit-form","class"=>"g-short-form"])
 modules/gallery/views/in_place_edit.html.php                 3   DIRTY    access::csrf_form_field()
 modules/gallery/views/in_place_edit.html.php                 6   DIRTY    form::input("input",$form["input"]," class=\"textbox\"")
 modules/gallery/views/in_place_edit.html.php                 14  DIRTY    $errors["input"]
@@ -279,7 +279,7 @@ modules/gallery/views/upgrader.html.php                      132 DIRTY_ATTR $don
 modules/gallery/views/user_languages_block.html.php          2   DIRTY    form::dropdown("g-select-session-locale",$installed_locales,$selected)
 modules/gallery/views/user_profile.html.php                  34  DIRTY_ATTR $user->avatar_url(40,$theme->url(,true))
 modules/gallery/views/user_profile.html.php                  43  DIRTY    $info->view
-modules/image_block/views/image_block_block.html.php         5   DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))
+modules/image_block/views/image_block_block.html.php         5   DIRTY    $item->thumb_img(["class"=>"g-thumbnail"])
 modules/info/views/info_block.html.php                       5   DIRTY    $info["label"]
 modules/info/views/info_block.html.php                       5   DIRTY    $info["value"]
 modules/notification/views/comment_published.html.php        28  DIRTY_JS $comment->item()->abs_url()
@@ -348,7 +348,7 @@ modules/rss/views/feed.mrss.php                              69  DIRTY_ATTR $ite
 modules/rss/views/rss_block.html.php                         6   DIRTY_JS rss::url($url)
 modules/search/views/search.html.php                         43  DIRTY_ATTR $item_class
 modules/search/views/search.html.php                         44  DIRTY_JS $item->url()
-modules/search/views/search.html.php                         45  DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))
+modules/search/views/search.html.php                         45  DIRTY    $item->thumb_img(["class"=>"g-thumbnail"])
 modules/search/views/search.html.php                         47  DIRTY_ATTR $item_class
 modules/search/views/search.html.php                         57  DIRTY    $theme->paginator()
 modules/search/views/search_link.html.php                    15  DIRTY_ATTR $album_id
@@ -415,7 +415,7 @@ themes/admin_wind/views/paginator.html.php                   79  DIRTY_JS $last_
 themes/widewind/views/album.html.php                         19  DIRTY_ATTR $child->id
 themes/widewind/views/album.html.php                         19  DIRTY_ATTR $item_class
 themes/widewind/views/album.html.php                         21  DIRTY_JS $child->url()
-themes/widewind/views/album.html.php                         23  DIRTY    $child->thumb_img(array("class"=>"g-thumbnail"))
+themes/widewind/views/album.html.php                         23  DIRTY    $child->thumb_img(["class"=>"g-thumbnail"])
 themes/widewind/views/album.html.php                         28  DIRTY_ATTR $item_class
 themes/widewind/views/album.html.php                         29  DIRTY_JS $child->url()
 themes/widewind/views/album.html.php                         47  DIRTY    $theme->paginator()
@@ -431,7 +431,7 @@ themes/widewind/views/dynamic.html.php                       16  DIRTY_ATTR $chi
 themes/widewind/views/dynamic.html.php                       17  DIRTY_ATTR $child->thumb_height
 themes/widewind/views/dynamic.html.php                       29  DIRTY    $theme->paginator()
 themes/widewind/views/movie.html.php                         5   DIRTY    $theme->paginator()
-themes/widewind/views/movie.html.php                         9   DIRTY    $item->movie_img(array("class"=>"g-movie","id"=>"g-item-id-{$item->id}"))
+themes/widewind/views/movie.html.php                         9   DIRTY    $item->movie_img(["class"=>"g-movie","id"=>"g-item-id-{$item->id}"])
 themes/widewind/views/page.html.php                          4   DIRTY    $theme->html_attributes()
 themes/widewind/views/page.html.php                          10  DIRTY    $page_title
 themes/widewind/views/page.html.php                          32  DIRTY    $new_width
@@ -458,11 +458,11 @@ themes/widewind/views/photo.html.php                         7   DIRTY_JS $theme
 themes/widewind/views/photo.html.php                         17  DIRTY_JS url::site("items/dimensions/".$theme->item()->id)
 themes/widewind/views/photo.html.php                         31  DIRTY    $theme->paginator()
 themes/widewind/views/photo.html.php                         36  DIRTY_JS $item->file_url()
-themes/widewind/views/photo.html.php                         38  DIRTY    $item->resize_img(array("id"=>"g-item-id-{$item->id}","class"=>"g-resize"))
+themes/widewind/views/photo.html.php                         38  DIRTY    $item->resize_img(["id"=>"g-item-id-{$item->id}","class"=>"g-resize"])
 themes/wind/views/album.html.php                             19  DIRTY_ATTR $child->id
 themes/wind/views/album.html.php                             19  DIRTY_ATTR $item_class
 themes/wind/views/album.html.php                             21  DIRTY_JS $child->url()
-themes/wind/views/album.html.php                             23  DIRTY    $child->thumb_img(array("class"=>"g-thumbnail"))
+themes/wind/views/album.html.php                             23  DIRTY    $child->thumb_img(["class"=>"g-thumbnail"])
 themes/wind/views/album.html.php                             28  DIRTY_ATTR $item_class
 themes/wind/views/album.html.php                             29  DIRTY_JS $child->url()
 themes/wind/views/album.html.php                             47  DIRTY    $theme->paginator()
@@ -478,7 +478,7 @@ themes/wind/views/dynamic.html.php                           16  DIRTY_ATTR $chi
 themes/wind/views/dynamic.html.php                           17  DIRTY_ATTR $child->thumb_height
 themes/wind/views/dynamic.html.php                           29  DIRTY    $theme->paginator()
 themes/wind/views/movie.html.php                             5   DIRTY    $theme->paginator()
-themes/wind/views/movie.html.php                             9   DIRTY    $item->movie_img(array("class"=>"g-movie","id"=>"g-item-id-{$item->id}"))
+themes/wind/views/movie.html.php                             9   DIRTY    $item->movie_img(["class"=>"g-movie","id"=>"g-item-id-{$item->id}"])
 themes/wind/views/page.html.php                              4   DIRTY    $theme->html_attributes()
 themes/wind/views/page.html.php                              10  DIRTY    $page_title
 themes/wind/views/page.html.php                              32  DIRTY    $new_width
@@ -505,4 +505,4 @@ themes/wind/views/photo.html.php                             7   DIRTY_JS $theme
 themes/wind/views/photo.html.php                             17  DIRTY_JS url::site("items/dimensions/".$theme->item()->id)
 themes/wind/views/photo.html.php                             31  DIRTY    $theme->paginator()
 themes/wind/views/photo.html.php                             36  DIRTY_JS $item->file_url()
-themes/wind/views/photo.html.php                             38  DIRTY    $item->resize_img(array("id"=>"g-item-id-{$item->id}","class"=>"g-resize"))
+themes/wind/views/photo.html.php                             38  DIRTY    $item->resize_img(["id"=>"g-item-id-{$item->id}","class"=>"g-resize"])
