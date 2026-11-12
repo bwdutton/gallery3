@@ -67,7 +67,14 @@ class url_Core {
 			if ($site_domain === '' OR $site_domain[0] === '/')
 			{
 				// Guess the server name if the domain starts with slash
-				$port = $_SERVER['SERVER_PORT'];
+                if ( ! empty($_SERVER['HTTP_X_FORWARDED_PORT']) )
+                {
+                    $port = $_SERVER['HTTP_X_FORWARDED_PORT'];
+                }
+                else
+                {
+                    $port = $_SERVER['SERVER_PORT'];
+                }
 				$port = ((($port == 80) && ($protocol == 'http')) || (($port == 443) && ($protocol == 'https')) || !$port) ? '' : ":$port";
 				$base_url = $protocol.'://'.($_SERVER['SERVER_NAME']?($_SERVER['SERVER_NAME'].$port):$_SERVER['HTTP_HOST']).$site_domain;
 			}
