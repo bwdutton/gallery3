@@ -119,7 +119,7 @@ class tag_event_Core {
   public static function add_photos_form_completed($item, $form) {
     $group = $form->add_photos;
 
-    foreach (explode(",", $group->tags->value) as $tag_name) {
+    foreach (explode(",", $group->tags->value ?? "") as $tag_name) {
       $tag_name = trim($tag_name);
       if ($tag_name) {
         $tag = tag::add($item, $tag_name);

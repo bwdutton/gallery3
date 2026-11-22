@@ -44,7 +44,7 @@ class system_Core {
     }
     $paths = array_merge($paths,
       explode(":", getenv("PATH")),
-      explode(":", module::get_var("gallery", "extra_binary_paths")));
+      explode(":", module::get_var("gallery", "extra_binary_paths", "")));
 
     foreach ($paths as $path) {
       $path = rtrim($path, "/");
