@@ -536,6 +536,12 @@ td {
   margin: 0 auto;
 }
 
+img.g-thumbnail,
+#g-item img.g-resize,
+#g-item #g-photo img {
+  height: auto;
+}
+
 /* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-footer #g-credits li {
