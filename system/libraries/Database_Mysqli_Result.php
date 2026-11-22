@@ -145,8 +145,13 @@ class Database_Mysqli_Result_Core extends Database_Result {
     #[\ReturnTypeWillChange]
 	public function current()
 	{
-		if ($this->current_row !== $this->internal_row AND ! $this->seek($this->current_row))
-			return NULL;
+		if ($this->current_row !== $this->internal_row)
+		{
+			if ( ! $this->offsetExists($this->current_row))
+				return NULL;
+			$this->seek($this->current_row);
+			$this->internal_row = $this->current_row;
+		}
 
 		++$this->internal_row;
 
