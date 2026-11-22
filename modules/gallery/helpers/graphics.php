@@ -115,6 +115,7 @@ class graphics_Core {
    * @param Item_Model $item
    */
   public static function generate($item) {
+    $ops = [];
     if ($item->thumb_dirty) {
       $ops["thumb"] = $item->thumb_path();
     }
