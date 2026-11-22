@@ -17,6 +17,8 @@ class Image_GraphicsMagick_Driver extends Image_Driver {
 
 	// Temporary image filename
 	protected $tmp_image;
+	protected $cmd_image;
+	protected $new_image;
 
 	/**
 	 * Attempts to detect the GraphicsMagick installation directory.
