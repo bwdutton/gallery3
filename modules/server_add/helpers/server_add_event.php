@@ -28,7 +28,7 @@ class server_add_event_Core {
 
   public static function site_menu($menu, $theme) {
     $item = $theme->item();
-    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
 
     if ($item && identity::active_user()->admin && $item->is_album() && !empty($paths) &&
         is_writable($item->is_album() ? $item->file_path() : $item->parent()->file_path())) {

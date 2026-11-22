@@ -26,7 +26,8 @@ class upgrade_checker_Core {
    * null if no checks have been performed.
    */
   public static function version_info() {
-    return unserialize(Cache::instance()->get("upgrade_checker_version_info"));
+    $data = Cache::instance()->get("upgrade_checker_version_info");
+    return $data ? unserialize($data) : null;
   }
 
   /**
