@@ -153,6 +153,20 @@ class Database_Test extends Gallery_Unit_Test_Case {
     $this->assert_same('basic\_test', Database::escape_for_like("basic_test"));
     $this->assert_same('\\\100\%\_test/', Database::escape_for_like('\100%_test/'));
   }
+
+  public function mysqli_result_second_iteration_test() {
+    $groups = ORM::factory("group")->find_all();
+    $first = [];
+    foreach ($groups as $g) {
+      $first[] = $g->id;
+    }
+    $second = [];
+    foreach ($groups as $g) {
+      $second[] = $g->id;
+    }
+    $this->assert_true(count($first) > 0);
+    $this->assert_same($first, $second);
+  }
 }
 
 class Database_Mock extends Database {
