@@ -19,7 +19,7 @@
  */
 class server_add_Core {
   public static function check_config($paths=null) {
-    $paths ??= unserialize(module::get_var("server_add", "authorized_paths"));
+    $paths ??= unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
     if (empty($paths)) {
       site_status::warning(
         t("Server Add needs configuration. <a href=\"%url\">Configure it now!</a>",
@@ -35,7 +35,7 @@ class server_add_Core {
       return false;
     }
 
-    $authorized_paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    $authorized_paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
     foreach (array_keys($authorized_paths) as $valid_path) {
       if (str_starts_with($path, $valid_path)) {
         return true;

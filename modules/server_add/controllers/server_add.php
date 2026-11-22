@@ -19,7 +19,7 @@
  */
 class Server_Add_Controller extends Admin_Controller {
   public function browse($id) {
-    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
     foreach (array_keys($paths) as $path) {
       $files[] = $path;
     }
@@ -70,7 +70,7 @@ class Server_Add_Controller extends Admin_Controller {
       }
     } else {
       // Missing or invalid path; print out the list of authorized path
-      $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+      $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
       foreach (array_keys($paths) as $path) {
         $tree->files[] = $path;
       }
@@ -149,7 +149,7 @@ class Server_Add_Controller extends Admin_Controller {
       // We can't fit an arbitrary number of paths in a task, so store them in a separate table.
       // Don't use an iterator here because we can't get enough control over it when we're dealing
       // with a deep hierarchy and we don't want to go over our time quota.
-      $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+      $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
       $dirs_scanned = $task->get("dirs_scanned");
       while (microtime(true) - $start < 0.5) {
         // Process every directory that doesn't yet have a parent id, these are the

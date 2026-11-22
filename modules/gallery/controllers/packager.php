@@ -72,7 +72,7 @@ class Packager_Controller extends Controller {
     $i = 1;
     foreach (["dashboard_sidebar", "dashboard_center", "site_sidebar"] as $key) {
       $blocks = [];
-      foreach (unserialize(module::get_var("gallery", "blocks_{$key}")) as $value) {
+      foreach (unserialize(module::get_var("gallery", "blocks_{$key}", "a:0:{}")) as $value) {
         $blocks[++$i] = $value;
       }
       module::set_var("gallery", "blocks_{$key}", serialize($blocks));
