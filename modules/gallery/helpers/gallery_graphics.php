@@ -105,9 +105,50 @@ class gallery_graphics_Core {
         }
         $image->save($output_file);
       }
+
+      self::_auto_orient($output_file);
     }
 
     module::event("graphics_resize_completed", $input_file, $output_file, $options, $item);
+  }
+
+  /**
+   * Auto-orient derived image files according to EXIF Orientation so stored
+   * pixel dimensions match browser rendering without modifying the original.
+   */
+  private static function _auto_orient($file_path) {
+    if (!is_file($file_path) || !function_exists("exif_read_data")) {
+      return;
+    }
+    $exif = @exif_read_data($file_path);
+    $ori = isset($exif["Orientation"]) ? (int)$exif["Orientation"] : 1;
+    if ($ori <= 1 || $ori > 8) {
+      return;
+    }
+
+    $toolkit = module::get_var("gallery", "graphics_toolkit");
+    $toolkit_path = module::get_var("gallery", "graphics_toolkit_path");
+    if ($toolkit === "graphicsmagick" && ($bin = system::find_binary("gm", $toolkit_path))) {
+      exec(escapeshellcmd($bin) . " convert -auto-orient " . escapeshellarg($file_path) . " " . escapeshellarg($file_path));
+      return;
+    }
+    if ($toolkit === "imagemagick" && ($bin = system::find_binary("convert", $toolkit_path))) {
+      exec(escapeshellcmd($bin) . " -auto-orient " . escapeshellarg($file_path) . " " . escapeshellarg($file_path));
+      return;
+    }
+
+    $degrees = match ($ori) {
+      3 => 180,
+      6 => 90,
+      8 => -90,
+      default => 0,
+    };
+    if ($degrees !== 0) {
+      Image::factory($file_path)
+        ->rotate($degrees)
+        ->quality(module::get_var("gallery", "image_quality"))
+        ->save($file_path);
+    }
   }
 
   /**

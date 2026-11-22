@@ -134,4 +134,28 @@ class Gallery_Graphics_Helper_Test extends Gallery_Unit_Test_Case {
       // pass
     }
   }
+
+  public function resize_jpg_exif_orientation_test() {
+    $src = file_get_contents(MODPATH . "gallery/tests/test.jpg");
+    $tiff = "II*\x00\x08\x00\x00\x00" . pack("v", 1) . pack("vvVV", 0x0112, 3, 1, 6) . "\x00\x00\x00\x00";
+    $app1_payload = "Exif\x00\x00" . $tiff;
+    $app1 = "\xff\xe1" . pack("n", strlen($app1_payload) + 2) . $app1_payload;
+
+    $input_file = TMPPATH . test::random_name() . ".jpg";
+    $output_file = TMPPATH . test::random_name() . ".jpg";
+    file_put_contents($input_file, "\xff\xd8" . $app1 . substr($src, 2));
+
+    $options = ["width" => 300, "height" => 300, "master" => Image::AUTO];
+    gallery_graphics::resize($input_file, $output_file, $options, null);
+
+    // Derived output is auto-oriented to portrait 225x300 with Orientation=1
+    $this->assert_equal([225, 300, "image/jpeg", "jpg"], photo::get_file_metadata($output_file));
+    $out_exif = @exif_read_data($output_file);
+    $this->assert_equal(1, isset($out_exif["Orientation"]) ? (int)$out_exif["Orientation"] : 1);
+
+    // Original input file remains untouched
+    $this->assert_equal([1024, 768, "image/jpeg", "jpg"], photo::get_file_metadata($input_file));
+    $in_exif = @exif_read_data($input_file);
+    $this->assert_equal(6, (int)$in_exif["Orientation"]);
+  }
 }
