@@ -155,4 +155,13 @@ class Graphics_Helper_Test extends Gallery_Unit_Test_Case {
     // Check that the images are marked as dirty
     $this->assert_equal(1, $album->thumb_dirty);
   }
+
+  public function generate_clean_photo_test() {
+    $photo = test::random_photo();
+    $this->assert_equal(0, $photo->resize_dirty);
+    $this->assert_equal(0, $photo->thumb_dirty);
+    graphics::generate($photo);
+    $this->assert_equal(0, $photo->resize_dirty);
+    $this->assert_equal(0, $photo->thumb_dirty);
+  }
 }
